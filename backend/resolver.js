@@ -1,6 +1,10 @@
-const mysql = require('mysql2/promise');
-const fs = require('fs');
-const path = require('path');
+import mysql from 'mysql2/promise';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Script Resolver - Vibe Social Network (Node.js)
@@ -126,7 +130,7 @@ class VibeResolver {
                 ADD COLUMN account_status ENUM('pending', 'active', 'suspended', 'banned') 
                 DEFAULT 'pending'
             `);
-            console.log('��� Coluna account_status adicionada!');
+            console.log('✅ Coluna account_status adicionada!');
         } else {
             console.log('✅ Coluna account_status já existe');
         }
