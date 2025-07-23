@@ -298,7 +298,7 @@ const EmailVerificationPage: React.FC = () => {
 
       // Redirecionar para home
       setTimeout(() => {
-        window.location.reload(); // Recarrega para aplicar o login
+        window.location.href = '/'; // Redireciona para a página principal
       }, 2000);
     }
   };
