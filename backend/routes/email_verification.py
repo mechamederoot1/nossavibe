@@ -72,7 +72,7 @@ def create_verification_record(user_id: int, email: str, first_name: str, db: Se
         # Gerar código e token
         verification_code = generate_verification_code()
         verification_token = generate_verification_token()
-        expires_at = datetime.utcnow() + timedelta(minutes=5)
+        expires_at = datetime.utcnow() + timedelta(minutes=10)
 
         print(f"📝 Generated verification code: {verification_code}")
 
@@ -158,7 +158,7 @@ async def send_verification_email(
         # Gerar código e token
         verification_code = generate_verification_code()
         verification_token = generate_verification_token()
-        expires_at = datetime.utcnow() + timedelta(minutes=5)
+        expires_at = datetime.utcnow() + timedelta(minutes=10)
         
         print(f"📝 Generated verification code: {verification_code}")
 
