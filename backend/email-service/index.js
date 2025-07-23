@@ -59,14 +59,9 @@ if (missingVars.length > 0) {
   console.log('💡 Execute o comando: node setup.js');
   console.log('📝 Ou configure manualmente o arquivo .env');
   
-  // Tentar usar valores padrão se disponíveis
-  if (!process.env.SMTP_HOST) process.env.SMTP_HOST = 'smtp.hostinger.com';
-  if (!process.env.SMTP_PORT) process.env.SMTP_PORT = '587';
-  if (!process.env.SMTP_USER) process.env.SMTP_USER = 'suporte@meuvibe.com';
-  if (!process.env.SMTP_PASS) process.env.SMTP_PASS = 'Dashwoodi@1995';
-  if (!process.env.SMTP_FROM) process.env.SMTP_FROM = 'no-reply@meuvibe.com';
-  
-  console.log('⚠️  Usando configurações padrão temporariamente');
+  console.log('❌ Configure o arquivo .env com suas credenciais antes de continuar.');
+  console.log('📋 Variáveis faltando:', missingVars.join(', '));
+  process.exit(1);
 } else {
   console.log('✅ Todas as variáveis de ambiente carregadas com sucesso');
 }
