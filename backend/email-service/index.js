@@ -24,40 +24,10 @@ if (fs.existsSync(envPath)) {
   }
 } else {
   console.log('❌ Arquivo .env não encontrado em:', envPath);
-  console.log('📝 Criando arquivo .env com configurações padrão...');
-  
-  const defaultEnvContent = `# Configurações do banco de dados MySQL
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=YOUR_DB_PASSWORD_HERE
-DB_NAME=vibe
-
-# Configurações SMTP (configure com suas credenciais)
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USER=your-email@example.com
-SMTP_PASS=YOUR_EMAIL_PASSWORD_HERE
-SMTP_FROM=noreply@example.com
-
-# Configurações de verificação
-VERIFICATION_CODE_EXPIRY=300000
-RESEND_COOLDOWN=60000
-MAX_RESEND_ATTEMPTS=5
-
-# Porta do serviço
-PORT=3001
-`;
-  
-  try {
-    fs.writeFileSync(envPath, defaultEnvContent);
-    console.log('✅ Arquivo .env criado com sucesso');
-    
-    // Recarregar as variáveis
-    dotenv.config({ path: envPath });
-  } catch (writeError) {
-    console.error('❌ Erro ao criar arquivo .env:', writeError);
-  }
+  console.log('🚨 ERRO: Arquivo .env é obrigatório para o funcionamento do serviço!');
+  console.log('📝 Crie o arquivo .env com as configurações necessárias.');
+  console.log('💡 Consulte o arquivo .env.example ou a documentação.');
+  process.exit(1);
 }
 
 // Debug do arquivo .env
