@@ -30,15 +30,15 @@ if (fs.existsSync(envPath)) {
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_USER=root
-DB_PASSWORD=Dashwoodi@1995
+DB_PASSWORD=YOUR_DB_PASSWORD_HERE
 DB_NAME=vibe
 
 # Configurações SMTP (configure com suas credenciais)
-SMTP_HOST=smtp.hostinger.com
+SMTP_HOST=smtp.example.com
 SMTP_PORT=587
-SMTP_USER=suporte@meuvibe.com
-SMTP_PASS=Dashwoodi@1995
-SMTP_FROM=no-reply@meuvibe.com
+SMTP_USER=your-email@example.com
+SMTP_PASS=YOUR_EMAIL_PASSWORD_HERE
+SMTP_FROM=noreply@example.com
 
 # Configurações de verificação
 VERIFICATION_CODE_EXPIRY=300000
