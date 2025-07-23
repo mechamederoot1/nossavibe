@@ -210,6 +210,7 @@ async def verify_code(
         code = request.code
         
         print(f"🔍 Verifying code {code} for user {user_id}")
+        print(f"⏰ Current UTC time: {datetime.utcnow()}")
 
         # Buscar código válido
         verification = db.query(EmailVerification).filter(
