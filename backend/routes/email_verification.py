@@ -72,7 +72,10 @@ def create_verification_record(user_id: int, email: str, first_name: str, db: Se
         # Gerar código e token
         verification_code = generate_verification_code()
         verification_token = generate_verification_token()
-        expires_at = datetime.utcnow() + timedelta(minutes=10)
+        # Usar tempo do banco para consistência
+        from sqlalchemy import text
+        db_time = db.execute(text("SELECT NOW()")).fetchone()[0]
+        expires_at = db_time + timedelta(minutes=10)
 
         print(f"📝 Generated verification code: {verification_code}")
 
@@ -158,7 +161,10 @@ async def send_verification_email(
         # Gerar código e token
         verification_code = generate_verification_code()
         verification_token = generate_verification_token()
-        expires_at = datetime.utcnow() + timedelta(minutes=10)
+        # Usar tempo do banco para consistência
+        from sqlalchemy import text
+        db_time = db.execute(text("SELECT NOW()")).fetchone()[0]
+        expires_at = db_time + timedelta(minutes=10)
         
         print(f"📝 Generated verification code: {verification_code}")
 
