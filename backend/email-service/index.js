@@ -508,17 +508,16 @@ app.post('/send-verification', async (req, res) => {
     console.log('🔗 Gerando token:', verificationToken.substring(0, 10) + '...');
 
     console.log('💾 Salvando no banco de dados...');
-    // Salvar no banco de dados
+    // Primeiro, deletar qualquer registro anterior para este usuário
     await pool.execute(
-      `INSERT INTO email_verifications (user_id, email, verification_code, verification_token, expires_at, created_at, attempts)
-       VALUES (?, ?, ?, ?, ?, NOW(), 1)
-       ON DUPLICATE KEY UPDATE 
-       verification_code = VALUES(verification_code),
-       verification_token = VALUES(verification_token),
-       expires_at = VALUES(expires_at),
-       created_at = NOW(),
-       attempts = attempts + 1,
-       verified = FALSE`,
+      'DELETE FROM email_verifications WHERE user_id = ?',
+      [userId]
+    );
+
+    // Agora inserir um novo registro limpo
+    await pool.execute(
+      `INSERT INTO email_verifications (user_id, email, verification_code, verification_token, expires_at, created_at, attempts, verified)
+       VALUES (?, ?, ?, ?, ?, NOW(), 1, FALSE)`,
       [userId, email, verificationCode, verificationToken, expiresAt]
     );
 
@@ -539,7 +538,7 @@ app.post('/send-verification', async (req, res) => {
     console.log('📤 Enviando e-mail via SMTP...');
     await transporter.sendMail(mailOptions);
 
-    console.log(`✅ E-mail de verificação enviado com sucesso para: ${email}`);
+    console.log(`��� E-mail de verificação enviado com sucesso para: ${email}`);
     console.log(`📋 Código: ${verificationCode}`);
     console.log(`⏰ Expira em: ${expiresAt}`);
 
