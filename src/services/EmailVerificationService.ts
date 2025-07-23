@@ -94,13 +94,14 @@ class EmailVerificationService {
       return response.data;
     } catch (error: any) {
       console.error('❌ Erro ao verificar código:', error.response?.data || error.message);
-      
+      console.error('❌ Erro completo:', error);
+
       if (error.response?.data) {
         throw error.response.data;
       }
       throw {
         success: false,
-        message: 'Erro de conexão com o serviço de e-mail'
+        message: error.message || 'Erro de conexão com o serviço de e-mail'
       };
     }
   }
