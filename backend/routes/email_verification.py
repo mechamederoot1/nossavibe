@@ -94,7 +94,7 @@ def create_verification_record(user_id: int, email: str, first_name: str, db: Se
         db.commit()
 
         print(f"✅ Verification record saved to database")
-        print(f"📧 Código de verificação para {email}: {verification_code}")
+        print(f"���� Código de verificação para {email}: {verification_code}")
         print(f"🔗 Token: {verification_token}")
         print(f"⏰ Expira em: {expires_at}")
 
@@ -221,6 +221,18 @@ async def verify_code(
         ).first()
 
         if not verification:
+            # Debug: verificar se existe algum código para este usuário
+            all_codes = db.query(EmailVerification).filter(
+                EmailVerification.user_id == user_id,
+                EmailVerification.verification_code == code
+            ).all()
+
+            if all_codes:
+                for v in all_codes:
+                    print(f"🔍 Found code: verified={v.verified}, expires_at={v.expires_at}, current_time={datetime.utcnow()}")
+            else:
+                print(f"❌ No code found with value {code} for user {user_id}")
+
             print(f"❌ Invalid or expired code for user {user_id}")
             raise HTTPException(
                 status_code=400,
