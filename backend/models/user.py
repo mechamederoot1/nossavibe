@@ -58,6 +58,7 @@ class User(Base):
     # Account settings
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
+    account_status = Column(Enum(AccountStatus), default=AccountStatus.pending)
     account_deactivated = Column(Boolean, default=False)
     deactivated_at = Column(DateTime)
     created_at = Column(DateTime, default=datetime.utcnow)
