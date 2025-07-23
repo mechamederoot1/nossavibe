@@ -94,7 +94,7 @@ def create_verification_record(user_id: int, email: str, first_name: str, db: Se
         db.commit()
 
         print(f"✅ Verification record saved to database")
-        print(f"���� Código de verificação para {email}: {verification_code}")
+        print(f"📧 Código de verificação para {email}: {verification_code}")
         print(f"🔗 Token: {verification_token}")
         print(f"⏰ Expira em: {expires_at}")
 
@@ -210,14 +210,18 @@ async def verify_code(
         code = request.code
         
         print(f"🔍 Verifying code {code} for user {user_id}")
-        print(f"⏰ Current UTC time: {datetime.utcnow()}")
 
-        # Buscar código válido
+        # Usar tempo do banco para consistência
+        from sqlalchemy import text
+        db_time = db.execute(text("SELECT NOW()")).fetchone()[0]
+        print(f"⏰ Current database time: {db_time}")
+
+        # Buscar código válido usando tempo do banco
         verification = db.query(EmailVerification).filter(
             EmailVerification.user_id == user_id,
             EmailVerification.verification_code == code,
             EmailVerification.verified == False,
-            EmailVerification.expires_at > datetime.utcnow()
+            EmailVerification.expires_at > db_time
         ).first()
 
         if not verification:
