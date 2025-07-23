@@ -189,7 +189,7 @@ async def send_verification_email(
         return {
             "success": True,
             "message": "Código de verificação enviado com sucesso",
-            "expires_in": 300000,  # 5 minutos em millisegundos
+            "expires_in": 600000,  # 10 minutos em millisegundos
             "cooldown_ms": 60000   # 1 minuto em millisegundos
         }
 
