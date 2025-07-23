@@ -251,7 +251,7 @@ async def verify_code(
 
         # Marcar como verificado
         verification.verified = True
-        verification.verified_at = datetime.utcnow()
+        verification.verified_at = db_time
 
         # Atualizar usuário como verificado
         user = db.query(User).filter(User.id == user_id).first()
@@ -296,7 +296,7 @@ async def verify_token(
 
         # Marcar como verificado
         verification.verified = True
-        verification.verified_at = datetime.utcnow()
+        verification.verified_at = db_time
 
         # Atualizar usuário como verificado
         user = db.query(User).filter(User.id == verification.user_id).first()
