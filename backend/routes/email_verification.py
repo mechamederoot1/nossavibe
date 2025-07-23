@@ -301,10 +301,13 @@ async def verify_token(
         verification.verified = True
         verification.verified_at = db_time
 
-        # Atualizar usuário como verificado
+        # Atualizar usuário como verificado e ativar conta
         user = db.query(User).filter(User.id == verification.user_id).first()
         if user:
             user.is_verified = True
+            # Ativar conta após verificação de email
+            from models.user import AccountStatus
+            user.account_status = AccountStatus.active
 
         db.commit()
 
