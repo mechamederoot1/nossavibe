@@ -263,11 +263,15 @@ const EmailVerificationPage: React.FC = () => {
   };
 
   const handleSuccessfulVerification = async () => {
+    console.log('🎉 E-mail verificado! Iniciando login automático...');
+
     // Limpar dados temporários e fazer login automático
     const pendingUser = localStorage.getItem('pendingVerificationUser');
     if (pendingUser) {
       const user = JSON.parse(pendingUser);
       const pendingPassword = localStorage.getItem('pendingPassword');
+
+      console.log('👤 Dados do usuário pendente:', { email: user.email, hasPassword: !!pendingPassword });
 
       // Fazer login automático
       if (pendingPassword) {
@@ -284,34 +288,67 @@ const EmailVerificationPage: React.FC = () => {
             }),
           });
 
+          console.log(`📊 Status do login: ${loginResponse.status}`);
+
           if (loginResponse.ok) {
             const loginData = await loginResponse.json();
-            console.log('✅ Login automático bem-sucedido');
+            console.log('✅ Login automático bem-sucedido!', loginData);
             localStorage.setItem('token', loginData.access_token);
 
-            // Limpar dados pendentes apenas se login foi bem-sucedido
+            // Limpar dados pendentes
             localStorage.removeItem('pendingVerificationUser');
             localStorage.removeItem('pendingVerificationEmail');
             localStorage.removeItem('pendingPassword');
+
+            // Redirecionar imediatamente após login bem-sucedido
+            console.log('🚀 Redirecionando para página principal...');
+            window.location.href = '/';
+            return; // Sair da função para evitar delay desnecessário
+
           } else {
-            console.error('❌ Login automático falhou:', await loginResponse.text());
-            // Se login falhou, manter dados para tentar novamente
+            const errorText = await loginResponse.text();
+            console.error('❌ Login automático falhou:', errorText);
+            setMessage('E-mail verificado, mas erro no login automático. Faça login manualmente.');
+            setMessageType('warning');
+
+            // Se login falhou, redirecionar para tela de login após delay
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 3000);
           }
         } catch (error) {
           console.error('❌ Erro no login automático:', error);
-          // Se houve erro, manter dados para tentar novamente
+          setMessage('E-mail verificado, mas erro de conexão. Faça login manualmente.');
+          setMessageType('warning');
+
+          // Se houve erro, redirecionar para tela de login após delay
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 3000);
         }
       } else {
-        // Se não há senha pendente, limpar dados mesmo assim
+        console.log('⚠️ Senha pendente não encontrada');
+        setMessage('E-mail verificado! Faça login com suas credenciais.');
+        setMessageType('success');
+
+        // Limpar dados mesmo assim
         localStorage.removeItem('pendingVerificationUser');
         localStorage.removeItem('pendingVerificationEmail');
         localStorage.removeItem('pendingPassword');
-      }
 
-      // Redirecionar para home após delay maior
+        // Redirecionar para tela de login
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 3000);
+      }
+    } else {
+      console.log('⚠️ Dados de usuário pendente não encontrados');
+      setMessage('E-mail verificado! Faça login com suas credenciais.');
+      setMessageType('success');
+
+      // Redirecionar para tela de login
       setTimeout(() => {
-        console.log('🔄 Redirecionando para página principal...');
-        window.location.href = '/'; // Redireciona para a página principal
+        window.location.href = '/';
       }, 3000);
     }
   };
