@@ -1,9 +1,16 @@
 """
 Modelo de usuário
 """
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Date
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Date, Enum
 from datetime import datetime
 from core.database import Base
+import enum
+
+class AccountStatus(enum.Enum):
+    pending = "pending"
+    active = "active"
+    suspended = "suspended"
+    banned = "banned"
 
 class User(Base):
     __tablename__ = "users"
