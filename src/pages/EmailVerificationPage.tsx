@@ -300,10 +300,11 @@ const EmailVerificationPage: React.FC = () => {
       localStorage.removeItem('pendingVerificationEmail');
       localStorage.removeItem('pendingPassword');
 
-      // Redirecionar para home
+      // Redirecionar para home após delay maior
       setTimeout(() => {
+        console.log('🔄 Redirecionando para página principal...');
         window.location.href = '/'; // Redireciona para a página principal
-      }, 2000);
+      }, 3000);
     }
   };
 
