@@ -303,12 +303,10 @@ async function main() {
     }
 }
 
-// Verificar se este arquivo está sendo executado diretamente
-if (require.main === module) {
-    main().catch(error => {
-        console.error('❌ Erro fatal:', error);
-        process.exit(1);
-    });
-}
+// Executar se este arquivo for chamado diretamente
+main().catch(error => {
+    console.error('❌ Erro fatal:', error);
+    process.exit(1);
+});
 
-module.exports = VibeResolver;
+export default VibeResolver;
