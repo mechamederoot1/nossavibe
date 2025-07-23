@@ -272,6 +272,7 @@ const EmailVerificationPage: React.FC = () => {
       // Fazer login automático
       if (pendingPassword) {
         try {
+          console.log('🔄 Tentando login automático...');
           const loginResponse = await fetch('http://localhost:8000/auth/login', {
             method: 'POST',
             headers: {
@@ -285,10 +286,13 @@ const EmailVerificationPage: React.FC = () => {
 
           if (loginResponse.ok) {
             const loginData = await loginResponse.json();
+            console.log('✅ Login automático bem-sucedido');
             localStorage.setItem('token', loginData.access_token);
+          } else {
+            console.error('❌ Login automático falhou:', await loginResponse.text());
           }
         } catch (error) {
-          console.error('Erro no login automático:', error);
+          console.error('❌ Erro no login automático:', error);
         }
       }
 
