@@ -239,7 +239,7 @@ async def verify_code(
 
             if all_codes:
                 for v in all_codes:
-                    print(f"🔍 Found code: verified={v.verified}, expires_at={v.expires_at}, current_time={datetime.utcnow()}")
+                    print(f"🔍 Found code: verified={v.verified}, expires_at={v.expires_at}, current_db_time={db_time}")
             else:
                 print(f"❌ No code found with value {code} for user {user_id}")
 
