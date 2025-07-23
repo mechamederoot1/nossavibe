@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const EMAIL_SERVICE_BASE_URL = 'http://localhost:8000/email-verification';
+const EMAIL_SERVICE_BASE_URL = 'http://localhost:3001';
 
 export interface SendVerificationRequest {
   email: string;
