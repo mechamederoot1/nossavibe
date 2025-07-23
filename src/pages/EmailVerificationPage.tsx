@@ -288,17 +288,25 @@ const EmailVerificationPage: React.FC = () => {
             const loginData = await loginResponse.json();
             console.log('✅ Login automático bem-sucedido');
             localStorage.setItem('token', loginData.access_token);
+
+            // Limpar dados pendentes apenas se login foi bem-sucedido
+            localStorage.removeItem('pendingVerificationUser');
+            localStorage.removeItem('pendingVerificationEmail');
+            localStorage.removeItem('pendingPassword');
           } else {
             console.error('❌ Login automático falhou:', await loginResponse.text());
+            // Se login falhou, manter dados para tentar novamente
           }
         } catch (error) {
           console.error('❌ Erro no login automático:', error);
+          // Se houve erro, manter dados para tentar novamente
         }
+      } else {
+        // Se não há senha pendente, limpar dados mesmo assim
+        localStorage.removeItem('pendingVerificationUser');
+        localStorage.removeItem('pendingVerificationEmail');
+        localStorage.removeItem('pendingPassword');
       }
-
-      localStorage.removeItem('pendingVerificationUser');
-      localStorage.removeItem('pendingVerificationEmail');
-      localStorage.removeItem('pendingPassword');
 
       // Redirecionar para home após delay maior
       setTimeout(() => {
