@@ -479,16 +479,26 @@ app.post('/send-verification', async (req, res) => {
     console.log('🔍 Verificando cooldown...');
     // Verificar cooldown entre envios
     const [lastAttempt] = await pool.execute(
-      `SELECT created_at FROM email_verifications 
+      `SELECT created_at FROM email_verifications
        WHERE user_id = ? ORDER BY created_at DESC LIMIT 1`,
       [userId]
     );
 
     if (lastAttempt.length > 0) {
-      const timeSinceLastAttempt = Date.now() - new Date(lastAttempt[0].created_at).getTime();
-      const cooldownMs = parseInt(process.env.RESEND_COOLDOWN);
-      
-      if (timeSinceLastAttempt < cooldownMs) {
+      const lastAttemptTime = new Date(lastAttempt[0].created_at).getTime();
+      const now = Date.now();
+      const timeSinceLastAttempt = now - lastAttemptTime;
+      const cooldownMs = parseInt(process.env.RESEND_COOLDOWN) || 60000; // Fallback para 60s
+
+      console.log('⏰ Debug cooldown:');
+      console.log(`   - Última tentativa: ${lastAttempt[0].created_at}`);
+      console.log(`   - Timestamp última: ${lastAttemptTime}`);
+      console.log(`   - Timestamp atual: ${now}`);
+      console.log(`   - Diferença: ${timeSinceLastAttempt}ms`);
+      console.log(`   - Cooldown config: ${cooldownMs}ms`);
+
+      // Só aplicar cooldown se for um valor positivo e menor que o limite
+      if (timeSinceLastAttempt > 0 && timeSinceLastAttempt < cooldownMs) {
         const remainingTime = Math.ceil((cooldownMs - timeSinceLastAttempt) / 1000);
         console.log('❌ Cooldown ativo:', remainingTime, 'segundos restantes');
         return res.status(429).json({
@@ -496,7 +506,11 @@ app.post('/send-verification', async (req, res) => {
           message: `Aguarde ${remainingTime} segundos antes de solicitar um novo código`,
           retryAfter: remainingTime * 1000
         });
+      } else {
+        console.log('✅ Cooldown expirado ou timestamp inválido - permitindo envio');
       }
+    } else {
+      console.log('✅ Primeira tentativa - sem cooldown');
     }
 
     // Gerar código e token de verificação
@@ -935,7 +949,7 @@ app.post('/verify-recovery-token', async (req, res) => {
 
     const recovery = results[0];
 
-    // Log da verificação
+    // Log da verifica��ão
     await pool.execute(
       `INSERT INTO password_recovery_logs (user_id, email, action_type, recovery_id, success)
        VALUES (?, ?, 'token_attempt', ?, TRUE)`,
