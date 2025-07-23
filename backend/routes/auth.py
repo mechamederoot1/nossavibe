@@ -127,22 +127,53 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 def login(login_data: LoginRequest, db: Session = Depends(get_db)):
     try:
         user = db.query(User).filter(User.email == login_data.email).first()
-        
+
         if not user or not verify_password(login_data.password, user.password_hash):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect username or password",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        
+
         if not user.is_active:
             raise HTTPException(status_code=400, detail="Inactive user")
-        
+
+        # Verificar se o email foi confirmado
+        is_verified = getattr(user, 'is_verified', False)
+        if not is_verified:
+            raise HTTPException(
+                status_code=403,
+                detail={
+                    "error": "email_not_verified",
+                    "message": "Você precisa confirmar seu email antes de fazer login. Verifique sua caixa de entrada.",
+                    "user_id": user.id,
+                    "email": user.email
+                }
+            )
+
+        # Verificar status da conta
+        account_status = getattr(user, 'account_status', 'pending')
+        if account_status != 'active':
+            status_messages = {
+                'pending': 'Sua conta está pendente de ativação. Confirme seu email.',
+                'suspended': 'Sua conta foi suspensa. Entre em contato com o suporte.',
+                'banned': 'Sua conta foi banida. Entre em contato com o suporte.'
+            }
+            raise HTTPException(
+                status_code=403,
+                detail={
+                    "error": "account_not_active",
+                    "message": status_messages.get(account_status, "Conta não está ativa"),
+                    "status": account_status,
+                    "user_id": user.id
+                }
+            )
+
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
             data={"sub": user.email, "user_id": user.id}, expires_delta=access_token_expires
         )
-        
+
         return {"access_token": access_token, "token_type": "bearer"}
     except HTTPException:
         raise

@@ -1,9 +1,16 @@
 """
 Modelo de usuário
 """
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Date
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Date, Enum
 from datetime import datetime
 from core.database import Base
+import enum
+
+class AccountStatus(enum.Enum):
+    pending = "pending"
+    active = "active"
+    suspended = "suspended"
+    banned = "banned"
 
 class User(Base):
     __tablename__ = "users"
@@ -51,6 +58,7 @@ class User(Base):
     # Account settings
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
+    account_status = Column(Enum(AccountStatus), default=AccountStatus.pending)
     account_deactivated = Column(Boolean, default=False)
     deactivated_at = Column(DateTime)
     created_at = Column(DateTime, default=datetime.utcnow)

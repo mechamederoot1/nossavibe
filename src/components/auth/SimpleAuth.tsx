@@ -183,7 +183,30 @@ export function SimpleAuth({ onLogin }: AuthProps) {
         }
 
         console.error("Registration/Login error:", errorData);
-        setError(errorData.detail || "Erro ao processar solicitação");
+
+        // Handle specific error cases
+        if (response.status === 403 && typeof errorData.detail === 'object') {
+          if (errorData.detail.error === 'email_not_verified') {
+            // Store user data for verification redirect
+            localStorage.setItem("pendingVerificationEmail", errorData.detail.email);
+            localStorage.setItem("pendingVerificationUser", JSON.stringify({
+              id: errorData.detail.user_id,
+              email: errorData.detail.email
+            }));
+
+            setError("Você precisa confirmar seu email antes de fazer login. Redirecionando para verificação...");
+
+            setTimeout(() => {
+              navigate('/verify-email');
+            }, 2000);
+            return;
+          } else if (errorData.detail.error === 'account_not_active') {
+            setError(`Conta não está ativa: ${errorData.detail.message}`);
+            return;
+          }
+        }
+
+        setError(errorData.detail?.message || errorData.detail || "Erro ao processar solicita��ão");
       }
     } catch (error) {
       console.error("❌ Network or processing error:", error);

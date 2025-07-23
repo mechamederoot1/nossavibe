@@ -24,40 +24,10 @@ if (fs.existsSync(envPath)) {
   }
 } else {
   console.log('❌ Arquivo .env não encontrado em:', envPath);
-  console.log('📝 Criando arquivo .env com configurações padrão...');
-  
-  const defaultEnvContent = `# Configurações do banco de dados MySQL
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=Dashwoodi@1995
-DB_NAME=vibe
-
-# Configurações SMTP (configure com suas credenciais)
-SMTP_HOST=smtp.hostinger.com
-SMTP_PORT=587
-SMTP_USER=suporte@meuvibe.com
-SMTP_PASS=Dashwoodi@1995
-SMTP_FROM=no-reply@meuvibe.com
-
-# Configurações de verificação
-VERIFICATION_CODE_EXPIRY=300000
-RESEND_COOLDOWN=60000
-MAX_RESEND_ATTEMPTS=5
-
-# Porta do serviço
-PORT=3001
-`;
-  
-  try {
-    fs.writeFileSync(envPath, defaultEnvContent);
-    console.log('✅ Arquivo .env criado com sucesso');
-    
-    // Recarregar as variáveis
-    dotenv.config({ path: envPath });
-  } catch (writeError) {
-    console.error('❌ Erro ao criar arquivo .env:', writeError);
-  }
+  console.log('🚨 ERRO: Arquivo .env é obrigatório para o funcionamento do serviço!');
+  console.log('📝 Crie o arquivo .env com as configurações necessárias.');
+  console.log('💡 Consulte o arquivo .env.example ou a documentação.');
+  process.exit(1);
 }
 
 // Debug do arquivo .env
@@ -89,14 +59,9 @@ if (missingVars.length > 0) {
   console.log('💡 Execute o comando: node setup.js');
   console.log('📝 Ou configure manualmente o arquivo .env');
   
-  // Tentar usar valores padrão se disponíveis
-  if (!process.env.SMTP_HOST) process.env.SMTP_HOST = 'smtp.hostinger.com';
-  if (!process.env.SMTP_PORT) process.env.SMTP_PORT = '587';
-  if (!process.env.SMTP_USER) process.env.SMTP_USER = 'suporte@meuvibe.com';
-  if (!process.env.SMTP_PASS) process.env.SMTP_PASS = 'Dashwoodi@1995';
-  if (!process.env.SMTP_FROM) process.env.SMTP_FROM = 'no-reply@meuvibe.com';
-  
-  console.log('⚠️  Usando configurações padrão temporariamente');
+  console.log('❌ Configure o arquivo .env com suas credenciais antes de continuar.');
+  console.log('📋 Variáveis faltando:', missingVars.join(', '));
+  process.exit(1);
 } else {
   console.log('✅ Todas as variáveis de ambiente carregadas com sucesso');
 }
@@ -479,16 +444,26 @@ app.post('/send-verification', async (req, res) => {
     console.log('🔍 Verificando cooldown...');
     // Verificar cooldown entre envios
     const [lastAttempt] = await pool.execute(
-      `SELECT created_at FROM email_verifications 
+      `SELECT created_at FROM email_verifications
        WHERE user_id = ? ORDER BY created_at DESC LIMIT 1`,
       [userId]
     );
 
     if (lastAttempt.length > 0) {
-      const timeSinceLastAttempt = Date.now() - new Date(lastAttempt[0].created_at).getTime();
-      const cooldownMs = parseInt(process.env.RESEND_COOLDOWN);
-      
-      if (timeSinceLastAttempt < cooldownMs) {
+      const lastAttemptTime = new Date(lastAttempt[0].created_at).getTime();
+      const now = Date.now();
+      const timeSinceLastAttempt = now - lastAttemptTime;
+      const cooldownMs = parseInt(process.env.RESEND_COOLDOWN) || 60000; // Fallback para 60s
+
+      console.log('⏰ Debug cooldown:');
+      console.log(`   - Última tentativa: ${lastAttempt[0].created_at}`);
+      console.log(`   - Timestamp última: ${lastAttemptTime}`);
+      console.log(`   - Timestamp atual: ${now}`);
+      console.log(`   - Diferença: ${timeSinceLastAttempt}ms`);
+      console.log(`   - Cooldown config: ${cooldownMs}ms`);
+
+      // Só aplicar cooldown se for um valor positivo e menor que o limite
+      if (timeSinceLastAttempt > 0 && timeSinceLastAttempt < cooldownMs) {
         const remainingTime = Math.ceil((cooldownMs - timeSinceLastAttempt) / 1000);
         console.log('❌ Cooldown ativo:', remainingTime, 'segundos restantes');
         return res.status(429).json({
@@ -496,7 +471,11 @@ app.post('/send-verification', async (req, res) => {
           message: `Aguarde ${remainingTime} segundos antes de solicitar um novo código`,
           retryAfter: remainingTime * 1000
         });
+      } else {
+        console.log('✅ Cooldown expirado ou timestamp inválido - permitindo envio');
       }
+    } else {
+      console.log('✅ Primeira tentativa - sem cooldown');
     }
 
     // Gerar código e token de verificação
@@ -508,17 +487,16 @@ app.post('/send-verification', async (req, res) => {
     console.log('🔗 Gerando token:', verificationToken.substring(0, 10) + '...');
 
     console.log('💾 Salvando no banco de dados...');
-    // Salvar no banco de dados
+    // Primeiro, deletar qualquer registro anterior para este usuário
     await pool.execute(
-      `INSERT INTO email_verifications (user_id, email, verification_code, verification_token, expires_at, created_at, attempts)
-       VALUES (?, ?, ?, ?, ?, NOW(), 1)
-       ON DUPLICATE KEY UPDATE 
-       verification_code = VALUES(verification_code),
-       verification_token = VALUES(verification_token),
-       expires_at = VALUES(expires_at),
-       created_at = NOW(),
-       attempts = attempts + 1,
-       verified = FALSE`,
+      'DELETE FROM email_verifications WHERE user_id = ?',
+      [userId]
+    );
+
+    // Agora inserir um novo registro limpo
+    await pool.execute(
+      `INSERT INTO email_verifications (user_id, email, verification_code, verification_token, expires_at, created_at, attempts, verified)
+       VALUES (?, ?, ?, ?, ?, NOW(), 1, FALSE)`,
       [userId, email, verificationCode, verificationToken, expiresAt]
     );
 
@@ -539,7 +517,7 @@ app.post('/send-verification', async (req, res) => {
     console.log('📤 Enviando e-mail via SMTP...');
     await transporter.sendMail(mailOptions);
 
-    console.log(`✅ E-mail de verificação enviado com sucesso para: ${email}`);
+    console.log(`��� E-mail de verificação enviado com sucesso para: ${email}`);
     console.log(`📋 Código: ${verificationCode}`);
     console.log(`⏰ Expira em: ${expiresAt}`);
 
@@ -936,7 +914,7 @@ app.post('/verify-recovery-token', async (req, res) => {
 
     const recovery = results[0];
 
-    // Log da verificação
+    // Log da verifica��ão
     await pool.execute(
       `INSERT INTO password_recovery_logs (user_id, email, action_type, recovery_id, success)
        VALUES (?, ?, 'token_attempt', ?, TRUE)`,
