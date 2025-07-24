@@ -81,13 +81,13 @@ export const FeedSidebar: React.FC<FeedSidebarProps> = ({ user, isVisible }) => 
   if (!isVisible) return null;
 
   return (
-    <div className="w-64 hidden lg:block">
+    <div className="w-64 hidden lg:block transition-all duration-300 ease-in-out">
       <div className="space-y-4">
         {/* Menu Principal */}
-        <div className="bg-white rounded-xl shadow-sm p-4">
+        <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Menu</h3>
           <div className="space-y-2">
-            <button className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors">
+            <button className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-all duration-200 hover:scale-105">
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                 <Users className="w-5 h-5 text-blue-600" />
               </div>
@@ -97,7 +97,7 @@ export const FeedSidebar: React.FC<FeedSidebarProps> = ({ user, isVisible }) => 
               </div>
             </button>
             
-            <button className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors">
+            <button className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-all duration-200 hover:scale-105">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                 <Plus className="w-5 h-5 text-green-600" />
               </div>
@@ -107,7 +107,7 @@ export const FeedSidebar: React.FC<FeedSidebarProps> = ({ user, isVisible }) => 
               </div>
             </button>
             
-            <button className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors">
+            <button className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-all duration-200 hover:scale-105">
               <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                 <FileText className="w-5 h-5 text-purple-600" />
               </div>
@@ -117,7 +117,7 @@ export const FeedSidebar: React.FC<FeedSidebarProps> = ({ user, isVisible }) => 
               </div>
             </button>
             
-            <button className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors">
+            <button className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-all duration-200 hover:scale-105">
               <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
                 <Calendar className="w-5 h-5 text-orange-600" />
               </div>
@@ -127,7 +127,7 @@ export const FeedSidebar: React.FC<FeedSidebarProps> = ({ user, isVisible }) => 
               </div>
             </button>
             
-            <button className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors">
+            <button className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-all duration-200 hover:scale-105">
               <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                 <Bookmark className="w-5 h-5 text-red-600" />
               </div>
@@ -140,10 +140,10 @@ export const FeedSidebar: React.FC<FeedSidebarProps> = ({ user, isVisible }) => 
         </div>
 
         {/* Sugestão de Amizades */}
-        <div className="bg-white rounded-xl shadow-sm p-4">
+        <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Sugestão de amizades</h3>
-            <button className="text-blue-600 hover:text-blue-700 text-sm">Ver todas</button>
+            <button className="text-blue-600 hover:text-blue-700 text-sm transition-colors duration-200">Ver todas</button>
           </div>
           
           {loading ? (
@@ -158,7 +158,7 @@ export const FeedSidebar: React.FC<FeedSidebarProps> = ({ user, isVisible }) => 
           ) : (
             <div className="space-y-3">
               {suggestedFriends.map((friend) => (
-                <div key={friend.id} className="flex items-center space-x-3">
+                <div key={friend.id} className="flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors duration-200">
                   <img
                     src={
                       friend.avatar ||
@@ -177,7 +177,7 @@ export const FeedSidebar: React.FC<FeedSidebarProps> = ({ user, isVisible }) => 
                       </p>
                     )}
                   </div>
-                  <button className="px-3 py-1 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  <button className="px-3 py-1 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105">
                     Adicionar
                   </button>
                 </div>
@@ -187,15 +187,15 @@ export const FeedSidebar: React.FC<FeedSidebarProps> = ({ user, isVisible }) => 
         </div>
 
         {/* Criar Página */}
-        <div className="bg-white rounded-xl shadow-sm p-4">
+        <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Criar</h3>
           <div className="space-y-3">
-            <button className="w-full flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors">
+            <button className="w-full flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 hover:scale-105 hover:shadow-lg">
               <Plus className="w-5 h-5" />
               <span className="text-sm font-medium">Criar Página</span>
             </button>
             
-            <button className="w-full flex items-center space-x-3 p-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-colors">
+            <button className="w-full flex items-center space-x-3 p-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 hover:scale-105 hover:shadow-lg">
               <Globe className="w-5 h-5" />
               <span className="text-sm font-medium">Anunciar</span>
             </button>
@@ -203,17 +203,17 @@ export const FeedSidebar: React.FC<FeedSidebarProps> = ({ user, isVisible }) => 
         </div>
 
         {/* Atalhos */}
-        <div className="bg-white rounded-xl shadow-sm p-4">
+        <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Seus atalhos</h3>
           <div className="space-y-2">
-            <button className="w-full flex items-center space-x-3 p-2 text-left hover:bg-gray-50 rounded-lg transition-colors">
+            <button className="w-full flex items-center space-x-3 p-2 text-left hover:bg-gray-50 rounded-lg transition-all duration-200 hover:scale-105">
               <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
                 <Heart className="w-4 h-4 text-gray-600" />
               </div>
               <span className="text-sm text-gray-700">Curtidas</span>
             </button>
             
-            <button className="w-full flex items-center space-x-3 p-2 text-left hover:bg-gray-50 rounded-lg transition-colors">
+            <button className="w-full flex items-center space-x-3 p-2 text-left hover:bg-gray-50 rounded-lg transition-all duration-200 hover:scale-105">
               <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
                 <MessageSquare className="w-4 h-4 text-gray-600" />
               </div>

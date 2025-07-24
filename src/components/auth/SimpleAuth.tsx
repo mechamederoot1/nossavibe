@@ -32,6 +32,14 @@ export function SimpleAuth({ onLogin }: AuthProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🚀 Form submitted, starting authentication process...');
+    
+    // Prevent multiple submissions
+    if (loading) {
+      console.log('⚠️ Already processing, ignoring duplicate submission');
+      return;
+    }
+
     console.log(`🚀 Starting ${isLogin ? 'login' : 'registration'} process...`);
 
     setLoading(true);
@@ -111,10 +119,12 @@ export function SimpleAuth({ onLogin }: AuthProps) {
         } catch (parseError) {
           console.error('Error parsing response:', parseError);
           setError("Erro na resposta do servidor");
+          setLoading(false);
           return;
         }
 
         if (isLogin) {
+          console.log('✅ Login successful, fetching user data...');
           // Get user details for login
           const userResponse = await fetch("http://localhost:8000/auth/me", {
             headers: {
@@ -124,6 +134,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
 
           if (userResponse.ok) {
             const userData = await userResponse.json();
+            console.log('✅ User data fetched, calling onLogin...');
             onLogin({
               name: `${userData.first_name} ${userData.last_name}`,
               email: userData.email,

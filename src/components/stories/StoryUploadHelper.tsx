@@ -88,8 +88,7 @@ export const createStoryWithFile = async (
 
       if (!mediaUrl) {
         console.error("❌ Failed to upload media file");
-        alert("Erro ao fazer upload da mídia. Tente novamente.");
-        return false;
+        throw new Error("Erro ao fazer upload da mídia. Tente novamente.");
       }
 
       // Determine media type based on file
@@ -108,8 +107,13 @@ export const createStoryWithFile = async (
     if (!content.trim() && !mediaUrl) {
       console.error("❌ Story must have either content or media");
       console.log("📋 Validation failed:", { content: content.length, mediaUrl: !!mediaUrl });
-      return false; // Don't show alert here, let the calling component handle it
+      throw new Error("Story deve ter conteúdo ou mídia");
     }
+
+    // Ensure background color is safe for database
+    const safeBackgroundColor = backgroundColor.length > 255 
+      ? backgroundColor.substring(0, 255) 
+      : backgroundColor;
 
     // Create story payload
     const payload: StoryUploadData = {
@@ -117,7 +121,7 @@ export const createStoryWithFile = async (
       media_type: mediaType,
       media_url: mediaUrl,
       duration_hours: storyDuration,
-      background_color: backgroundColor,
+      background_color: safeBackgroundColor,
       privacy,
       overlays: [],
     };
@@ -150,18 +154,17 @@ export const createStoryWithFile = async (
 
       // Show user-friendly error message
       if (response.status === 413) {
-        alert("Arquivo muito grande! Tente com um arquivo menor.");
+        throw new Error("Arquivo muito grande! Tente com um arquivo menor.");
       } else if (response.status === 400) {
-        alert("Dados inválidos. Verifique se o arquivo é válido.");
+        throw new Error("Dados inválidos. Verifique se o arquivo é válido.");
       } else {
-        alert("Erro ao criar story. Tente novamente.");
+        throw new Error("Erro ao criar story. Tente novamente.");
       }
 
       return false;
     }
   } catch (error) {
     console.error("❌ Story creation error:", error);
-    alert("Erro de conexão. Verifique sua internet e tente novamente.");
-    return false;
+    throw error;
   }
 };

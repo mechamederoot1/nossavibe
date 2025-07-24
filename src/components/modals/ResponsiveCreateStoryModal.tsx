@@ -83,7 +83,12 @@ export function ResponsiveCreateStoryModal({
       <EnhancedMobileStoryCreator
         isOpen={isOpen}
         onClose={onClose}
-        onSuccess={onSuccess || (() => {})}
+        onSuccess={() => {
+          if (onSuccess) {
+            onSuccess();
+          }
+          onClose();
+        }}
         userToken={userToken}
       />
     );

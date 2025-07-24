@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { createStoryWithFile } from "../stories/StoryUploadHelper";
 import { BACKGROUND_GRADIENTS, getSafeBackground, getBackgroundStyle } from "../stories/BackgroundUtils";
+import { toast } from "../ui/Toast";
 
 interface EnhancedMobileStoryCreatorProps {
   isOpen: boolean;
@@ -134,7 +135,7 @@ export function EnhancedMobileStoryCreator({
 
   const handleSubmit = async () => {
     if (!content.trim() && !mediaCapture) {
-      alert("Adicione texto ou uma mídia ao seu story!");
+      toast.warning("Adicione texto ou uma mídia ao seu story!");
       return;
     }
 
@@ -161,14 +162,14 @@ export function EnhancedMobileStoryCreator({
 
       if (success) {
         onSuccess();
-        onClose();
         console.log("✅ Story created successfully!");
+        toast.success("🎉 Story criado com sucesso!");
       } else {
-        alert("❌ Erro ao criar story. Verifique sua conexão e tente novamente.");
+        throw new Error("Erro ao criar story. Verifique sua conexão e tente novamente.");
       }
     } catch (error) {
       console.error("Error creating story:", error);
-      alert("❌ Erro ao criar story. Verifique sua conexão e tente novamente.");
+      toast.error(error instanceof Error ? error.message : "❌ Erro ao criar story. Tente novamente.");
     } finally {
       setIsSubmitting(false);
     }

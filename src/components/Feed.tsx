@@ -5,6 +5,7 @@ import { PostCard } from "./posts/PostCard";
 import { StoriesBar } from "./stories/StoriesBar";
 import { createStoryWithFile } from "./stories/StoryUploadHelper";
 import { apiCall } from "../config/api";
+import { toast } from "./ui/Toast";
 
 // Global function type declaration
 declare global {
@@ -159,18 +160,18 @@ export const Feed: React.FC<FeedProps> = ({ user }) => {
 
         // Show success message
         if (type === "testimonial") {
-          alert("🎉 Depoimento criado com sucesso!");
+          toast.success("🎉 Depoimento criado com sucesso!");
         } else {
-          alert("🎉 Post criado com sucesso!");
+          toast.success("🎉 Post criado com sucesso!");
         }
       } else {
         const error = await response.json();
         console.error("Erro ao criar post:", error);
-        alert("Erro ao criar post: " + (error.detail || "Erro desconhecido"));
+        toast.error("Erro ao criar post: " + (error.detail || "Erro desconhecido"));
       }
     } catch (error) {
       console.error("Erro ao criar publicação:", error);
-      alert("Erro ao criar publicação");
+      toast.error("Erro ao criar publicação");
     }
   };
 
@@ -204,17 +205,17 @@ export const Feed: React.FC<FeedProps> = ({ user }) => {
 
       if (success) {
         console.log("✅ Story created successfully!");
-        alert("🎉 Story criado com sucesso!");
         // Trigger immediate refresh of stories
         setStoryRefreshTrigger((prev) => prev + 1);
         setShowCreateStory(false);
+        toast.success("🎉 Story criado com sucesso!");
       } else {
         console.error("❌ Failed to create story");
-        alert("❌ Erro ao criar story. Tente novamente.");
+        throw new Error("Erro ao criar story");
       }
     } catch (error) {
       console.error("❌ Error creating story:", error);
-      alert("❌ Erro ao criar story. Tente novamente.");
+      toast.error(error instanceof Error ? error.message : "❌ Erro ao criar story. Tente novamente.");
     }
   };
 

@@ -195,6 +195,11 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
     setLoading(true);
     console.log('🚀 Starting registration process...');
 
+    // Prevent multiple submissions
+    if (loading) {
+      console.log('⚠️ Already processing, ignoring duplicate submission');
+      return;
+    }
     try {
       // Formatando a data de nascimento para o backend
       const birthDate =

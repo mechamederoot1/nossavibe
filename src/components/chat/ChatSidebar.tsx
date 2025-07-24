@@ -192,16 +192,16 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
   if (!isVisible) return null;
 
   return (
-    <div className="w-64 bg-white border-l border-gray-200 hidden xl:block">
+    <div className="w-64 bg-white border-l border-gray-200 hidden xl:block transition-all duration-300 ease-in-out">
       <div className="h-full flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
           <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => setActiveTab("recent")}
-              className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+              className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeTab === "recent"
-                  ? "bg-white text-gray-900 shadow-sm"
+                  ? "bg-white text-gray-900 shadow-sm scale-105"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -209,9 +209,9 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
             </button>
             <button
               onClick={() => setActiveTab("online")}
-              className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+              className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeTab === "online"
-                  ? "bg-white text-gray-900 shadow-sm"
+                  ? "bg-white text-gray-900 shadow-sm scale-105"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -221,7 +221,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-2">
+        <div className="flex-1 overflow-y-auto p-2 scrollbar-hide">
           {activeTab === "recent" && (
             <div>
               {recentActivities.length === 0 ? (
@@ -234,7 +234,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
                   {recentActivities.map((activity) => (
                     <div
                       key={activity.id}
-                      className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+                      className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm"
                     >
                       <img
                         src={
@@ -242,7 +242,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
                           `https://ui-avatars.com/api/?name=${activity.user.first_name}+${activity.user.last_name}&background=3B82F6&color=fff`
                         }
                         alt={`${activity.user.first_name} ${activity.user.last_name}`}
-                        className="w-8 h-8 rounded-full"
+                        className="w-8 h-8 rounded-full border-2 border-white shadow-sm"
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs text-gray-700 leading-relaxed">
@@ -271,7 +271,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
                   {onlineUsers.map((onlineUser) => (
                     <div
                       key={onlineUser.id}
-                      className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+                      className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm"
                     >
                       <div className="relative">
                         <img
@@ -280,15 +280,15 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
                             `https://ui-avatars.com/api/?name=${onlineUser.first_name}+${onlineUser.last_name}&background=3B82F6&color=fff`
                           }
                           alt={`${onlineUser.first_name} ${onlineUser.last_name}`}
-                          className="w-10 h-10 rounded-full"
+                          className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
                         />
-                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full animate-pulse"></div>
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">
                           {onlineUser.first_name} {onlineUser.last_name}
                         </p>
-                        <p className="text-xs text-green-600">Online</p>
+                        <p className="text-xs text-green-600 font-medium">● Online</p>
                       </div>
                     </div>
                   ))}

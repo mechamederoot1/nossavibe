@@ -46,8 +46,31 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showChatSidebar, setShowChatSidebar] = useState(true);
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
   useEffect(() => {
+    // Track current path changes
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname);
+    };
+
+    // Listen for navigation changes
+    window.addEventListener('popstate', handleLocationChange);
+    
+    // Also listen for programmatic navigation
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+    
+    history.pushState = function(...args) {
+      originalPushState.apply(history, args);
+      handleLocationChange();
+    };
+    
+    history.replaceState = function(...args) {
+      originalReplaceState.apply(history, args);
+      handleLocationChange();
+    };
+
     // Close user menu when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
       if (showUserMenu) {
@@ -92,15 +115,22 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
         clearInterval(connectionCheck);
         document.removeEventListener("click", handleClickOutside);
         window.removeEventListener("resize", checkIfMobile);
+        window.removeEventListener('popstate', handleLocationChange);
+        history.pushState = originalPushState;
+        history.replaceState = originalReplaceState;
       };
     }
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
       window.removeEventListener("resize", checkIfMobile);
+      window.removeEventListener('popstate', handleLocationChange);
     };
   }, [user, showUserMenu]);
 
+  // Determine if we should show sidebars
+  const isOnFeedPage = currentPath === '/';
+  const shouldShowSidebars = isOnFeedPage && !isMobile;
   const generateProfileUrl = () => {
     if ((user as any).display_id && (user as any).username) {
       const displayId = (user as any).display_id;
@@ -372,7 +402,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
       {/* Main Content with Sidebars */}
       <div className="flex max-w-7xl mx-auto">
         {/* Feed Sidebar - Left */}
-        <FeedSidebar user={user} isVisible={!isMobile} />
+        <FeedSidebar user={user} isVisible={shouldShowSidebars} />
 
         <main
           className={`flex-1 px-4 sm:px-6 lg:px-8 py-8 ${isMobile ? "pb-24" : "pb-8"}`}
@@ -381,7 +411,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
         </main>
 
         {/* Chat Sidebar - Right */}
-        <ChatSidebar user={user} isVisible={showChatSidebar && !isMobile} />
+        <ChatSidebar user={user} isVisible={shouldShowSidebars && showChatSidebar} />
       </div>
 
       {/* Mobile Bottom Navigation */}
