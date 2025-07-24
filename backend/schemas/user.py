@@ -42,6 +42,7 @@ class UserResponse(UserBase):
     display_id: Optional[str] = None
     birth_date: Optional[Union[str, date]] = None
     is_active: bool
+    onboarding_completed: bool = False
     created_at: datetime
     last_seen: datetime
     
