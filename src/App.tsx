@@ -28,30 +28,10 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { notificationService } from "./services/NotificationService";
 import { useSession } from "./hooks/useSession";
 
-interface User {
-  id?: number;
-  display_id?: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  cover_photo?: string;
-  bio?: string;
-  location?: string;
-  joinDate?: string;
-  username?: string;
-  nickname?: string;
-  phone?: string;
-  website?: string;
-  birth_date?: string;
-  gender?: string;
-  relationship_status?: string;
-  work?: string;
-  education?: string;
-  token: string;
-}
+
 
 function App() {
-  const { user, loading, sessionExpired, login, logout, refreshUserData, updateActivity } = useSession();
+  const { user, loading, sessionExpired, login, logout, refreshUserData } = useSession();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [sessionExpiredMessage, setSessionExpiredMessage] = useState(false);
 
