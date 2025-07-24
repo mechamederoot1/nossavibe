@@ -100,112 +100,38 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto">
-          {activeTab === "chats" && (
-            <div className="p-2">
-              {loading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-                </div>
-              ) : conversations.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <MessageCircle className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                  <p className="text-sm">Nenhuma conversa ainda</p>
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  {conversations.map((conv) => (
-                    <button
-                      key={conv.id}
-                      className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors"
-                      onClick={() => window.location.href = "/messenger"}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="relative">
-                          <img
-                            src={
-                              conv.avatar ||
-                              `https://ui-avatars.com/api/?name=${conv.first_name}+${conv.last_name}&background=3B82F6&color=fff`
-                            }
-                            alt={`${conv.first_name} ${conv.last_name}`}
-                            className="w-10 h-10 rounded-full"
-                          />
-                          {conv.unread_count > 0 && (
-                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                              <span className="text-xs text-white font-medium">
-                                {conv.unread_count > 9 ? "9+" : conv.unread_count}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {conv.first_name} {conv.last_name}
-                          </p>
-                          {conv.last_message && (
-                            <div className="flex items-center justify-between">
-                              <p className="text-xs text-gray-600 truncate max-w-[120px]">
-                                {conv.last_message.content}
-                              </p>
-                              <span className="text-xs text-gray-400">
-                                {formatTime(conv.last_message.created_at)}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                  
-                  {/* Ver todas as conversas */}
-                  <button
-                    onClick={() => window.location.href = "/messenger"}
-                    className="w-full p-3 text-center text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm font-medium"
-                  >
-                    Ver todas as conversas
-                  </button>
-                </div>
-              )}
+        <div className="flex-1 overflow-y-auto p-2">
+          {onlineUsers.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+              <p className="text-sm">Nenhum amigo online</p>
             </div>
-          )}
-
-          {activeTab === "online" && (
-            <div className="p-2">
-              {onlineUsers.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                  <p className="text-sm">Nenhum amigo online</p>
+          ) : (
+            <div className="space-y-2">
+              {onlineUsers.map((onlineUser) => (
+                <div
+                  key={onlineUser.id}
+                  className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+                >
+                  <div className="relative">
+                    <img
+                      src={
+                        onlineUser.avatar ||
+                        `https://ui-avatars.com/api/?name=${onlineUser.first_name}+${onlineUser.last_name}&background=3B82F6&color=fff`
+                      }
+                      alt={`${onlineUser.first_name} ${onlineUser.last_name}`}
+                      className="w-10 h-10 rounded-full"
+                    />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {onlineUser.first_name} {onlineUser.last_name}
+                    </p>
+                    <p className="text-xs text-green-600">Online</p>
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-1">
-                  {onlineUsers.map((user) => (
-                    <button
-                      key={user.id}
-                      className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="relative">
-                          <img
-                            src={
-                              user.avatar ||
-                              `https://ui-avatars.com/api/?name=${user.first_name}+${user.last_name}&background=3B82F6&color=fff`
-                            }
-                            alt={`${user.first_name} ${user.last_name}`}
-                            className="w-8 h-8 rounded-full"
-                          />
-                          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {user.first_name} {user.last_name}
-                          </p>
-                          <p className="text-xs text-green-600">Online</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
+              ))}
             </div>
           )}
         </div>
