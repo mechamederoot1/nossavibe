@@ -10,7 +10,7 @@ import { Layout } from "./components/Layout";
 import { SimpleAuth } from "./components/auth/SimpleAuth";
 import { MultiStepAuth } from "./components/auth/MultiStepAuth";
 import { SessionManager } from "./components/auth/SessionManager";
-import { WelcomeOnboarding } from "./components/onboarding/WelcomeOnboarding";
+import { WelcomeModal } from "./components/onboarding/WelcomeModal";
 import { Feed } from "./components/Feed";
 import { Profile } from "./components/profile/Profile";
 import { ProfileRoute } from "./components/routing/ProfileRoute";
@@ -153,15 +153,14 @@ function App() {
   return (
     <ThemeProvider>
       <Router>
-        {/* Onboarding para novos usuários */}
-        {showOnboarding && (
-          <WelcomeOnboarding user={user} onComplete={completeOnboarding} />
-        )}
-
         {/* Gerenciador de sessão */}
         <SessionManager user={user} onLogout={handleLogout} />
 
         <Layout user={user} onLogout={handleLogout}>
+          {/* Modal de boas-vindas para novos usuários */}
+          {showOnboarding && (
+            <WelcomeModal user={user} onComplete={completeOnboarding} />
+          )}
           <Routes>
             <Route path="/" element={<Feed user={user} />} />
             <Route
