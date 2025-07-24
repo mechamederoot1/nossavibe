@@ -201,12 +201,12 @@ export function SimpleAuth({ onLogin }: AuthProps) {
             }, 2000);
             return;
           } else if (errorData.detail.error === 'account_not_active') {
-            setError(`Conta não está ativa: ${errorData.detail.message}`);
+            setError(`Conta n��o está ativa: ${errorData.detail.message}`);
             return;
           }
         }
 
-        setError(errorData.detail?.message || errorData.detail || "Erro ao processar solicita��ão");
+        setError(errorData.detail?.message || errorData.detail || "Erro ao processar solicitação");
       }
     } catch (error) {
       console.error("❌ Network or processing error:", error);
@@ -217,194 +217,422 @@ export function SimpleAuth({ onLogin }: AuthProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center md:p-4">
-      <div className="w-full max-w-md md:w-full">
-        <div className="bg-white md:rounded-2xl md:shadow-xl p-6 md:p-8 min-h-screen md:min-h-0">
-          {/* Logo */}
-          <div className="text-center mb-8">
-            <Logo size="lg" showText={true} />
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mt-4">
-              {isLogin ? "Bem-vindo de volta!" : "Criar conta"}
-            </h2>
-            <p className="text-gray-600 mt-2 text-sm md:text-base">
-              {isLogin
-                ? "Entre na sua conta para continuar"
-                : "Junte-se à nossa comunidade"}
-            </p>
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm">{error}</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      {/* Desktop Layout */}
+      <div className="hidden lg:flex min-h-screen">
+        {/* Welcome Section - Left Side */}
+        <div className="flex-1 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 flex items-center justify-center p-12">
+          <div className="max-w-lg text-white text-center">
+            <div className="mb-8">
+              <Logo size="xl" showText={true} />
             </div>
-          )}
+            <h1 className="text-4xl font-bold mb-6">
+              {isLogin ? "Bem-vindo de volta!" : "Junte-se à nossa comunidade!"}
+            </h1>
+            <p className="text-xl text-blue-100 mb-8 leading-relaxed">
+              {isLogin 
+                ? "Conecte-se com seus amigos, compartilhe momentos especiais e descubra um mundo de possibilidades."
+                : "Crie sua conta e faça parte de uma experiência única. Compartilhe, conecte-se e explore novas possibilidades."}
+            </p>
+            <div className="space-y-4 text-blue-100">
+              <div className="flex items-center justify-center space-x-3">
+                <div className="w-2 h-2 bg-blue-300 rounded-full"></div>
+                <span>Conecte-se com amigos</span>
+              </div>
+              <div className="flex items-center justify-center space-x-3">
+                <div className="w-2 h-2 bg-purple-300 rounded-full"></div>
+                <span>Compartilhe momentos especiais</span>
+              </div>
+              <div className="flex items-center justify-center space-x-3">
+                <div className="w-2 h-2 bg-indigo-300 rounded-full"></div>
+                <span>Descubra novas experiências</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4 md:space-y-4">
-            {!isLogin && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nome
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                    <input
-                      type="text"
-                      name="first_name"
-                      value={formData.first_name}
-                      onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-4 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
-                      placeholder="Seu nome"
-                      required
-                    />
-                  </div>
-                </div>
+        {/* Form Section - Right Side */}
+        <div className="flex-1 bg-white flex items-center justify-center p-12">
+          <div className="w-full max-w-md">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                {isLogin ? "Entrar" : "Criar conta"}
+              </h2>
+              <p className="text-gray-600">
+                {isLogin
+                  ? "Entre na sua conta para continuar"
+                  : "Preencha os dados para criar sua conta"}
+              </p>
+            </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Sobrenome
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                    <input
-                      type="text"
-                      name="last_name"
-                      value={formData.last_name}
-                      onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-4 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
-                      placeholder="Seu sobrenome"
-                      required
-                    />
-                  </div>
-                </div>
-              </>
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600 text-sm">{error}</p>
+              </div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-4 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
-                  placeholder="seu@email.com"
-                  required
-                />
-              </div>
-            </div>
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nome
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                      <input
+                        type="text"
+                        name="first_name"
+                        value={formData.first_name}
+                        onChange={handleInputChange}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Seu nome"
+                        required
+                      />
+                    </div>
+                  </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Senha
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-4 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
-                  placeholder="••••••••"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-            </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Sobrenome
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                      <input
+                        type="text"
+                        name="last_name"
+                        value={formData.last_name}
+                        onChange={handleInputChange}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Seu sobrenome"
+                        required
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
 
-            {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirmar Senha
+                  Email
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                   <input
-                    type="password"
-                    name="confirm_password"
-                    value={formData.confirm_password}
+                    type="email"
+                    name="email"
+                    value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-4 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
-                    placeholder="••••••••"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="seu@email.com"
                     required
                   />
                 </div>
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Senha
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="••••••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Confirmar Senha
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                    <input
+                      type="password"
+                      name="confirm_password"
+                      value={formData.confirm_password}
+                      onChange={handleInputChange}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Processando...
+                  </div>
+                ) : isLogin ? (
+                  "Entrar"
+                ) : (
+                  "Criar conta"
+                )}
+              </button>
+            </form>
+
+            {/* Forgot Password Link */}
+            {isLogin && (
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => navigate('/forgot-password')}
+                  className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                >
+                  Esqueci minha senha
+                </button>
+              </div>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 md:py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-base"
-            >
-              {loading ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Processando...
-                </div>
-              ) : isLogin ? (
-                "Entrar"
-              ) : (
-                "Criar conta"
-              )}
-            </button>
-          </form>
-
-          {/* Forgot Password Link */}
-          {isLogin && (
-            <div className="mt-4 text-center">
-              <button
-                onClick={() => navigate('/forgot-password')}
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-              >
-                Esqueci minha senha
-              </button>
+            {/* Toggle Auth Mode */}
+            <div className="mt-6 text-center">
+              <p className="text-gray-600 text-sm">
+                {isLogin ? "Não tem uma conta?" : "Já tem uma conta?"}{" "}
+                <button
+                  onClick={() => {
+                    if (isLogin) {
+                      // Redirecionar para cadastro em etapas
+                      navigate("/cadastro");
+                    } else {
+                      setIsLogin(!isLogin);
+                      setError("");
+                      setFormData({
+                        first_name: "",
+                        last_name: "",
+                        email: "",
+                        password: "",
+                        confirm_password: "",
+                      });
+                    }
+                  }}
+                  className="text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  {isLogin ? "Criar conta" : "Fazer login"}
+                </button>
+              </p>
             </div>
-          )}
+          </div>
+        </div>
+      </div>
 
-          {/* Toggle Auth Mode */}
-          <div className="mt-6 text-center">
-            <p className="text-gray-600 text-sm md:text-base">
-              {isLogin ? "Não tem uma conta?" : "Já tem uma conta?"}{" "}
+      {/* Mobile Layout */}
+      <div className="lg:hidden min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-xl p-6">
+            {/* Logo */}
+            <div className="text-center mb-8">
+              <Logo size="lg" showText={true} />
+              <h2 className="text-xl font-bold text-gray-900 mt-4">
+                {isLogin ? "Bem-vindo de volta!" : "Criar conta"}
+              </h2>
+              <p className="text-gray-600 mt-2 text-sm">
+                {isLogin
+                  ? "Entre na sua conta para continuar"
+                  : "Junte-se à nossa comunidade"}
+              </p>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600 text-sm">{error}</p>
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nome
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                      <input
+                        type="text"
+                        name="first_name"
+                        value={formData.first_name}
+                        onChange={handleInputChange}
+                        className="w-full pl-10 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
+                        placeholder="Seu nome"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Sobrenome
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                      <input
+                        type="text"
+                        name="last_name"
+                        value={formData.last_name}
+                        onChange={handleInputChange}
+                        className="w-full pl-10 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
+                        placeholder="Seu sobrenome"
+                        required
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
+                    placeholder="seu@email.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Senha
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-12 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
+                    placeholder="••••••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Confirmar Senha
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                    <input
+                      type="password"
+                      name="confirm_password"
+                      value={formData.confirm_password}
+                      onChange={handleInputChange}
+                      className="w-full pl-10 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
               <button
-                onClick={() => {
-                  if (isLogin) {
-                    // Redirecionar para cadastro em etapas
-                    navigate("/cadastro");
-                  } else {
-                    setIsLogin(!isLogin);
-                    setError("");
-                    setFormData({
-                      first_name: "",
-                      last_name: "",
-                      email: "",
-                      password: "",
-                      confirm_password: "",
-                    });
-                  }
-                }}
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-base"
               >
-                {isLogin ? "Criar conta" : "Fazer login"}
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Processando...
+                  </div>
+                ) : isLogin ? (
+                  "Entrar"
+                ) : (
+                  "Criar conta"
+                )}
               </button>
-            </p>
+            </form>
+
+            {/* Forgot Password Link */}
+            {isLogin && (
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => navigate('/forgot-password')}
+                  className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                >
+                  Esqueci minha senha
+                </button>
+              </div>
+            )}
+
+            {/* Toggle Auth Mode */}
+            <div className="mt-6 text-center">
+              <p className="text-gray-600 text-sm">
+                {isLogin ? "Não tem uma conta?" : "Já tem uma conta?"}{" "}
+                <button
+                  onClick={() => {
+                    if (isLogin) {
+                      // Redirecionar para cadastro em etapas
+                      navigate("/cadastro");
+                    } else {
+                      setIsLogin(!isLogin);
+                      setError("");
+                      setFormData({
+                        first_name: "",
+                        last_name: "",
+                        email: "",
+                        password: "",
+                        confirm_password: "",
+                      });
+                    }
+                  }}
+                  className="text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  {isLogin ? "Criar conta" : "Fazer login"}
+                </button>
+              </p>
+            </div>
           </div>
         </div>
       </div>
