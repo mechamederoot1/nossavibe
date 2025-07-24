@@ -221,10 +221,23 @@ export function SimpleAuth({ onLogin }: AuthProps) {
       {/* Desktop Layout */}
       <div className="hidden lg:flex min-h-screen">
         {/* Welcome Section - Left Side */}
-        <div className="flex-1 bg-white flex flex-col items-center justify-center p-12 border-r-2 border-gray-200 relative">
+        <div className="flex-1 bg-gradient-to-br from-gray-50 to-white flex flex-col items-center justify-center p-12 relative">
           <div className="absolute top-8 left-8 text-xs font-medium text-gray-400 uppercase tracking-wider">
             Boas-vindas
           </div>
+
+          {/* Decorative separator */}
+          <div className="absolute right-0 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
+          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center">
+            <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+
+          {/* Floating elements for social media feel */}
+          <div className="absolute top-20 right-20 w-3 h-3 bg-blue-400 rounded-full opacity-60 animate-pulse"></div>
+          <div className="absolute bottom-32 right-16 w-2 h-2 bg-red-400 rounded-full opacity-40"></div>
+          <div className="absolute top-40 right-8 w-1.5 h-1.5 bg-green-400 rounded-full opacity-50 animate-pulse" style={{animationDelay: '1s'}}></div>
           <div className="max-w-lg text-center">
             <h1 className="text-4xl font-bold mb-6 text-gray-900">
               {isLogin ? "Conecte-se agora!" : "Junte-se à nossa comunidade!"}
