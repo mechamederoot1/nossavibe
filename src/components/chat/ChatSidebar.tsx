@@ -222,37 +222,78 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-2">
-          {onlineUsers.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p className="text-sm">Nenhum amigo online</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {onlineUsers.map((onlineUser) => (
-                <div
-                  key={onlineUser.id}
-                  className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
-                >
-                  <div className="relative">
-                    <img
-                      src={
-                        onlineUser.avatar ||
-                        `https://ui-avatars.com/api/?name=${onlineUser.first_name}+${onlineUser.last_name}&background=3B82F6&color=fff`
-                      }
-                      alt={`${onlineUser.first_name} ${onlineUser.last_name}`}
-                      className="w-10 h-10 rounded-full"
-                    />
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {onlineUser.first_name} {onlineUser.last_name}
-                    </p>
-                    <p className="text-xs text-green-600">Online</p>
-                  </div>
+          {activeTab === "recent" && (
+            <div>
+              {recentActivities.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <MessageCircle className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm">Nenhuma atividade recente</p>
                 </div>
-              ))}
+              ) : (
+                <div className="space-y-3">
+                  {recentActivities.map((activity) => (
+                    <div
+                      key={activity.id}
+                      className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+                    >
+                      <img
+                        src={
+                          activity.user.avatar ||
+                          `https://ui-avatars.com/api/?name=${activity.user.first_name}+${activity.user.last_name}&background=3B82F6&color=fff`
+                        }
+                        alt={`${activity.user.first_name} ${activity.user.last_name}`}
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-gray-700 leading-relaxed">
+                          {getActivityText(activity)}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {formatTime(activity.created_at)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "online" && (
+            <div>
+              {onlineUsers.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm">Nenhum amigo online</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {onlineUsers.map((onlineUser) => (
+                    <div
+                      key={onlineUser.id}
+                      className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+                    >
+                      <div className="relative">
+                        <img
+                          src={
+                            onlineUser.avatar ||
+                            `https://ui-avatars.com/api/?name=${onlineUser.first_name}+${onlineUser.last_name}&background=3B82F6&color=fff`
+                          }
+                          alt={`${onlineUser.first_name} ${onlineUser.last_name}`}
+                          className="w-10 h-10 rounded-full"
+                        />
+                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {onlineUser.first_name} {onlineUser.last_name}
+                        </p>
+                        <p className="text-xs text-green-600">Online</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
