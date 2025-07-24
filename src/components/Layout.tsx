@@ -368,12 +368,17 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main
-        className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 ${isMobile ? "pb-24" : "pb-8"}`}
-      >
-        {children}
-      </main>
+      {/* Main Content with Chat Sidebar */}
+      <div className="flex">
+        <main
+          className={`flex-1 ${showChatSidebar ? "max-w-4xl" : "max-w-6xl"} mx-auto px-4 sm:px-6 lg:px-8 py-8 ${isMobile ? "pb-24" : "pb-8"}`}
+        >
+          {children}
+        </main>
+
+        {/* Chat Sidebar */}
+        <ChatSidebar user={user} isVisible={showChatSidebar && !isMobile} />
+      </div>
 
       {/* Mobile Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-40">
