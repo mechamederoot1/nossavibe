@@ -37,46 +37,14 @@ interface ChatSidebarProps {
 }
 
 export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => {
-  const [activeTab, setActiveTab] = useState<"chats" | "online">("chats");
-  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isVisible) {
-      loadConversations();
       loadOnlineUsers();
     }
   }, [isVisible, user.token]);
-
-  const loadConversations = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch("http://localhost:8000/messages/conversations", {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setConversations(
-          data.slice(0, 5).map((conv: any) => ({
-            id: conv.user.id,
-            first_name: conv.user.first_name,
-            last_name: conv.user.last_name,
-            avatar: conv.user.avatar,
-            last_message: conv.last_message,
-            unread_count: conv.unread_count,
-          }))
-        );
-      }
-    } catch (error) {
-      console.error("Erro ao carregar conversas:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const loadOnlineUsers = async () => {
     try {
