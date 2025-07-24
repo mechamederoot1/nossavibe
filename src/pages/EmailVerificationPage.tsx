@@ -263,15 +263,20 @@ const EmailVerificationPage: React.FC = () => {
   };
 
   const handleSuccessfulVerification = async () => {
+    console.log('🎉 E-mail verificado! Iniciando login automático...');
+
     // Limpar dados temporários e fazer login automático
     const pendingUser = localStorage.getItem('pendingVerificationUser');
     if (pendingUser) {
       const user = JSON.parse(pendingUser);
       const pendingPassword = localStorage.getItem('pendingPassword');
 
+      console.log('👤 Dados do usuário pendente:', { email: user.email, hasPassword: !!pendingPassword });
+
       // Fazer login automático
       if (pendingPassword) {
         try {
+          console.log('🔄 Tentando login automático...');
           const loginResponse = await fetch('http://localhost:8000/auth/login', {
             method: 'POST',
             headers: {
@@ -283,23 +288,68 @@ const EmailVerificationPage: React.FC = () => {
             }),
           });
 
+          console.log(`📊 Status do login: ${loginResponse.status}`);
+
           if (loginResponse.ok) {
             const loginData = await loginResponse.json();
+            console.log('✅ Login automático bem-sucedido!', loginData);
             localStorage.setItem('token', loginData.access_token);
+
+            // Limpar dados pendentes
+            localStorage.removeItem('pendingVerificationUser');
+            localStorage.removeItem('pendingVerificationEmail');
+            localStorage.removeItem('pendingPassword');
+
+            // Redirecionar imediatamente após login bem-sucedido
+            console.log('🚀 Redirecionando para página principal...');
+            window.location.href = '/';
+            return; // Sair da função para evitar delay desnecessário
+
+          } else {
+            const errorText = await loginResponse.text();
+            console.error('❌ Login automático falhou:', errorText);
+            setMessage('E-mail verificado, mas erro no login automático. Faça login manualmente.');
+            setMessageType('warning');
+
+            // Se login falhou, redirecionar para tela de login após delay
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 3000);
           }
         } catch (error) {
-          console.error('Erro no login automático:', error);
+          console.error('❌ Erro no login automático:', error);
+          setMessage('E-mail verificado, mas erro de conexão. Faça login manualmente.');
+          setMessageType('warning');
+
+          // Se houve erro, redirecionar para tela de login após delay
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 3000);
         }
+      } else {
+        console.log('⚠️ Senha pendente não encontrada');
+        setMessage('E-mail verificado! Faça login com suas credenciais.');
+        setMessageType('success');
+
+        // Limpar dados mesmo assim
+        localStorage.removeItem('pendingVerificationUser');
+        localStorage.removeItem('pendingVerificationEmail');
+        localStorage.removeItem('pendingPassword');
+
+        // Redirecionar para tela de login
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 3000);
       }
+    } else {
+      console.log('⚠️ Dados de usuário pendente não encontrados');
+      setMessage('E-mail verificado! Faça login com suas credenciais.');
+      setMessageType('success');
 
-      localStorage.removeItem('pendingVerificationUser');
-      localStorage.removeItem('pendingVerificationEmail');
-      localStorage.removeItem('pendingPassword');
-
-      // Redirecionar para home
+      // Redirecionar para tela de login
       setTimeout(() => {
-        window.location.reload(); // Recarrega para aplicar o login
-      }, 2000);
+        window.location.href = '/';
+      }, 3000);
     }
   };
 

@@ -153,7 +153,14 @@ def login(login_data: LoginRequest, db: Session = Depends(get_db)):
 
         # Verificar status da conta
         account_status = getattr(user, 'account_status', 'pending')
-        if account_status != 'active':
+
+        # Converter Enum para string para serialização JSON
+        if hasattr(account_status, 'value'):
+            account_status_str = account_status.value
+        else:
+            account_status_str = str(account_status)
+
+        if account_status_str != 'active':
             status_messages = {
                 'pending': 'Sua conta está pendente de ativação. Confirme seu email.',
                 'suspended': 'Sua conta foi suspensa. Entre em contato com o suporte.',
@@ -163,8 +170,8 @@ def login(login_data: LoginRequest, db: Session = Depends(get_db)):
                 status_code=403,
                 detail={
                     "error": "account_not_active",
-                    "message": status_messages.get(account_status, "Conta não está ativa"),
-                    "status": account_status,
+                    "message": status_messages.get(account_status_str, "Conta não está ativa"),
+                    "status": account_status_str,
                     "user_id": user.id
                 }
             )

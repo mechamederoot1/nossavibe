@@ -72,7 +72,10 @@ def create_verification_record(user_id: int, email: str, first_name: str, db: Se
         # Gerar código e token
         verification_code = generate_verification_code()
         verification_token = generate_verification_token()
-        expires_at = datetime.utcnow() + timedelta(minutes=5)
+        # Usar tempo do banco para consistência
+        from sqlalchemy import text
+        db_time = db.execute(text("SELECT NOW()")).fetchone()[0]
+        expires_at = db_time + timedelta(minutes=10)
 
         print(f"📝 Generated verification code: {verification_code}")
 
@@ -158,7 +161,10 @@ async def send_verification_email(
         # Gerar código e token
         verification_code = generate_verification_code()
         verification_token = generate_verification_token()
-        expires_at = datetime.utcnow() + timedelta(minutes=5)
+        # Usar tempo do banco para consistência
+        from sqlalchemy import text
+        db_time = db.execute(text("SELECT NOW()")).fetchone()[0]
+        expires_at = db_time + timedelta(minutes=10)
         
         print(f"📝 Generated verification code: {verification_code}")
 
@@ -189,7 +195,7 @@ async def send_verification_email(
         return {
             "success": True,
             "message": "Código de verificação enviado com sucesso",
-            "expires_in": 300000,  # 5 minutos em millisegundos
+            "expires_in": 600000,  # 10 minutos em millisegundos
             "cooldown_ms": 60000   # 1 minuto em millisegundos
         }
 
@@ -211,15 +217,32 @@ async def verify_code(
         
         print(f"🔍 Verifying code {code} for user {user_id}")
 
-        # Buscar código válido
+        # Usar tempo do banco para consistência
+        from sqlalchemy import text
+        db_time = db.execute(text("SELECT NOW()")).fetchone()[0]
+        print(f"⏰ Current database time: {db_time}")
+
+        # Buscar código válido usando tempo do banco
         verification = db.query(EmailVerification).filter(
             EmailVerification.user_id == user_id,
             EmailVerification.verification_code == code,
             EmailVerification.verified == False,
-            EmailVerification.expires_at > datetime.utcnow()
+            EmailVerification.expires_at > db_time
         ).first()
 
         if not verification:
+            # Debug: verificar se existe algum código para este usuário
+            all_codes = db.query(EmailVerification).filter(
+                EmailVerification.user_id == user_id,
+                EmailVerification.verification_code == code
+            ).all()
+
+            if all_codes:
+                for v in all_codes:
+                    print(f"🔍 Found code: verified={v.verified}, expires_at={v.expires_at}, current_db_time={db_time}")
+            else:
+                print(f"❌ No code found with value {code} for user {user_id}")
+
             print(f"❌ Invalid or expired code for user {user_id}")
             raise HTTPException(
                 status_code=400,
@@ -228,13 +251,16 @@ async def verify_code(
 
         # Marcar como verificado
         verification.verified = True
-        verification.verified_at = datetime.utcnow()
+        verification.verified_at = db_time
 
-        # Atualizar usuário como verificado
+        # Atualizar usuário como verificado e ativar conta
         user = db.query(User).filter(User.id == user_id).first()
         if user:
             user.is_verified = True
-            print(f"✅ User {user_id} marked as verified")
+            # Ativar conta após verificação de email
+            from models.user import AccountStatus
+            user.account_status = AccountStatus.active
+            print(f"✅ User {user_id} marked as verified and account activated")
 
         db.commit()
 
@@ -273,12 +299,15 @@ async def verify_token(
 
         # Marcar como verificado
         verification.verified = True
-        verification.verified_at = datetime.utcnow()
+        verification.verified_at = db_time
 
-        # Atualizar usuário como verificado
+        # Atualizar usuário como verificado e ativar conta
         user = db.query(User).filter(User.id == verification.user_id).first()
         if user:
             user.is_verified = True
+            # Ativar conta após verificação de email
+            from models.user import AccountStatus
+            user.account_status = AccountStatus.active
 
         db.commit()
 
