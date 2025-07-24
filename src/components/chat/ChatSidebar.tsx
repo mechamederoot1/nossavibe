@@ -18,6 +18,23 @@ interface OnlineUser {
   last_seen?: string;
 }
 
+interface RecentActivity {
+  id: number;
+  type: "reaction" | "profile_update" | "post_pin" | "user_joined";
+  user: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    avatar?: string;
+  };
+  target_user?: {
+    id: number;
+    first_name: string;
+    last_name: string;
+  };
+  created_at: string;
+}
+
 interface Conversation {
   id: number;
   first_name: string;
