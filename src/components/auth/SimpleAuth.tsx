@@ -221,7 +221,10 @@ export function SimpleAuth({ onLogin }: AuthProps) {
       {/* Desktop Layout */}
       <div className="hidden lg:flex min-h-screen">
         {/* Welcome Section - Left Side */}
-        <div className="flex-1 bg-white flex items-center justify-center p-12 border-r border-gray-100">
+        <div className="flex-1 bg-white flex flex-col items-center justify-center p-12 border-r-2 border-gray-200 relative">
+          <div className="absolute top-8 left-8 text-xs font-medium text-gray-400 uppercase tracking-wider">
+            Boas-vindas
+          </div>
           <div className="max-w-lg text-center">
             <h1 className="text-4xl font-bold mb-6 text-gray-900">
               {isLogin ? "Conecte-se agora!" : "Junte-se à nossa comunidade!"}
