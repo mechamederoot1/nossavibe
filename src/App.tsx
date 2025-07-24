@@ -9,8 +9,10 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { Layout } from "./components/Layout";
 import { SimpleAuth } from "./components/auth/SimpleAuth";
 import { MultiStepAuth } from "./components/auth/MultiStepAuth";
+import { SessionManager } from "./components/auth/SessionManager";
+import { WelcomeOnboarding } from "./components/onboarding/WelcomeOnboarding";
 import { Feed } from "./components/Feed";
-import { Profile } from "./components/profile/Profile"; // Atualizado
+import { Profile } from "./components/profile/Profile";
 import { ProfileRoute } from "./components/routing/ProfileRoute";
 import { SimpleSettingsPage } from "./pages/SimpleSettingsPage";
 import { SearchPage } from "./pages/SearchPage";
@@ -24,7 +26,7 @@ import EmailVerificationPage from "./pages/EmailVerificationPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { notificationService } from "./services/NotificationService";
-import { apiCall } from "./config/api";
+import { useSession } from "./hooks/useSession";
 
 interface User {
   id?: number;
@@ -49,17 +51,25 @@ interface User {
 }
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading, sessionExpired, login, logout, refreshUserData, updateActivity } = useSession();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [sessionExpiredMessage, setSessionExpiredMessage] = useState(false);
 
+  // Verificar se deve mostrar onboarding
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      fetchUserData(token);
-    } else {
-      setLoading(false);
+    if (user && !localStorage.getItem(`onboarding_completed_${user.id}`)) {
+      setShowOnboarding(true);
     }
-  }, []);
+  }, [user]);
+
+  // Verificar se a sessão expirou
+  useEffect(() => {
+    if (sessionExpired) {
+      setSessionExpiredMessage(true);
+      // Limpar mensagem após 5 segundos
+      setTimeout(() => setSessionExpiredMessage(false), 5000);
+    }
+  }, [sessionExpired]);
 
   useEffect(() => {
     if (user?.id) {
@@ -71,46 +81,11 @@ function App() {
     }
   }, [user]);
 
-  const fetchUserData = async (token: string) => {
-    try {
-      const response = await apiCall("/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const userData = await response.json();
-        setUser({
-          id: userData.id,
-          display_id: userData.display_id,
-          name: `${userData.first_name} ${userData.last_name}`,
-          email: userData.email,
-          avatar: userData.avatar,
-          cover_photo: userData.cover_photo,
-          bio:
-            userData.bio || "Apaixonado por conexões genuínas e boas vibes! 🌟",
-          location: userData.location || "São Paulo, Brasil",
-          joinDate: "Janeiro 2025",
-          username: userData.username,
-          nickname: userData.nickname,
-          phone: userData.phone,
-          website: userData.website,
-          birth_date: userData.birth_date,
-          gender: userData.gender,
-          relationship_status: userData.relationship_status,
-          work: userData.work,
-          education: userData.education,
-          token,
-        });
-      } else {
-        localStorage.removeItem("token");
-      }
-    } catch (error) {
-      console.error("Erro ao buscar dados do usuário:", error);
-      localStorage.removeItem("token");
-    } finally {
-      setLoading(false);
+  // Completar onboarding
+  const completeOnboarding = () => {
+    if (user) {
+      localStorage.setItem(`onboarding_completed_${user.id}`, 'true');
+      setShowOnboarding(false);
     }
   };
 
@@ -120,26 +95,17 @@ function App() {
     token: string;
     id: number;
   }) => {
-    const userWithDefaults = {
-      ...userData,
-      id: userData.id,
-      bio: "Apaixonado por conexões genuínas e boas vibes! 🌟",
-      location: "São Paulo, Brasil",
-      joinDate: "Janeiro 2025",
-    };
-    setUser(userWithDefaults);
-    localStorage.setItem("token", userData.token);
+    login(userData);
   };
 
-  const handleLogout = () => {
+  const handleLogout = (expired = false) => {
     notificationService.disconnect();
-    localStorage.removeItem("token");
-    setUser(null);
+    logout(expired);
   };
 
-  const refreshUserData = async () => {
-    if (user?.token) {
-      await fetchUserData(user.token);
+  const handleRefreshUserData = async () => {
+    if (refreshUserData) {
+      await refreshUserData();
     }
   };
 
@@ -155,31 +121,50 @@ function App() {
     return (
       <ThemeProvider>
         <Router>
-          <Routes>
-            <Route path="/" element={<SimpleAuth onLogin={handleLogin} />} />
-            <Route
-              path="/cadastro"
-              element={<MultiStepAuth onLogin={handleLogin} />}
-            />
-            <Route path="/termos-de-uso" element={<TermsOfService />} />
-            <Route
-              path="/politica-de-privacidade"
-              element={<PrivacyPolicy />}
-            />
-            <Route
-              path="/verify-email"
-              element={<EmailVerificationPage />}
-            />
-            <Route
-              path="/forgot-password"
-              element={<ForgotPasswordPage />}
-            />
-            <Route
-              path="/reset-password"
-              element={<ResetPasswordPage />}
-            />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <div className="relative">
+            {/* Mensagem de sessão expirada */}
+            {sessionExpiredMessage && (
+              <div className="fixed top-4 left-4 bg-orange-100 border border-orange-400 text-orange-700 px-4 py-3 rounded-lg shadow-lg z-50 max-w-md">
+                <div className="flex items-center">
+                  <div className="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center mr-3">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-medium">Sessão Expirada</p>
+                    <p className="text-sm">Sua sessão expirou por inatividade. Faça login novamente para continuar.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <Routes>
+              <Route path="/" element={<SimpleAuth onLogin={handleLogin} />} />
+              <Route
+                path="/cadastro"
+                element={<MultiStepAuth onLogin={handleLogin} />}
+              />
+              <Route path="/termos-de-uso" element={<TermsOfService />} />
+              <Route
+                path="/politica-de-privacidade"
+                element={<PrivacyPolicy />}
+              />
+              <Route
+                path="/verify-email"
+                element={<EmailVerificationPage />}
+              />
+              <Route
+                path="/forgot-password"
+                element={<ForgotPasswordPage />}
+              />
+              <Route
+                path="/reset-password"
+                element={<ResetPasswordPage />}
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </div>
         </Router>
       </ThemeProvider>
     );
@@ -188,13 +173,21 @@ function App() {
   return (
     <ThemeProvider>
       <Router>
+        {/* Onboarding para novos usuários */}
+        {showOnboarding && (
+          <WelcomeOnboarding user={user} onComplete={completeOnboarding} />
+        )}
+
+        {/* Gerenciador de sessão */}
+        <SessionManager user={user} onLogout={handleLogout} />
+
         <Layout user={user} onLogout={handleLogout}>
           <Routes>
             <Route path="/" element={<Feed user={user} />} />
             <Route
               path="/profile"
               element={
-                <Profile user={user} onUserDataRefresh={refreshUserData} />
+                <Profile user={user} onUserDataRefresh={handleRefreshUserData} />
               }
             />
             <Route
@@ -203,7 +196,7 @@ function App() {
                 <SimpleSettingsPage
                   user={user}
                   onLogout={handleLogout}
-                  onUserUpdate={refreshUserData}
+                  onUserUpdate={handleRefreshUserData}
                 />
               }
             />
@@ -219,7 +212,7 @@ function App() {
             <Route
               path="/edit-profile"
               element={
-                <EditProfilePage user={user} onUserUpdate={refreshUserData} />
+                <EditProfilePage user={user} onUserUpdate={handleRefreshUserData} />
               }
             />
             <Route
@@ -251,7 +244,7 @@ function App() {
               element={
                 <ProfileRoute
                   currentUser={user}
-                  onUserDataRefresh={refreshUserData}
+                  onUserDataRefresh={handleRefreshUserData}
                 />
               }
             />
@@ -260,7 +253,7 @@ function App() {
               element={
                 <ProfileRoute
                   currentUser={user}
-                  onUserDataRefresh={refreshUserData}
+                  onUserDataRefresh={handleRefreshUserData}
                 />
               }
             />
