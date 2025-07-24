@@ -162,11 +162,31 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
     const date = new Date(dateString);
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-    
+
     if (diffInMinutes < 1) return "Agora";
     if (diffInMinutes < 60) return `${diffInMinutes}m`;
     if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`;
     return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+  };
+
+  const getActivityText = (activity: RecentActivity) => {
+    const userName = `${activity.user.first_name} ${activity.user.last_name}`;
+
+    switch (activity.type) {
+      case "reaction":
+        const targetName = activity.target_user
+          ? `${activity.target_user.first_name} ${activity.target_user.last_name}`
+          : "alguém";
+        return `${userName} reagiu ao post de ${targetName}`;
+      case "profile_update":
+        return `${userName} atualizou a foto do perfil`;
+      case "post_pin":
+        return `${userName} fixou uma publicação no perfil`;
+      case "user_joined":
+        return `${userName} acabou de entrar`;
+      default:
+        return `${userName} fez uma atividade`;
+    }
   };
 
   if (!isVisible) return null;
