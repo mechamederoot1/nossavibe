@@ -4,7 +4,7 @@ Rotas de autenticação
 from fastapi import APIRouter, HTTPException, Depends, status, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from core.database import get_db
 from core.security import hash_password, verify_password, create_access_token, get_current_user
@@ -146,7 +146,7 @@ async def register(request: Request, user: UserCreate, db: Session = Depends(get
 
 @router.post("/login", response_model=Token)
 async def login(request: Request, login_data: LoginRequest, db: Session = Depends(get_db)):
-    # Verificações de seguran��a
+    # Verificações de segurança
     security_response = await security_middleware.process_request(request)
     if security_response:
         return security_response
@@ -249,3 +249,39 @@ def check_username_exists_public(username: str, db: Session = Depends(get_db)):
 @router.get("/verify-token")
 async def verify_token(current_user: User = Depends(get_current_user)):
     return {"valid": True, "user": current_user}
+
+@router.post("/complete-onboarding")
+async def complete_onboarding(
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Marcar o onboarding como completo para o usuário atual"""
+    # Verificações de segurança
+    security_response = await security_middleware.process_request(request)
+    if security_response:
+        return security_response
+
+    try:
+        # Atualizar usuário
+        current_user.onboarding_completed = True
+        current_user.updated_at = datetime.now()
+
+        db.commit()
+        db.refresh(current_user)
+
+        print(f"✅ Usuário {current_user.id} completou o onboarding")
+
+        return {
+            "success": True,
+            "message": "Onboarding marcado como completo",
+            "onboarding_completed": True
+        }
+
+    except Exception as e:
+        db.rollback()
+        print(f"❌ Erro ao completar onboarding para usuário {current_user.id}: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao completar onboarding"
+        )
