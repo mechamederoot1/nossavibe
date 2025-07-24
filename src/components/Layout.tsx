@@ -204,7 +204,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
                 {showMessages && (
                   <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                     <div className="px-4 py-2 border-b border-gray-100">
-                      <h3 className="text-sm font-semibold text-gray-900">Mensagens Recentes</h3>
+                      <h3 className="text-sm font-semibold text-gray-900">Recentes</h3>
                     </div>
                     <div className="max-h-60 overflow-y-auto">
                       {/* Recent messages preview will go here */}
