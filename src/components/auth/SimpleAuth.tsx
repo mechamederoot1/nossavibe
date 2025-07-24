@@ -264,7 +264,10 @@ export function SimpleAuth({ onLogin }: AuthProps) {
         </div>
 
         {/* Form Section - Right Side */}
-        <div className="flex-1 bg-white flex items-center justify-center p-12">
+        <div className="flex-1 bg-white flex flex-col items-center justify-center p-12 relative">
+          <div className="absolute top-8 right-8 text-xs font-medium text-gray-400 uppercase tracking-wider">
+            {isLogin ? "Login" : "Cadastro"}
+          </div>
           <div className="w-full max-w-md">
             {/* Logo */}
             <div className="text-center mb-8">
