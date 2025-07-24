@@ -251,7 +251,7 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
         }
 
         console.log("✅ Registration successful:", userData);
-        
+
         // Salvar dados temporários para verificação de e-mail
         const userDataForStorage = {
           id: userData.id,
@@ -268,15 +268,12 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
         localStorage.setItem('pendingPassword', formData.password);
 
         console.log('🔄 Redirecting to verification page...');
-        
-        // Show success message before redirect
+
+        // Redirecionamento direto sem mensagem
         setErrors({ general: "" });
-        alert('Conta criada com sucesso! Redirecionando para verificação de e-mail...');
-        
-        // Use navigate instead of window.location for better React handling
-        setTimeout(() => {
-          window.location.href = '/verify-email';
-        }, 100);
+
+        // Redirecionamento imediato
+        window.location.href = '/verify-email';
       } else {
         let errorData;
         try {
