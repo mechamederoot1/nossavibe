@@ -197,6 +197,30 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
                   <MessageCircle className="w-5 h-5" />
                   <span>Mensagens</span>
                 </button>
+
+                {/* Quick messages preview - will show in modal for now */}
+                {showMessages && (
+                  <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <h3 className="text-sm font-semibold text-gray-900">Mensagens Recentes</h3>
+                    </div>
+                    <div className="max-h-60 overflow-y-auto">
+                      {/* Recent messages preview will go here */}
+                      <div className="px-4 py-3 text-center text-gray-500 text-sm">
+                        Carregando conversas...
+                      </div>
+                    </div>
+                    <div className="border-t border-gray-100 px-4 py-2">
+                      <a
+                        href="/messenger"
+                        className="block w-full text-center py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                        onClick={() => setShowMessages(false)}
+                      >
+                        Mostrar todas as mensagens
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
             </nav>
 
