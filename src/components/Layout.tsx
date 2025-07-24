@@ -20,6 +20,8 @@ import { notificationService } from "../services/NotificationService";
 import { Logo } from "./ui/Logo";
 import { useTheme } from "../contexts/ThemeContext";
 import { API_BASE_URL } from "../config/api";
+import { ChatSidebar } from "./chat/ChatSidebar";
+import { FeedSidebar } from "./feed/FeedSidebar";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -43,6 +45,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
   const [friendRequestsCount, setFriendRequestsCount] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showChatSidebar, setShowChatSidebar] = useState(true);
 
   useEffect(() => {
     // Close user menu when clicking outside
@@ -183,26 +186,45 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
             {/* Navigation */}
             <nav className="flex space-x-8">
               <a
-                href="/"
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                <Home className="w-5 h-5" />
-                <span>Início</span>
-              </a>
-              <a
                 href={generateProfileUrl()}
                 className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
               >
                 <User className="w-5 h-5" />
                 <span>Perfil</span>
               </a>
-              <button
-                onClick={() => setShowMessages(true)}
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                <MessageCircle className="w-5 h-5" />
-                <span>Mensagens</span>
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setShowMessages(true)}
+                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  <span>Mensagens</span>
+                </button>
+
+                {/* Quick messages preview - will show in modal for now */}
+                {showMessages && (
+                  <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <h3 className="text-sm font-semibold text-gray-900">Recentes</h3>
+                    </div>
+                    <div className="max-h-60 overflow-y-auto">
+                      {/* Recent messages preview will go here */}
+                      <div className="px-4 py-3 text-center text-gray-500 text-sm">
+                        Carregando conversas...
+                      </div>
+                    </div>
+                    <div className="border-t border-gray-100 px-4 py-2">
+                      <a
+                        href="/messenger"
+                        className="block w-full text-center py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                        onClick={() => setShowMessages(false)}
+                      >
+                        Mostrar todas as mensagens
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
             </nav>
 
             {/* Right side */}
@@ -282,22 +304,45 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
               </a>
 
               {/* User Menu */}
-              <div className="flex items-center space-x-3">
-                <img
-                  src={
-                    user.avatar ||
-                    `https://ui-avatars.com/api/?name=${user.name}&background=3B82F6&color=fff`
-                  }
-                  alt={user.name}
-                  className="w-8 h-8 rounded-full"
-                />
+              <div className="relative">
                 <button
-                  onClick={onLogout}
-                  className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
-                  title="Sair"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowUserMenu(!showUserMenu);
+                  }}
+                  className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
-                  <LogOut className="w-5 h-5" />
+                  <img
+                    src={
+                      user.avatar ||
+                      `https://ui-avatars.com/api/?name=${user.name}&background=3B82F6&color=fff`
+                    }
+                    alt={user.name}
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <span className="text-sm font-medium text-gray-700">{user.name.split(' ')[0]}</span>
                 </button>
+
+                {showUserMenu && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    <a
+                      href="/settings"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <Settings className="w-4 h-4 inline mr-2" />
+                      Configurações
+                    </a>
+                    <hr className="my-1" />
+                    <button
+                      onClick={onLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    >
+                      <LogOut className="w-4 h-4 inline mr-2" />
+                      Sair
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -324,12 +369,20 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main
-        className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 ${isMobile ? "pb-24" : "pb-8"}`}
-      >
-        {children}
-      </main>
+      {/* Main Content with Sidebars */}
+      <div className="flex max-w-7xl mx-auto">
+        {/* Feed Sidebar - Left */}
+        <FeedSidebar user={user} isVisible={!isMobile} />
+
+        <main
+          className={`flex-1 px-4 sm:px-6 lg:px-8 py-8 ${isMobile ? "pb-24" : "pb-8"}`}
+        >
+          {children}
+        </main>
+
+        {/* Chat Sidebar - Right */}
+        <ChatSidebar user={user} isVisible={showChatSidebar && !isMobile} />
+      </div>
 
       {/* Mobile Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-40">

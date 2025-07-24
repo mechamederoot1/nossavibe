@@ -20,6 +20,7 @@ import { EditProfilePage } from "./pages/EditProfilePage";
 import { UserInfoPage } from "./pages/UserInfoPage";
 import { PostPage } from "./pages/PostPage";
 import { PublicProfilePage } from "./pages/PublicProfilePage";
+import { MessengerPage } from "./pages/MessengerPage";
 import { TermsOfService } from "./pages/TermsOfService";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
@@ -37,9 +38,15 @@ function App() {
 
   // Verificar se deve mostrar onboarding baseado no backend
   useEffect(() => {
-    if (user) {
-      // Verificar pelo campo do backend
-      const shouldShowOnboarding = !user.onboarding_completed;
+    if (user && user.id) {
+      // Verificar se já mostrou onboarding para este usuário
+      const onboardingKey = `onboarding_shown_${user.id}`;
+      const onboardingShown = localStorage.getItem(onboardingKey);
+
+      // Mostrar apenas se:
+      // 1. Backend indica que não completou onboarding OU
+      // 2. Nunca mostrou onboarding para este usuário (localStorage)
+      const shouldShowOnboarding = !user.onboarding_completed && !onboardingShown;
       setShowOnboarding(shouldShowOnboarding);
 
       // Limpar localStorage antigo se existir
@@ -71,9 +78,12 @@ function App() {
 
   // Completar onboarding via backend
   const handleCompleteOnboarding = async () => {
-    if (completeOnboarding) {
+    if (completeOnboarding && user?.id) {
       const success = await completeOnboarding();
       if (success) {
+        // Marcar como mostrado no localStorage
+        const onboardingKey = `onboarding_shown_${user.id}`;
+        localStorage.setItem(onboardingKey, 'true');
         setShowOnboarding(false);
       }
     }
@@ -173,6 +183,7 @@ function App() {
           )}
           <Routes>
             <Route path="/" element={<Feed user={user} />} />
+            <Route path="/messenger" element={<MessengerPage user={user} />} />
             <Route
               path="/profile"
               element={
