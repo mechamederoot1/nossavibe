@@ -1,12 +1,14 @@
 """
 Rotas de autenticação
 """
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, Request
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
 from core.database import get_db
 from core.security import hash_password, verify_password, create_access_token, get_current_user
+from core.security_middleware import security_middleware
 from core.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from models import User
 from schemas import LoginRequest, Token, UserCreate, UserResponse
@@ -40,10 +42,21 @@ def test_database_connection(db: Session = Depends(get_db)):
         }
 
 @router.post("/register")
-def register(user: UserCreate, db: Session = Depends(get_db)):
+async def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
+    # Verificações de segurança
+    security_response = await security_middleware.process_request(request)
+    if security_response:
+        return security_response
+
+    ip = security_middleware.get_client_ip(request)
     try:
         print(f"🔍 Registration attempt for email: {user.email}")
         print(f"🔍 Received data: {user.dict()}")
+
+        # Sanitizar inputs
+        user.first_name = security_middleware.sanitize_input(user.first_name)
+        user.last_name = security_middleware.sanitize_input(user.last_name)
+        user.email = security_middleware.sanitize_input(user.email)
 
         # Validate required fields
         if not user.first_name or not user.first_name.strip():
@@ -52,8 +65,16 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
             raise HTTPException(status_code=400, detail="Sobrenome é obrigatório")
         if not user.email or not user.email.strip():
             raise HTTPException(status_code=400, detail="E-mail é obrigatório")
-        if not user.password or len(user.password) < 6:
-            raise HTTPException(status_code=400, detail="Senha deve ter pelo menos 6 caracteres")
+        if not user.password or len(user.password) < 8:
+            raise HTTPException(status_code=400, detail="Senha deve ter pelo menos 8 caracteres")
+
+        # Verificar força da senha
+        import re
+        if not re.search(r'(?=.*[a-z])(?=.*[A-Z])(?=.*\d)', user.password):
+            raise HTTPException(
+                status_code=400,
+                detail="Senha deve conter ao menos uma letra maiúscula, uma minúscula e um número"
+            )
 
         print(f"✅ Required fields validated")
 
@@ -124,14 +145,29 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Erro interno do servidor: {str(e)}")
 
 @router.post("/login", response_model=Token)
-def login(login_data: LoginRequest, db: Session = Depends(get_db)):
+async def login(request: Request, login_data: LoginRequest, db: Session = Depends(get_db)):
+    # Verificações de seguran��a
+    security_response = await security_middleware.process_request(request)
+    if security_response:
+        return security_response
+
+    ip = security_middleware.get_client_ip(request)
+
+    # Verificar tentativas de login
+    if not security_middleware.check_login_attempts(ip, login_data.email):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Muitas tentativas de login falhadas. Tente novamente em 15 minutos."
+        )
     try:
         user = db.query(User).filter(User.email == login_data.email).first()
 
         if not user or not verify_password(login_data.password, user.password_hash):
+            # Registrar tentativa falhada
+            security_middleware.record_failed_login(ip, login_data.email)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password",
+                detail="Email ou senha incorretos",
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
