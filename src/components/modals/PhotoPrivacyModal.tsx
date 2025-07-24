@@ -112,7 +112,7 @@ export function PhotoPrivacyModal({
   const handleSave = async () => {
     setLoading(true);
     try {
-      let privacyData: any = {
+      const privacyData: any = {
         privacy: selectedPrivacy,
       };
 

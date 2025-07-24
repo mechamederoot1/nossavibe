@@ -101,7 +101,7 @@ export const Feed: React.FC<FeedProps> = ({ user }) => {
     mediaData?: any,
   ) => {
     try {
-      let payload: any = {
+      const payload: any = {
         content,
         post_type: type,
         privacy: privacy,
