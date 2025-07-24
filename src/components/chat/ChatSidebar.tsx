@@ -96,38 +96,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
       <div className="h-full flex flex-col">
         {/* Header */}
         <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Chat</h2>
-            <button className="p-1 text-gray-400 hover:text-gray-600">
-              <MoreHorizontal className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => setActiveTab("chats")}
-              className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                activeTab === "chats"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              <MessageCircle className="w-4 h-4 inline mr-1" />
-              Conversas
-            </button>
-            <button
-              onClick={() => setActiveTab("online")}
-              className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                activeTab === "online"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              <Users className="w-4 h-4 inline mr-1" />
-              Online
-            </button>
-          </div>
+          <h2 className="text-lg font-semibold text-gray-900">Online agora</h2>
         </div>
 
         {/* Content */}
