@@ -61,6 +61,11 @@ class User(Base):
     account_status = Column(Enum(AccountStatus), default=AccountStatus.pending)
     account_deactivated = Column(Boolean, default=False)
     deactivated_at = Column(DateTime)
+
+    # Onboarding
+    onboarding_completed = Column(Boolean, default=False)
+
+    # Timestamps
     created_at = Column(DateTime, default=datetime.utcnow)
     last_seen = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
