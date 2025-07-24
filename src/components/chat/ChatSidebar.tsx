@@ -92,7 +92,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
   if (!isVisible) return null;
 
   return (
-    <div className="w-80 bg-white border-l border-gray-200 hidden xl:block">
+    <div className="w-64 bg-white border-l border-gray-200 hidden xl:block">
       <div className="h-full flex flex-col">
         {/* Header */}
         <div className="p-4 border-b border-gray-200">
