@@ -38,9 +38,15 @@ function App() {
 
   // Verificar se deve mostrar onboarding baseado no backend
   useEffect(() => {
-    if (user) {
-      // Verificar pelo campo do backend
-      const shouldShowOnboarding = !user.onboarding_completed;
+    if (user && user.id) {
+      // Verificar se já mostrou onboarding para este usuário
+      const onboardingKey = `onboarding_shown_${user.id}`;
+      const onboardingShown = localStorage.getItem(onboardingKey);
+
+      // Mostrar apenas se:
+      // 1. Backend indica que não completou onboarding OU
+      // 2. Nunca mostrou onboarding para este usuário (localStorage)
+      const shouldShowOnboarding = !user.onboarding_completed && !onboardingShown;
       setShowOnboarding(shouldShowOnboarding);
 
       // Limpar localStorage antigo se existir
