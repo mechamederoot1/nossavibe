@@ -54,12 +54,15 @@ interface ChatSidebarProps {
 }
 
 export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => {
+  const [activeTab, setActiveTab] = useState<"recent" | "online">("recent");
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
+  const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isVisible) {
       loadOnlineUsers();
+      loadRecentActivities();
     }
   }, [isVisible, user.token]);
 
