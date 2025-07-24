@@ -44,6 +44,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
   const [friendRequestsCount, setFriendRequestsCount] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showChatSidebar, setShowChatSidebar] = useState(true);
 
   useEffect(() => {
     // Close user menu when clicking outside
