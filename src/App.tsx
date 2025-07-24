@@ -31,14 +31,22 @@ import { useSession } from "./hooks/useSession";
 
 
 function App() {
-  const { user, loading, sessionExpired, login, logout, refreshUserData } = useSession();
+  const { user, loading, sessionExpired, login, logout, refreshUserData, completeOnboarding } = useSession();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [sessionExpiredMessage, setSessionExpiredMessage] = useState(false);
 
-  // Verificar se deve mostrar onboarding
+  // Verificar se deve mostrar onboarding baseado no backend
   useEffect(() => {
-    if (user && !localStorage.getItem(`onboarding_completed_${user.id}`)) {
-      setShowOnboarding(true);
+    if (user) {
+      // Verificar pelo campo do backend
+      const shouldShowOnboarding = !user.onboarding_completed;
+      setShowOnboarding(shouldShowOnboarding);
+
+      // Limpar localStorage antigo se existir
+      const oldKey = `onboarding_completed_${user.id}`;
+      if (localStorage.getItem(oldKey)) {
+        localStorage.removeItem(oldKey);
+      }
     }
   }, [user]);
 
@@ -61,11 +69,13 @@ function App() {
     }
   }, [user]);
 
-  // Completar onboarding
-  const completeOnboarding = () => {
-    if (user) {
-      localStorage.setItem(`onboarding_completed_${user.id}`, 'true');
-      setShowOnboarding(false);
+  // Completar onboarding via backend
+  const handleCompleteOnboarding = async () => {
+    if (completeOnboarding) {
+      const success = await completeOnboarding();
+      if (success) {
+        setShowOnboarding(false);
+      }
     }
   };
 
@@ -159,7 +169,7 @@ function App() {
         <Layout user={user} onLogout={handleLogout}>
           {/* Modal de boas-vindas para novos usuários */}
           {showOnboarding && (
-            <WelcomeModal user={user} onComplete={completeOnboarding} />
+            <WelcomeModal user={user} onComplete={handleCompleteOnboarding} />
           )}
           <Routes>
             <Route path="/" element={<Feed user={user} />} />
