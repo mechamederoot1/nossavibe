@@ -174,6 +174,7 @@ function App() {
           )}
           <Routes>
             <Route path="/" element={<Feed user={user} />} />
+            <Route path="/messenger" element={<MessengerPage user={user} />} />
             <Route
               path="/profile"
               element={
