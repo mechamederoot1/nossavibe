@@ -170,6 +170,7 @@ export const useSession = () => {
       bio: "Apaixonado por conexões genuínas e boas vibes! 🌟",
       location: "São Paulo, Brasil",
       joinDate: "Janeiro 2025",
+      onboarding_completed: false, // Apenas para novos usuários
     };
     
     setSessionState(prev => ({
