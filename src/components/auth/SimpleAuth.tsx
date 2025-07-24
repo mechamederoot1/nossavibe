@@ -201,7 +201,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
             }, 2000);
             return;
           } else if (errorData.detail.error === 'account_not_active') {
-            setError(`Conta n��o está ativa: ${errorData.detail.message}`);
+            setError(`Conta não está ativa: ${errorData.detail.message}`);
             return;
           }
         }
@@ -221,16 +221,13 @@ export function SimpleAuth({ onLogin }: AuthProps) {
       {/* Desktop Layout */}
       <div className="hidden lg:flex min-h-screen">
         {/* Welcome Section - Left Side */}
-        <div className="flex-1 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 flex items-center justify-center p-12">
+        <div className="flex-1 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center p-12">
           <div className="max-w-lg text-white text-center">
-            <div className="mb-8">
-              <Logo size="xl" showText={true} />
-            </div>
             <h1 className="text-4xl font-bold mb-6">
               {isLogin ? "Bem-vindo de volta!" : "Junte-se à nossa comunidade!"}
             </h1>
             <p className="text-xl text-blue-100 mb-8 leading-relaxed">
-              {isLogin 
+              {isLogin
                 ? "Conecte-se com seus amigos, compartilhe momentos especiais e descubra um mundo de possibilidades."
                 : "Crie sua conta e faça parte de uma experiência única. Compartilhe, conecte-se e explore novas possibilidades."}
             </p>
@@ -240,11 +237,11 @@ export function SimpleAuth({ onLogin }: AuthProps) {
                 <span>Conecte-se com amigos</span>
               </div>
               <div className="flex items-center justify-center space-x-3">
-                <div className="w-2 h-2 bg-purple-300 rounded-full"></div>
+                <div className="w-2 h-2 bg-blue-300 rounded-full"></div>
                 <span>Compartilhe momentos especiais</span>
               </div>
               <div className="flex items-center justify-center space-x-3">
-                <div className="w-2 h-2 bg-indigo-300 rounded-full"></div>
+                <div className="w-2 h-2 bg-blue-300 rounded-full"></div>
                 <span>Descubra novas experiências</span>
               </div>
             </div>
@@ -254,15 +251,16 @@ export function SimpleAuth({ onLogin }: AuthProps) {
         {/* Form Section - Right Side */}
         <div className="flex-1 bg-white flex items-center justify-center p-12">
           <div className="w-full max-w-md">
-            {/* Header */}
+            {/* Logo */}
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                {isLogin ? "Entrar" : "Criar conta"}
+              <Logo size="lg" showText={true} />
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mt-4">
+                {isLogin ? "Bem-vindo de volta!" : "Criar conta"}
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 mt-2 text-sm md:text-base">
                 {isLogin
                   ? "Entre na sua conta para continuar"
-                  : "Preencha os dados para criar sua conta"}
+                  : "Junte-se à nossa comunidade"}
               </p>
             </div>
 
