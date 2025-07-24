@@ -78,9 +78,12 @@ function App() {
 
   // Completar onboarding via backend
   const handleCompleteOnboarding = async () => {
-    if (completeOnboarding) {
+    if (completeOnboarding && user?.id) {
       const success = await completeOnboarding();
       if (success) {
+        // Marcar como mostrado no localStorage
+        const onboardingKey = `onboarding_shown_${user.id}`;
+        localStorage.setItem(onboardingKey, 'true');
         setShowOnboarding(false);
       }
     }
