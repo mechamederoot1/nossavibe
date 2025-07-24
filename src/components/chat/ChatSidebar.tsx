@@ -98,6 +98,66 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({ user, isVisible }) => 
     }
   };
 
+  const loadRecentActivities = async () => {
+    try {
+      // Simulated activities for now - replace with real API call
+      const mockActivities: RecentActivity[] = [
+        {
+          id: 1,
+          type: "reaction",
+          user: {
+            id: 1,
+            first_name: "Ana",
+            last_name: "Silva",
+            avatar: undefined,
+          },
+          target_user: {
+            id: 2,
+            first_name: "Carlos",
+            last_name: "Santos",
+          },
+          created_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+        },
+        {
+          id: 2,
+          type: "profile_update",
+          user: {
+            id: 3,
+            first_name: "Maria",
+            last_name: "Costa",
+            avatar: undefined,
+          },
+          created_at: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+        },
+        {
+          id: 3,
+          type: "user_joined",
+          user: {
+            id: 4,
+            first_name: "João",
+            last_name: "Oliveira",
+            avatar: undefined,
+          },
+          created_at: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+        },
+        {
+          id: 4,
+          type: "post_pin",
+          user: {
+            id: 5,
+            first_name: "Lucia",
+            last_name: "Ferreira",
+            avatar: undefined,
+          },
+          created_at: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+        },
+      ];
+      setRecentActivities(mockActivities);
+    } catch (error) {
+      console.error("Erro ao carregar atividades recentes:", error);
+    }
+  };
+
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
