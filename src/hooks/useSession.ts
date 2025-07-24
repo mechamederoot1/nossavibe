@@ -20,6 +20,7 @@ interface User {
   relationship_status?: string;
   work?: string;
   education?: string;
+  onboarding_completed?: boolean;
   token: string;
 }
 
@@ -120,6 +121,7 @@ export const useSession = () => {
           relationship_status: userData.relationship_status,
           work: userData.work,
           education: userData.education,
+          onboarding_completed: userData.onboarding_completed || false,
           token,
         };
 
@@ -245,6 +247,42 @@ export const useSession = () => {
     }
   }, [sessionState.user, updateActivity, checkSessionExpiry]);
 
+  // Completar onboarding
+  const completeOnboarding = useCallback(async () => {
+    if (!sessionState.user?.token) return false;
+
+    try {
+      const response = await apiCall('/auth/complete-onboarding', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${sessionState.user.token}`,
+        },
+      });
+
+      if (response.ok) {
+        // Atualizar estado local
+        setSessionState(prev => ({
+          ...prev,
+          user: prev.user ? {
+            ...prev.user,
+            onboarding_completed: true
+          } : null
+        }));
+
+        // Limpar localStorage antigo se existir
+        if (sessionState.user.id) {
+          localStorage.removeItem(`onboarding_completed_${sessionState.user.id}`);
+        }
+
+        return true;
+      }
+    } catch (error) {
+      console.error('Erro ao completar onboarding:', error);
+    }
+
+    return false;
+  }, [sessionState.user]);
+
   return {
     user: sessionState.user,
     loading: sessionState.loading,
@@ -256,6 +294,7 @@ export const useSession = () => {
         return fetchUserData(sessionState.user.token, false);
       }
     },
-    updateActivity
+    updateActivity,
+    completeOnboarding
   };
 };
