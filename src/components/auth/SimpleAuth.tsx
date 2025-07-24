@@ -277,10 +277,21 @@ export function SimpleAuth({ onLogin }: AuthProps) {
         </div>
 
         {/* Form Section - Right Side */}
-        <div className="flex-1 bg-white flex flex-col items-center justify-center p-12 relative">
+        <div className="flex-1 bg-white flex flex-col items-center justify-center p-12 relative overflow-hidden">
           <div className="absolute top-8 right-8 text-xs font-medium text-gray-400 uppercase tracking-wider">
             {isLogin ? "Login" : "Cadastro"}
           </div>
+
+          {/* Subtle pattern background */}
+          <div className="absolute inset-0 opacity-[0.02]">
+            <div className="absolute top-10 left-10 w-32 h-32 border border-gray-400 rounded-full"></div>
+            <div className="absolute bottom-20 right-20 w-20 h-20 border border-gray-400 rounded-full"></div>
+            <div className="absolute top-1/3 right-10 w-16 h-16 border border-gray-400 rounded-full"></div>
+          </div>
+
+          {/* Floating notification-like elements */}
+          <div className="absolute top-16 left-8 w-2 h-2 bg-blue-500 rounded-full opacity-30 animate-pulse"></div>
+          <div className="absolute bottom-40 left-12 w-1.5 h-1.5 bg-green-500 rounded-full opacity-40" style={{animationDelay: '2s'}}></div>
           <div className="w-full max-w-md">
             {/* Logo */}
             <div className="text-center mb-8">
