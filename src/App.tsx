@@ -20,6 +20,7 @@ import { EditProfilePage } from "./pages/EditProfilePage";
 import { UserInfoPage } from "./pages/UserInfoPage";
 import { PostPage } from "./pages/PostPage";
 import { PublicProfilePage } from "./pages/PublicProfilePage";
+import { MessengerPage } from "./pages/MessengerPage";
 import { TermsOfService } from "./pages/TermsOfService";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
