@@ -2,7 +2,9 @@ from fastapi import WebSocket
 from typing import Dict, List, Union
 import jwt
 import json
-from main import SECRET_KEY, ALGORITHM, SessionLocal, User
+from core.config import SECRET_KEY, ALGORITHM
+from core.database import SessionLocal
+from models import User
 
 class ConnectionManager:
     def __init__(self):
