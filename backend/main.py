@@ -11,7 +11,9 @@ from core.config import ALLOWED_ORIGINS
 from core.database import engine, Base
 from core.security_middleware import security_middleware
 from core.performance_middleware import performance_middleware, start_cache_cleanup
+from core.websockets import manager
 from routes import auth_router, posts_router, users_router, email_verification_router, stories_router
+from utils.auth import verify_websocket_token
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
