@@ -46,6 +46,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
   const [showFriendRequests, setShowFriendRequests] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showInlineSearch, setShowInlineSearch] = useState(false);
   const [realtimeNotifications, setRealtimeNotifications] = useState<any[]>([]);
   const [friendRequestsCount, setFriendRequestsCount] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
