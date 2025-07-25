@@ -170,7 +170,7 @@ export function InlineSearch({
 
   return (
     <div className="absolute top-full left-0 right-0 mt-2 z-50">
-      <div ref={searchRef} className="bg-white rounded-xl shadow-xl border border-gray-200 max-w-lg mx-auto">
+      <div ref={searchRef} className="bg-white rounded-xl shadow-xl border border-gray-200 w-full max-w-2xl">
         {/* Search Input */}
         <div className="p-4 border-b border-gray-100">
           <div className="relative">
