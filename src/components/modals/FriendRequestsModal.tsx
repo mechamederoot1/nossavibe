@@ -2,23 +2,12 @@ import React from 'react';
 import { X } from 'lucide-react';
 import { FriendRequestNotifications } from '../notifications/FriendRequestNotifications';
 
-interface FriendRequest {
-  id: number;
-  requester: {
-    id: number;
-    first_name: string;
-    last_name: string;
-    avatar?: string;
-    bio?: string;
-  };
-  created_at: string;
-}
-
 interface FriendRequestsModalProps {
   isOpen: boolean;
   onClose: () => void;
   userToken: string;
-  onRequestHandled: () => void;
+  onRequestHandled?: () => void;
+  currentUserId?: number;
 }
 
 export const FriendRequestsModal: React.FC<FriendRequestsModalProps> = ({
