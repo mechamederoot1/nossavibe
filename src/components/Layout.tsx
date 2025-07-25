@@ -234,8 +234,34 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
               </div>
             </div>
 
-            {/* Navigation */}
-            <nav className="flex space-x-8">
+            {/* Central Search */}
+            <div className="flex-1 max-w-md mx-8 relative">
+              <button
+                onClick={() => setShowInlineSearch(!showInlineSearch)}
+                className="w-full flex items-center space-x-3 px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                <Search className="w-5 h-5" />
+                <span>Buscar pessoas, páginas...</span>
+              </button>
+
+              <InlineSearch
+                userToken={user.token}
+                currentUserId={user.id || 0}
+                isOpen={showInlineSearch}
+                onClose={() => setShowInlineSearch(false)}
+                onAdvancedSearch={() => {
+                  setShowInlineSearch(false);
+                  window.location.href = "/search";
+                }}
+                onUserSelect={(userId) => {
+                  setShowInlineSearch(false);
+                  window.location.href = `/profile/${userId}`;
+                }}
+              />
+            </div>
+
+            {/* Right side navigation */}
+            <nav className="flex items-center space-x-6">
               <a
                 href={generateProfileUrl()}
                 className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
@@ -243,64 +269,18 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
                 <User className="w-5 h-5" />
                 <span>Perfil</span>
               </a>
-              <div className="relative">
-                <button
-                  onClick={() => setShowMessages(true)}
-                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  <span>Mensagens</span>
-                </button>
 
-                {/* Quick messages preview - will show in modal for now */}
-                {showMessages && (
-                  <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                    <div className="px-4 py-2 border-b border-gray-100">
-                      <h3 className="text-sm font-semibold text-gray-900">Recentes</h3>
-                    </div>
-                    <div className="max-h-60 overflow-y-auto">
-                      {/* Recent messages preview will go here */}
-                      <div className="px-4 py-3 text-center text-gray-500 text-sm">
-                        Carregando conversas...
-                      </div>
-                    </div>
-                    <div className="border-t border-gray-100 px-4 py-2">
-                      <a
-                        href="/messenger"
-                        className="block w-full text-center py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                        onClick={() => setShowMessages(false)}
-                      >
-                        Mostrar todas as mensagens
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <button
+                onClick={() => setShowMessages(true)}
+                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                <MessageCircle className="w-5 h-5" />
+                <span>Mensagens</span>
+              </button>
             </nav>
 
-            {/* Right side */}
-            <div className="flex items-center space-x-4">
-              {/* Dark Mode Toggle */}
-              <button
-                onClick={toggleDarkMode}
-                className="p-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                title={isDarkMode ? "Modo claro" : "Modo escuro"}
-              >
-                {isDarkMode ? (
-                  <Sun className="w-5 h-5" />
-                ) : (
-                  <Moon className="w-5 h-5" />
-                )}
-              </button>
-
-              {/* Story Button */}
-              <button
-                onClick={() => setShowCreateStory(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Story</span>
-              </button>
+            {/* Right side actions */}
+            <div className="flex items-center space-x-3">
 
               {/* Connection Status */}
               <div className="flex items-center space-x-2">
