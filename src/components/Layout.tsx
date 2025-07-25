@@ -18,6 +18,7 @@ import { NotificationCenter } from "./notifications/NotificationCenter";
 import { EnhancedNotificationCenter } from "./notifications/EnhancedNotificationCenter";
 import { FriendRequestsModal } from "./modals/FriendRequestsModal";
 import { NotificationBadge } from "./ui/NotificationBadge";
+import { InlineSearch } from "./search/InlineSearch";
 import { useNotifications } from "../hooks/useNotifications";
 import { notificationService } from "../services/NotificationService";
 import { Logo } from "./ui/Logo";
