@@ -43,6 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
   const [showMessages, setShowMessages] = useState(false);
   const [showCreateStory, setShowCreateStory] = useState(false);
   const [showFriendRequests, setShowFriendRequests] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [realtimeNotifications, setRealtimeNotifications] = useState<any[]>([]);
   const [friendRequestsCount, setFriendRequestsCount] = useState(0);
@@ -50,6 +51,21 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [showChatSidebar, setShowChatSidebar] = useState(true);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  // Enhanced notification system
+  const {
+    notifications,
+    unreadCount,
+    loading: notificationsLoading,
+    isConnected: notificationConnected,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    refetch: refetchNotifications
+  } = useNotifications({
+    userToken: user.token,
+    userId: user.id || 0
+  });
 
   useEffect(() => {
     // Track current path changes
