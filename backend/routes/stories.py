@@ -56,7 +56,7 @@ async def create_story(
             if file.content_type and file.content_type.startswith(('image/', 'video/', 'audio/')):
                 try:
                     filename = await save_uploaded_file(file, "stories")
-                    media_url = f"/uploads/stories/{filename}"
+                    media_url = filename  # save_uploaded_file já retorna o path completo
                     print(f"✅ Arquivo salvo: {media_url}")
 
                     # Definir media_type baseado no arquivo
