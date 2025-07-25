@@ -216,6 +216,7 @@ function App() {
                 <EditProfilePage user={user} onUserUpdate={handleRefreshUserData} />
               }
             />
+            <Route path="/friends" element={<FriendsPage user={user} />} />
             <Route
               path="/user-info/:userId?"
               element={
