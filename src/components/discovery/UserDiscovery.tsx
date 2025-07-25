@@ -29,10 +29,15 @@ export function UserDiscovery({ userToken, onUserSelect }: UserDiscoveryProps) {
   const fetchDiscoveredUsers = async () => {
     setLoading(true);
     try {
-      const endpoint =
-        filter === "suggested"
-          ? "http://localhost:8000/api/users/suggestions"
-          : "http://localhost:8000/api/users/discover";
+      let endpoint = "http://localhost:8000/users/discover";
+
+      if (filter === "suggested") {
+        endpoint = "http://localhost:8000/friendships/suggestions";
+      } else if (filter === "new") {
+        endpoint = "http://localhost:8000/users/discover";
+      } else if (filter === "all") {
+        endpoint = "http://localhost:8000/users/?limit=20";
+      }
 
       const response = await fetch(endpoint, {
         headers: {
@@ -43,6 +48,8 @@ export function UserDiscovery({ userToken, onUserSelect }: UserDiscoveryProps) {
       if (response.ok) {
         const data = await response.json();
         setDiscoveredUsers(data);
+      } else {
+        console.error("Erro na resposta:", response.status);
       }
     } catch (error) {
       console.error("Erro ao carregar usuários:", error);
