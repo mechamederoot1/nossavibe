@@ -247,6 +247,11 @@ export function InlineSearch({
                             {result.description}
                           </p>
                         )}
+                        {result.type === "user" && result.followers !== undefined && (
+                          <p className="text-xs text-gray-400">
+                            {result.followers} seguidores
+                          </p>
+                        )}
                       </div>
                       
                       <ArrowRight className="w-4 h-4 text-gray-300" />
