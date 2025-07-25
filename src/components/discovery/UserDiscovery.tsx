@@ -160,11 +160,19 @@ export function UserDiscovery({ userToken, onUserSelect }: UserDiscoveryProps) {
               >
                 <img
                   src={
-                    user.avatar ||
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name + " " + user.last_name)}&background=3B82F6&color=fff`
+                    user.avatar
+                      ? user.avatar.startsWith("http")
+                        ? user.avatar
+                        : `http://localhost:8000${user.avatar}`
+                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name + " " + user.last_name)}&background=3B82F6&color=fff`
                   }
                   alt={`${user.first_name} ${user.last_name}`}
                   className="w-12 h-12 rounded-full border-2 border-white shadow-sm"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      user.first_name + " " + user.last_name
+                    )}&background=3B82F6&color=fff`;
+                  }}
                 />
 
                 <div className="flex-1 min-w-0">
