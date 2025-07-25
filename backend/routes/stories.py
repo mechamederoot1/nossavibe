@@ -20,52 +20,81 @@ router = APIRouter(prefix="/stories", tags=["stories"])
 
 @router.post("/", response_model=dict)
 async def create_story(
-    story_data: Optional[str] = Form(None),
     content: Optional[str] = Form(None),
     media_type: Optional[str] = Form(None),
-    background_color: Optional[str] = Form(None),
+    background_color: Optional[str] = Form("#3B82F6"),
     duration_hours: int = Form(24),
     file: Optional[UploadFile] = File(None),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Criar uma nova story com upload de mídia opcional"""
-    
+
+    print(f"🔥 CREATE STORY REQUEST - Usuário: {current_user.id}")
+    print(f"📋 Parâmetros recebidos:")
+    print(f"   content: {content}")
+    print(f"   media_type: {media_type}")
+    print(f"   background_color: {background_color}")
+    print(f"   duration_hours: {duration_hours}")
+    print(f"   file: {file.filename if file else 'None'}")
+
     try:
         media_url = None
-        
+        final_media_type = media_type or "text"
+
+        # Validar que há conteúdo ou arquivo
+        if not content and not file:
+            print("❌ Erro: Story deve ter conteúdo ou arquivo")
+            raise HTTPException(status_code=400, detail="Story deve ter conteúdo ou arquivo")
+
         # Se há arquivo, fazer upload
         if file:
-            if file.content_type and file.content_type.startswith(('image/', 'video/')):
-                filename = await save_uploaded_file(file, "stories")
-                media_url = f"/uploads/stories/{filename}"
-                
-                # Definir media_type baseado no arquivo
-                if file.content_type.startswith('image/'):
-                    media_type = "image"
-                elif file.content_type.startswith('video/'):
-                    media_type = "video"
+            print(f"📤 Processando upload de arquivo: {file.filename}")
+            print(f"   Tipo: {file.content_type}")
+            print(f"   Tamanho: {file.size}")
+
+            if file.content_type and file.content_type.startswith(('image/', 'video/', 'audio/')):
+                try:
+                    filename = await save_uploaded_file(file, "stories")
+                    media_url = f"/uploads/stories/{filename}"
+                    print(f"✅ Arquivo salvo: {media_url}")
+
+                    # Definir media_type baseado no arquivo
+                    if file.content_type.startswith('image/'):
+                        final_media_type = "image"
+                    elif file.content_type.startswith('video/'):
+                        final_media_type = "video"
+                    elif file.content_type.startswith('audio/'):
+                        final_media_type = "audio"
+
+                except Exception as upload_error:
+                    print(f"❌ Erro no upload: {str(upload_error)}")
+                    raise HTTPException(status_code=500, detail=f"Erro no upload: {str(upload_error)}")
             else:
+                print(f"❌ Tipo de arquivo não suportado: {file.content_type}")
                 raise HTTPException(status_code=400, detail="Tipo de arquivo não suportado")
-        
+
         # Criar story
         expires_at = datetime.utcnow() + timedelta(hours=duration_hours)
-        
+
+        print(f"💾 Criando story no banco de dados...")
         story = Story(
             author_id=current_user.id,
-            content=content,
-            media_type=media_type,
+            content=content or "",
+            media_type=final_media_type,
             media_url=media_url,
             background_color=background_color,
             duration_hours=duration_hours,
             expires_at=expires_at
         )
-        
+
         db.add(story)
         db.commit()
         db.refresh(story)
-        
-        return {
+
+        print(f"✅ Story criada com sucesso - ID: {story.id}")
+
+        result = {
             "success": True,
             "message": "Story criada com sucesso!",
             "story_id": story.id,
@@ -86,11 +115,21 @@ async def create_story(
                 "views_count": story.views_count
             }
         }
-        
-    except Exception as e:
+
+        print(f"📤 Retornando resposta de sucesso")
+        return result
+
+    except HTTPException as he:
+        print(f"❌ HTTPException: {he.detail}")
         db.rollback()
-        print(f"❌ Erro ao criar story: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Erro ao criar story: {str(e)}")
+        raise he
+    except Exception as e:
+        print(f"❌ Erro inesperado ao criar story: {str(e)}")
+        print(f"   Tipo do erro: {type(e)}")
+        import traceback
+        traceback.print_exc()
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro interno: {str(e)}")
 
 @router.get("/", response_model=List[dict])
 async def get_stories(
