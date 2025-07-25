@@ -436,11 +436,24 @@ export function SimpleAuth({ onLogin }: AuthProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 relative z-10 cursor-pointer"
+                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  position: 'relative',
+                  zIndex: 1000,
+                  pointerEvents: 'all',
+                  background: '#2563eb',
+                  border: '2px solid #1d4ed8',
+                  cursor: loading ? 'not-allowed' : 'pointer'
+                }}
                 onClick={(e) => {
-                  console.log('🔥 Botão clicado diretamente!', e);
-                  e.preventDefault();
-                  handleSubmit(e);
+                  console.log('🔥 Botão desktop clicado!', e);
+                  console.log('Loading:', loading);
+                  console.log('Event target:', e.target);
+                  console.log('Event type:', e.type);
+                  if (!loading) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
                 }}
               >
                 {loading ? (
