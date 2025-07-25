@@ -167,6 +167,17 @@ async def create_post_reaction(post_id: int, reaction_data: ReactionCreate, curr
         )
         db.add(reaction)
         db.commit()
+
+        # Criar notificação para o autor do post (se não for o mesmo usuário)
+        if post.author_id != current_user.id:
+            await create_post_reaction_notification(
+                db=db,
+                post_id=post_id,
+                reactor_id=current_user.id,
+                post_author_id=post.author_id,
+                reaction_type=reaction_data.reaction_type
+            )
+
         return {"message": "Reaction added"}
 
 @router.delete("/{post_id}/reactions")
