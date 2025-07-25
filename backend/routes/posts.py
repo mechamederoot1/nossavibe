@@ -10,7 +10,7 @@ from core.database import get_db
 from core.security import get_current_user
 from models import User, Post, Reaction, Comment, Share
 from schemas import PostCreate, PostResponse, ReactionCreate, CommentCreate, CommentResponse, ShareCreate
-from .notifications import create_post_reaction_notification, create_post_comment_notification
+from utils.notification_helpers import create_post_reaction_notification, create_post_comment_notification
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
