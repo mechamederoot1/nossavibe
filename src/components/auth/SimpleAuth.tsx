@@ -303,7 +303,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
           {/* Floating notification-like elements */}
           <div className="absolute top-16 left-8 w-2 h-2 bg-blue-500 rounded-full opacity-30 animate-pulse"></div>
           <div className="absolute bottom-40 left-12 w-1.5 h-1.5 bg-green-500 rounded-full opacity-40" style={{animationDelay: '2s'}}></div>
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-md" style={{position: 'relative', zIndex: 20}}>
             {/* Logo */}
             <div className="text-center mb-8">
               <Logo size="lg" showText={true} />
@@ -325,7 +325,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
             )}
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" style={{position: 'relative', zIndex: 30}}>
               {!isLogin && (
                 <>
                   <div>
