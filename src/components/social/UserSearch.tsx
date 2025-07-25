@@ -50,7 +50,7 @@ export function UserSearch({
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/users/search?q=${encodeURIComponent(query)}`,
+        `http://localhost:8000/users/?search=${encodeURIComponent(query)}&limit=15`,
         {
           headers: {
             Authorization: `Bearer ${userToken}`,
