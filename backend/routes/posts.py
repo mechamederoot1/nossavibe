@@ -238,6 +238,16 @@ async def create_comment(post_id: int, comment_data: CommentCreate, current_user
     db.commit()
     db.refresh(comment)
 
+    # Criar notificação para o autor do post (se não for o mesmo usuário)
+    if post.author_id != current_user.id:
+        await create_post_comment_notification(
+            db=db,
+            post_id=post_id,
+            commenter_id=current_user.id,
+            post_author_id=post.author_id,
+            comment_id=comment.id
+        )
+
     return CommentResponse(
         id=comment.id,
         content=comment.content,
