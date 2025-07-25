@@ -10,7 +10,6 @@ import json
 from core.database import get_db
 from core.security import get_current_user
 from models import User, Notification, NotificationType
-from utils.websocket_manager import manager
 
 router = APIRouter(prefix="/notifications", tags=["notifications"])
 
