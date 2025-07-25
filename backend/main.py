@@ -13,6 +13,10 @@ from core.security_middleware import security_middleware
 from core.performance_middleware import performance_middleware, start_cache_cleanup
 from core.websockets import manager
 from routes import auth_router, posts_router, users_router, email_verification_router, stories_router, upload_router
+from routes.friendships import router as friendships_router
+from routes.follows import router as follows_router
+from routes.reports import router as reports_router
+from routes.notifications import router as notifications_router
 from utils.auth import verify_websocket_token
 
 @asynccontextmanager
@@ -73,7 +77,7 @@ async def security_performance_middleware(request: Request, call_next):
     try:
         response = await call_next(request)
 
-        # 4. Processar resposta com otimizações
+        # 4. Processar resposta com otimiza��ões
         response = await performance_middleware.process_response(request, response)
 
         return response
@@ -158,6 +162,10 @@ app.include_router(users_router)
 app.include_router(email_verification_router)
 app.include_router(stories_router)
 app.include_router(upload_router)
+app.include_router(friendships_router)
+app.include_router(follows_router)
+app.include_router(reports_router)
+app.include_router(notifications_router)
 
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = None):
@@ -190,7 +198,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = No
 
         except WebSocketDisconnect:
             manager.disconnect(websocket, user_id)
-            print(f"🔌 WebSocket: Usuário {user_id} desconectado")
+            print(f"��� WebSocket: Usuário {user_id} desconectado")
 
     except Exception as e:
         print(f"❌ Erro no WebSocket para usuário {user_id}: {str(e)}")

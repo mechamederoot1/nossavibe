@@ -17,6 +17,7 @@ import { ProfileRoute } from "./components/routing/ProfileRoute";
 import { SimpleSettingsPage } from "./pages/SimpleSettingsPage";
 import { SearchPage } from "./pages/SearchPage";
 import { EditProfilePage } from "./pages/EditProfilePage";
+import { FriendsPage } from "./pages/FriendsPage";
 import { UserInfoPage } from "./pages/UserInfoPage";
 import { PostPage } from "./pages/PostPage";
 import { PublicProfilePage } from "./pages/PublicProfilePage";
@@ -215,6 +216,7 @@ function App() {
                 <EditProfilePage user={user} onUserUpdate={handleRefreshUserData} />
               }
             />
+            <Route path="/friends" element={<FriendsPage user={user} />} />
             <Route
               path="/user-info/:userId?"
               element={

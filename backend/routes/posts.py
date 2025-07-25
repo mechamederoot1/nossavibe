@@ -10,6 +10,7 @@ from core.database import get_db
 from core.security import get_current_user
 from models import User, Post, Reaction, Comment, Share
 from schemas import PostCreate, PostResponse, ReactionCreate, CommentCreate, CommentResponse, ShareCreate
+from utils.notification_helpers import create_post_reaction_notification, create_post_comment_notification
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
@@ -166,6 +167,17 @@ async def create_post_reaction(post_id: int, reaction_data: ReactionCreate, curr
         )
         db.add(reaction)
         db.commit()
+
+        # Criar notificação para o autor do post (se não for o mesmo usuário)
+        if post.author_id != current_user.id:
+            await create_post_reaction_notification(
+                db=db,
+                post_id=post_id,
+                reactor_id=current_user.id,
+                post_author_id=post.author_id,
+                reaction_type=reaction_data.reaction_type
+            )
+
         return {"message": "Reaction added"}
 
 @router.delete("/{post_id}/reactions")
@@ -225,6 +237,16 @@ async def create_comment(post_id: int, comment_data: CommentCreate, current_user
     db.add(comment)
     db.commit()
     db.refresh(comment)
+
+    # Criar notificação para o autor do post (se não for o mesmo usuário)
+    if post.author_id != current_user.id:
+        await create_post_comment_notification(
+            db=db,
+            post_id=post_id,
+            commenter_id=current_user.id,
+            post_author_id=post.author_id,
+            comment_id=comment.id
+        )
 
     return CommentResponse(
         id=comment.id,

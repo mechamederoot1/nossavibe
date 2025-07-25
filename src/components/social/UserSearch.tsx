@@ -50,7 +50,7 @@ export function UserSearch({
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/users/search?q=${encodeURIComponent(query)}`,
+        `http://localhost:8000/users/?search=${encodeURIComponent(query)}&limit=15`,
         {
           headers: {
             Authorization: `Bearer ${userToken}`,
@@ -173,7 +173,7 @@ export function UserSearch({
 
   const removeFriend = async (userId: number) => {
     try {
-      const response = await fetch(`http://localhost:8000/friends/${userId}`, {
+      const response = await fetch(`http://localhost:8000/friendships/${userId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${userToken}`,

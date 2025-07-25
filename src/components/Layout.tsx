@@ -15,7 +15,11 @@ import {
 import { MessagesModal } from "./modals/MessagesModal";
 import { ResponsiveCreateStoryModal } from "./modals/ResponsiveCreateStoryModal";
 import { NotificationCenter } from "./notifications/NotificationCenter";
+import { EnhancedNotificationCenter } from "./notifications/EnhancedNotificationCenter";
 import { FriendRequestsModal } from "./modals/FriendRequestsModal";
+import { NotificationBadge } from "./ui/NotificationBadge";
+import { InlineSearch } from "./search/InlineSearch";
+import { useNotifications } from "../hooks/useNotifications";
 import { notificationService } from "../services/NotificationService";
 import { Logo } from "./ui/Logo";
 import { useTheme } from "../contexts/ThemeContext";
@@ -40,13 +44,30 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
   const [showMessages, setShowMessages] = useState(false);
   const [showCreateStory, setShowCreateStory] = useState(false);
   const [showFriendRequests, setShowFriendRequests] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showInlineSearch, setShowInlineSearch] = useState(false);
   const [realtimeNotifications, setRealtimeNotifications] = useState<any[]>([]);
   const [friendRequestsCount, setFriendRequestsCount] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showChatSidebar, setShowChatSidebar] = useState(true);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  // Enhanced notification system
+  const {
+    notifications,
+    unreadCount,
+    loading: notificationsLoading,
+    isConnected: notificationConnected,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    refetch: refetchNotifications
+  } = useNotifications({
+    userToken: user.token,
+    userId: user.id || 0
+  });
 
   useEffect(() => {
     // Track current path changes
@@ -213,8 +234,34 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
               </div>
             </div>
 
-            {/* Navigation */}
-            <nav className="flex space-x-8">
+            {/* Central Search */}
+            <div className="flex-1 max-w-md mx-8 relative">
+              <button
+                onClick={() => setShowInlineSearch(!showInlineSearch)}
+                className="w-full flex items-center space-x-3 px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                <Search className="w-5 h-5" />
+                <span>Buscar pessoas, páginas...</span>
+              </button>
+
+              <InlineSearch
+                userToken={user.token}
+                currentUserId={user.id || 0}
+                isOpen={showInlineSearch}
+                onClose={() => setShowInlineSearch(false)}
+                onAdvancedSearch={() => {
+                  setShowInlineSearch(false);
+                  window.location.href = "/search";
+                }}
+                onUserSelect={(userId) => {
+                  setShowInlineSearch(false);
+                  window.location.href = `/profile/${userId}`;
+                }}
+              />
+            </div>
+
+            {/* Right side navigation */}
+            <nav className="flex items-center space-x-6">
               <a
                 href={generateProfileUrl()}
                 className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
@@ -222,83 +269,23 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
                 <User className="w-5 h-5" />
                 <span>Perfil</span>
               </a>
-              <div className="relative">
-                <button
-                  onClick={() => setShowMessages(true)}
-                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  <span>Mensagens</span>
-                </button>
 
-                {/* Quick messages preview - will show in modal for now */}
-                {showMessages && (
-                  <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                    <div className="px-4 py-2 border-b border-gray-100">
-                      <h3 className="text-sm font-semibold text-gray-900">Recentes</h3>
-                    </div>
-                    <div className="max-h-60 overflow-y-auto">
-                      {/* Recent messages preview will go here */}
-                      <div className="px-4 py-3 text-center text-gray-500 text-sm">
-                        Carregando conversas...
-                      </div>
-                    </div>
-                    <div className="border-t border-gray-100 px-4 py-2">
-                      <a
-                        href="/messenger"
-                        className="block w-full text-center py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                        onClick={() => setShowMessages(false)}
-                      >
-                        Mostrar todas as mensagens
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <button
+                onClick={() => setShowMessages(true)}
+                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                <MessageCircle className="w-5 h-5" />
+                <span>Mensagens</span>
+              </button>
             </nav>
 
-            {/* Right side */}
-            <div className="flex items-center space-x-4">
-              {/* Dark Mode Toggle */}
-              <button
-                onClick={toggleDarkMode}
-                className="p-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                title={isDarkMode ? "Modo claro" : "Modo escuro"}
-              >
-                {isDarkMode ? (
-                  <Sun className="w-5 h-5" />
-                ) : (
-                  <Moon className="w-5 h-5" />
-                )}
-              </button>
-
-              {/* Story Button */}
-              <button
-                onClick={() => setShowCreateStory(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Story</span>
-              </button>
-
-              {/* Connection Status */}
-              <div className="flex items-center space-x-2">
-                <div
-                  className={`w-2 h-2 rounded-full ${
-                    isConnected ? "bg-green-500" : "bg-red-500"
-                  }`}
-                  title={isConnected ? "Conectado" : "Desconectado"}
-                />
-                <span className="text-xs text-gray-500">
-                  {isConnected ? "Online" : "Offline"}
-                </span>
-              </div>
-
+            {/* Right side actions */}
+            <div className="flex items-center space-x-3">
               {/* Notifications */}
-              <NotificationCenter
-                userToken={user.token}
-                realtimeNotifications={realtimeNotifications}
-                onClearRealtimeNotifications={clearRealtimeNotifications}
+              <NotificationBadge
+                count={unreadCount}
+                onClick={() => setShowNotifications(true)}
+                isActive={showNotifications}
               />
 
               {/* Friend Requests */}
@@ -315,23 +302,6 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
                   )}
                 </button>
               </div>
-
-              {/* Search */}
-              <a
-                href="/search?filter=people"
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
-                title="Procurar pessoas"
-              >
-                <Search className="w-6 h-6" />
-              </a>
-
-              {/* Settings */}
-              <a
-                href="/settings"
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <Settings className="w-6 h-6" />
-              </a>
 
               {/* User Menu */}
               <div className="relative">
@@ -355,6 +325,20 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
 
                 {showUserMenu && (
                   <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    <a
+                      href={generateProfileUrl()}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      Meu Perfil
+                    </a>
+                    <a
+                      href="/friends"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      Meus Amigos
+                    </a>
                     <a
                       href="/settings"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -537,6 +521,19 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
         userToken={user.token}
         onRequestHandled={fetchFriendRequestsCount}
       />
+
+      {showNotifications && (
+        <EnhancedNotificationCenter
+          userToken={user.token}
+          currentUserId={user.id || 0}
+          isOpen={showNotifications}
+          onClose={() => setShowNotifications(false)}
+          onNotificationClick={(notification) => {
+            console.log("Notification clicked:", notification);
+            setShowNotifications(false);
+          }}
+        />
+      )}
     </div>
   );
 };
