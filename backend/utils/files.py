@@ -33,13 +33,13 @@ def validate_media_file(file: UploadFile):
             break
 
     if not file_type:
-        raise HTTPException(status_code=400, detail="File type not supported")
+        return {"valid": False, "error": "Tipo de arquivo não suportado"}
 
     # Validate size (100MB max)
-    if file.size > MAX_FILE_SIZE_MB * 1024 * 1024:
-        raise HTTPException(status_code=400, detail=f"File too large (max {MAX_FILE_SIZE_MB}MB)")
-    
-    return file_type
+    if file.size and file.size > MAX_FILE_SIZE_MB * 1024 * 1024:
+        return {"valid": False, "error": f"Arquivo muito grande (máximo {MAX_FILE_SIZE_MB}MB)"}
+
+    return {"valid": True, "file_type": file_type}
 
 async def save_uploaded_file(file: UploadFile, file_type: str, prefix: str = "file") -> str:
     """Save uploaded file and return file_url"""
