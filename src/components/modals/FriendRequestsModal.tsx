@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { X, Check, UserX } from 'lucide-react';
+import React from 'react';
+import { X } from 'lucide-react';
+import { FriendRequestNotifications } from '../notifications/FriendRequestNotifications';
 
 interface FriendRequest {
   id: number;
