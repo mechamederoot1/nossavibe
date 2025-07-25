@@ -201,7 +201,7 @@ export function ProfilePreview({
           <>
             {/* Header with cover */}
             <div className="relative h-20 bg-gradient-to-r from-blue-400 to-purple-500">
-              {profile.cover_photo && (
+              {profile.cover_photo ? (
                 <img
                   src={
                     profile.cover_photo.startsWith("http")
@@ -211,6 +211,8 @@ export function ProfilePreview({
                   alt="Cover"
                   className="w-full h-20 object-cover"
                 />
+              ) : (
+                <div className="w-full h-20 bg-gradient-to-r from-blue-400 to-purple-500"></div>
               )}
               
               <button
