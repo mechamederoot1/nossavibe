@@ -144,6 +144,9 @@ os.makedirs("uploads/stories", exist_ok=True)
 os.makedirs("uploads/posts", exist_ok=True)
 os.makedirs("uploads/profiles", exist_ok=True)
 os.makedirs("uploads/image", exist_ok=True)
+os.makedirs("uploads/media", exist_ok=True)
+os.makedirs("uploads/avatars", exist_ok=True)
+os.makedirs("uploads/covers", exist_ok=True)
 
 # Servir arquivos estáticos para uploads
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
