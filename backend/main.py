@@ -1,5 +1,5 @@
 """
-Aplicação principal FastAPI - Vibe Social Network
+Aplica��ão principal FastAPI - Vibe Social Network
 """
 import os
 from contextlib import asynccontextmanager
@@ -13,6 +13,9 @@ from core.security_middleware import security_middleware
 from core.performance_middleware import performance_middleware, start_cache_cleanup
 from core.websockets import manager
 from routes import auth_router, posts_router, users_router, email_verification_router, stories_router, upload_router
+from routes.friendships import router as friendships_router
+from routes.follows import router as follows_router
+from routes.reports import router as reports_router
 from utils.auth import verify_websocket_token
 
 @asynccontextmanager
