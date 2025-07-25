@@ -502,7 +502,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
       {/* Mobile Layout */}
       <div className="lg:hidden min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-xl p-6">
+          <div className="bg-white rounded-2xl shadow-xl p-6" style={{position: 'relative', zIndex: 20}}>
             {/* Logo */}
             <div className="text-center mb-8">
               <Logo size="lg" showText={true} />
