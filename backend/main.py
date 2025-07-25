@@ -1,5 +1,5 @@
 """
-Aplica��ão principal FastAPI - Vibe Social Network
+Aplicação principal FastAPI - Vibe Social Network
 """
 import os
 from contextlib import asynccontextmanager
@@ -161,6 +161,9 @@ app.include_router(users_router)
 app.include_router(email_verification_router)
 app.include_router(stories_router)
 app.include_router(upload_router)
+app.include_router(friendships_router)
+app.include_router(follows_router)
+app.include_router(reports_router)
 
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = None):
