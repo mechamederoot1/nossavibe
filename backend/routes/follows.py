@@ -8,6 +8,7 @@ from datetime import datetime
 from core.database import get_db
 from core.security import get_current_user
 from models import User, Follow, Block
+from .notifications import create_follow_notification
 
 router = APIRouter(prefix="/follow", tags=["follow"])
 
