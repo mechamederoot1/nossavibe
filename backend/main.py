@@ -155,6 +155,46 @@ app.include_router(users_router)
 app.include_router(email_verification_router)
 app.include_router(stories_router)
 
+@app.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = None):
+    """Endpoint WebSocket para notificações em tempo real"""
+    try:
+        # Verificar token de autenticação
+        if not token:
+            await websocket.close(code=1008, reason="Token de autenticação necessário")
+            return
+
+        # Verificar se o token é válido
+        user_data = verify_websocket_token(token)
+        if not user_data or user_data.get("user_id") != user_id:
+            print(f"❌ WebSocket: Token inválido para usuário {user_id}")
+            await websocket.close(code=1008, reason="Token inválido")
+            return
+
+        # Conectar o usuário
+        await manager.connect(websocket, user_id)
+        print(f"✅ WebSocket: Usuário {user_id} conectado")
+
+        try:
+            # Manter conexão ativa
+            while True:
+                # Aguardar mensagens do cliente (ping/pong para manter conexão)
+                data = await websocket.receive_text()
+                # Echo para manter conexão ativa
+                if data == "ping":
+                    await websocket.send_text("pong")
+
+        except WebSocketDisconnect:
+            manager.disconnect(websocket, user_id)
+            print(f"🔌 WebSocket: Usuário {user_id} desconectado")
+
+    except Exception as e:
+        print(f"❌ Erro no WebSocket para usuário {user_id}: {str(e)}")
+        try:
+            await websocket.close(code=1011, reason="Erro interno do servidor")
+        except:
+            pass
+
 @app.get("/")
 async def root():
     """Endpoint raiz da API"""
