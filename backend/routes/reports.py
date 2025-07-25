@@ -8,6 +8,7 @@ from datetime import datetime
 from core.database import get_db
 from core.security import get_current_user
 from models import User
+from models.report import Report, ReportType, ReportStatus
 
 router = APIRouter(prefix="/reports", tags=["reports"])
 
