@@ -83,7 +83,28 @@ export function ProfilePreview({
 
       if (response.ok) {
         const data = await response.json();
+        console.log("Profile data received:", data); // Debug log
         setProfile(data);
+      } else {
+        console.error("Failed to fetch profile:", response.status, response.statusText);
+        // Fallback: try basic user info
+        const basicResponse = await fetch(`http://localhost:8000/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+
+        if (basicResponse.ok) {
+          const basicData = await basicResponse.json();
+          console.log("Basic user data received:", basicData); // Debug log
+          setProfile({
+            ...basicData,
+            friends_count: 0,
+            posts_count: 0,
+            is_friend: false,
+            is_own_profile: false
+          });
+        }
       }
     } catch (error) {
       console.error("Erro ao carregar perfil:", error);
