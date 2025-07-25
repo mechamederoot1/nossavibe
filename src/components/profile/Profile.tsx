@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { MessageCircle, Heart } from "lucide-react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { PostCard } from "../posts/PostCard";
-import { EnhancedProfileHeader } from "./EnhancedProfileHeader";
+import { UniversalProfile } from "./UniversalProfile";
 
 // Global function type declaration
 declare global {
