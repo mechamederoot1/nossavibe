@@ -10,7 +10,7 @@ from core.database import get_db
 from core.security import get_current_user
 from models import User, Friendship, Block
 from schemas import UserResponse
-from .notifications import create_friend_request_notification, create_friend_request_accepted_notification
+from utils.notification_helpers import create_friend_request_notification, create_friend_request_accepted_notification
 
 router = APIRouter(prefix="/friendships", tags=["friendships"])
 
