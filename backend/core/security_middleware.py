@@ -41,8 +41,8 @@ class SecurityMiddleware:
         self.trusted_ips = {'127.0.0.1', '::1', 'localhost'}
         
         # Configurações
-        self.MAX_REQUESTS_PER_MINUTE = 60
-        self.MAX_REQUESTS_PER_HOUR = 1000
+        self.MAX_REQUESTS_PER_MINUTE = 300  # Aumentado para desenvolvimento
+        self.MAX_REQUESTS_PER_HOUR = 5000   # Aumentado para desenvolvimento
         self.MAX_LOGIN_ATTEMPTS = 5
         self.LOGIN_LOCKOUT_DURATION = timedelta(minutes=15)
         self.BLOCKED_IP_DURATION = timedelta(hours=1)

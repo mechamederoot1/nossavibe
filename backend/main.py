@@ -3,7 +3,7 @@ Aplicação principal FastAPI - Vibe Social Network
 """
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -11,7 +11,9 @@ from core.config import ALLOWED_ORIGINS
 from core.database import engine, Base
 from core.security_middleware import security_middleware
 from core.performance_middleware import performance_middleware, start_cache_cleanup
-from routes import auth_router, posts_router, users_router, email_verification_router
+from core.websockets import manager
+from routes import auth_router, posts_router, users_router, email_verification_router, stories_router, upload_router
+from utils.auth import verify_websocket_token
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -142,6 +144,9 @@ os.makedirs("uploads/stories", exist_ok=True)
 os.makedirs("uploads/posts", exist_ok=True)
 os.makedirs("uploads/profiles", exist_ok=True)
 os.makedirs("uploads/image", exist_ok=True)
+os.makedirs("uploads/media", exist_ok=True)
+os.makedirs("uploads/avatars", exist_ok=True)
+os.makedirs("uploads/covers", exist_ok=True)
 
 # Servir arquivos estáticos para uploads
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
@@ -151,12 +156,54 @@ app.include_router(auth_router)
 app.include_router(posts_router)
 app.include_router(users_router)
 app.include_router(email_verification_router)
+app.include_router(stories_router)
+app.include_router(upload_router)
+
+@app.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = None):
+    """Endpoint WebSocket para notificações em tempo real"""
+    try:
+        # Verificar token de autenticação
+        if not token:
+            await websocket.close(code=1008, reason="Token de autenticação necessário")
+            return
+
+        # Verificar se o token é válido
+        user = verify_websocket_token(token)
+        if not user or user.id != user_id:
+            print(f"❌ WebSocket: Token inválido para usuário {user_id}")
+            await websocket.close(code=1008, reason="Token inválido")
+            return
+
+        # Conectar o usuário
+        await manager.connect(websocket, user_id)
+        print(f"✅ WebSocket: Usuário {user_id} conectado")
+
+        try:
+            # Manter conexão ativa
+            while True:
+                # Aguardar mensagens do cliente (ping/pong para manter conexão)
+                data = await websocket.receive_text()
+                # Echo para manter conexão ativa
+                if data == "ping":
+                    await websocket.send_text("pong")
+
+        except WebSocketDisconnect:
+            manager.disconnect(websocket, user_id)
+            print(f"🔌 WebSocket: Usuário {user_id} desconectado")
+
+    except Exception as e:
+        print(f"❌ Erro no WebSocket para usuário {user_id}: {str(e)}")
+        try:
+            await websocket.close(code=1011, reason="Erro interno do servidor")
+        except:
+            pass
 
 @app.get("/")
 async def root():
     """Endpoint raiz da API"""
     return {
-        "message": "Vibe Social Network API",
+        "message": "Vibe - conecte-se!",
         "version": "2.0.0",
         "status": "running"
     }

@@ -303,7 +303,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
           {/* Floating notification-like elements */}
           <div className="absolute top-16 left-8 w-2 h-2 bg-blue-500 rounded-full opacity-30 animate-pulse"></div>
           <div className="absolute bottom-40 left-12 w-1.5 h-1.5 bg-green-500 rounded-full opacity-40" style={{animationDelay: '2s'}}></div>
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-md" style={{position: 'relative', zIndex: 20}}>
             {/* Logo */}
             <div className="text-center mb-8">
               <Logo size="lg" showText={true} />
@@ -325,7 +325,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
             )}
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" style={{position: 'relative', zIndex: 50}}>
               {!isLogin && (
                 <>
                   <div>
@@ -436,7 +436,25 @@ export function SimpleAuth({ onLogin }: AuthProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  position: 'relative',
+                  zIndex: 1000,
+                  pointerEvents: 'all',
+                  background: '#2563eb',
+                  border: '2px solid #1d4ed8',
+                  cursor: loading ? 'not-allowed' : 'pointer'
+                }}
+                onClick={(e) => {
+                  console.log('🔥 Botão desktop clicado!', e);
+                  console.log('Loading:', loading);
+                  console.log('Event target:', e.target);
+                  console.log('Event type:', e.type);
+                  if (!loading) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
@@ -497,7 +515,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
       {/* Mobile Layout */}
       <div className="lg:hidden min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-xl p-6">
+          <div className="bg-white rounded-2xl shadow-xl p-6" style={{position: 'relative', zIndex: 20}}>
             {/* Logo */}
             <div className="text-center mb-8">
               <Logo size="lg" showText={true} />
@@ -630,7 +648,25 @@ export function SimpleAuth({ onLogin }: AuthProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-base"
+                className="w-full bg-blue-600 text-white py-4 px-4 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed text-base"
+                style={{
+                  position: 'relative',
+                  zIndex: 1000,
+                  pointerEvents: 'all',
+                  background: '#2563eb',
+                  border: '2px solid #1d4ed8',
+                  cursor: loading ? 'not-allowed' : 'pointer'
+                }}
+                onClick={(e) => {
+                  console.log('🔥 Botão mobile clicado!', e);
+                  console.log('Loading:', loading);
+                  console.log('Event target:', e.target);
+                  console.log('Event type:', e.type);
+                  if (!loading) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
               >
                 {loading ? (
                   <div className="flex items-center justify-center">

@@ -33,16 +33,16 @@ def validate_media_file(file: UploadFile):
             break
 
     if not file_type:
-        raise HTTPException(status_code=400, detail="File type not supported")
+        return {"valid": False, "error": "Tipo de arquivo não suportado"}
 
     # Validate size (100MB max)
-    if file.size > MAX_FILE_SIZE_MB * 1024 * 1024:
-        raise HTTPException(status_code=400, detail=f"File too large (max {MAX_FILE_SIZE_MB}MB)")
-    
-    return file_type
+    if file.size and file.size > MAX_FILE_SIZE_MB * 1024 * 1024:
+        return {"valid": False, "error": f"Arquivo muito grande (máximo {MAX_FILE_SIZE_MB}MB)"}
 
-async def save_uploaded_file(file: UploadFile, file_type: str, prefix: str = "file") -> tuple[str, str]:
-    """Save uploaded file and return (file_path, file_url)"""
+    return {"valid": True, "file_type": file_type}
+
+async def save_uploaded_file(file: UploadFile, file_type: str, prefix: str = "file") -> str:
+    """Save uploaded file and return file_url"""
     # Create directory if it doesn't exist
     upload_dir = Path(UPLOAD_DIR) / file_type
     upload_dir.mkdir(parents=True, exist_ok=True)
@@ -60,8 +60,8 @@ async def save_uploaded_file(file: UploadFile, file_type: str, prefix: str = "fi
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save file: {str(e)}")
 
-    # Return paths
-    return str(file_path), f"/{UPLOAD_DIR}/{file_type}/{unique_filename}"
+    # Return URL path
+    return f"/{UPLOAD_DIR}/{file_type}/{unique_filename}"
 
 async def save_avatar(file: UploadFile, user_id: int) -> str:
     """Save avatar file and return URL"""
