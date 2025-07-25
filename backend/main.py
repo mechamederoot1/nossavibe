@@ -154,6 +154,7 @@ app.include_router(posts_router)
 app.include_router(users_router)
 app.include_router(email_verification_router)
 app.include_router(stories_router)
+app.include_router(upload_router)
 
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = None):
