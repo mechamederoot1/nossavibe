@@ -127,7 +127,15 @@ async def accept_friend_request(
     friendship.status = "accepted"
     friendship.updated_at = datetime.utcnow()
     db.commit()
-    
+
+    # Criar notificação para quem enviou a solicitação
+    await create_friend_request_accepted_notification(
+        db=db,
+        requester_id=friendship.requester_id,
+        addressee_id=current_user.id,
+        friendship_id=friendship.id
+    )
+
     return {"message": "Friend request accepted"}
 
 @router.post("/requests/{request_id}/reject")
