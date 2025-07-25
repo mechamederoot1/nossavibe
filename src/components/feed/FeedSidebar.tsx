@@ -87,7 +87,10 @@ export const FeedSidebar: React.FC<FeedSidebarProps> = ({ user, isVisible }) => 
         <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Menu</h3>
           <div className="space-y-2">
-            <button className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-all duration-200 hover:scale-105">
+            <button
+              onClick={() => window.location.href = '/friends'}
+              className="w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-all duration-200 hover:scale-105"
+            >
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                 <Users className="w-5 h-5 text-blue-600" />
               </div>
