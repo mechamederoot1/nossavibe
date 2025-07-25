@@ -227,19 +227,27 @@ export function ProfilePreview({
             <div className="p-4 -mt-8 relative">
               {/* Avatar */}
               <div className="flex items-start justify-between mb-3">
-                <img
-                  src={
-                    profile.avatar?.startsWith("http")
-                      ? profile.avatar
-                      : profile.avatar
-                        ? `http://localhost:8000${profile.avatar}`
+                <div className="relative">
+                  <img
+                    src={
+                      profile.avatar
+                        ? profile.avatar.startsWith("http")
+                          ? profile.avatar
+                          : `http://localhost:8000${profile.avatar}`
                         : `https://ui-avatars.com/api/?name=${encodeURIComponent(
                             `${profile.first_name} ${profile.last_name}`
                           )}&background=3B82F6&color=fff&size=80`
-                  }
-                  alt={`${profile.first_name} ${profile.last_name}`}
-                  className="w-16 h-16 rounded-full border-4 border-white shadow-lg"
-                />
+                    }
+                    alt={`${profile.first_name} ${profile.last_name}`}
+                    className="w-16 h-16 rounded-full border-4 border-white shadow-lg"
+                    onError={(e) => {
+                      // Fallback to default avatar if image fails to load
+                      (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        `${profile.first_name} ${profile.last_name}`
+                      )}&background=3B82F6&color=fff&size=80`;
+                    }}
+                  />
+                </div>
                 
                 {!profile.is_own_profile && (
                   <div className="flex space-x-1 mt-2">
