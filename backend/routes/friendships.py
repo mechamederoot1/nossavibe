@@ -68,7 +68,16 @@ async def send_friend_request(
     
     db.add(friendship)
     db.commit()
-    
+    db.refresh(friendship)
+
+    # Criar notificação para o destinatário
+    await create_friend_request_notification(
+        db=db,
+        requester_id=current_user.id,
+        addressee_id=addressee_id,
+        friendship_id=friendship.id
+    )
+
     return {"message": "Friend request sent successfully"}
 
 @router.get("/requests")
