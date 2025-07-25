@@ -314,10 +314,10 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
               </div>
 
               {/* Notifications */}
-              <NotificationCenter
-                userToken={user.token}
-                realtimeNotifications={realtimeNotifications}
-                onClearRealtimeNotifications={clearRealtimeNotifications}
+              <NotificationBadge
+                count={unreadCount}
+                onClick={() => setShowNotifications(true)}
+                isActive={showNotifications}
               />
 
               {/* Friend Requests */}
