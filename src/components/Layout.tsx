@@ -338,21 +338,30 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
               </div>
 
               {/* Search */}
-              <a
-                href="/search?filter=people"
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
-                title="Procurar pessoas"
-              >
-                <Search className="w-6 h-6" />
-              </a>
+              <div className="relative">
+                <button
+                  onClick={() => setShowInlineSearch(!showInlineSearch)}
+                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                  title="Pesquisar"
+                >
+                  <Search className="w-6 h-6" />
+                </button>
 
-              {/* Settings */}
-              <a
-                href="/settings"
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <Settings className="w-6 h-6" />
-              </a>
+                <InlineSearch
+                  userToken={user.token}
+                  currentUserId={user.id || 0}
+                  isOpen={showInlineSearch}
+                  onClose={() => setShowInlineSearch(false)}
+                  onAdvancedSearch={() => {
+                    setShowInlineSearch(false);
+                    window.location.href = "/search";
+                  }}
+                  onUserSelect={(userId) => {
+                    setShowInlineSearch(false);
+                    window.location.href = `/profile/${userId}`;
+                  }}
+                />
+              </div>
 
               {/* User Menu */}
               <div className="relative">
