@@ -36,8 +36,14 @@ def get_database_url():
 # CORS settings
 ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://127.0.0.1:3000", 
+    "http://127.0.0.1:3000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "*"
 ]
+
+# Upload settings
+UPLOAD_DIR = "uploads"
+MAX_FILE_SIZE_MB = 50  # 50MB max for files
+MAX_AVATAR_SIZE_MB = 5  # 5MB max for avatars
+MAX_COVER_SIZE_MB = 10  # 10MB max for cover photos
