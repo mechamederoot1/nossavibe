@@ -77,7 +77,7 @@ async def security_performance_middleware(request: Request, call_next):
     try:
         response = await call_next(request)
 
-        # 4. Processar resposta com otimizações
+        # 4. Processar resposta com otimiza��ões
         response = await performance_middleware.process_response(request, response)
 
         return response
@@ -165,6 +165,7 @@ app.include_router(upload_router)
 app.include_router(friendships_router)
 app.include_router(follows_router)
 app.include_router(reports_router)
+app.include_router(notifications_router)
 
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = None):
