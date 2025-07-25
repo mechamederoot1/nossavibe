@@ -165,8 +165,8 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = No
             return
 
         # Verificar se o token é válido
-        user_data = verify_websocket_token(token)
-        if not user_data or user_data.get("user_id") != user_id:
+        user = verify_websocket_token(token)
+        if not user or user.id != user_id:
             print(f"❌ WebSocket: Token inválido para usuário {user_id}")
             await websocket.close(code=1008, reason="Token inválido")
             return
