@@ -1,0 +1,27 @@
+{
+  "name": "vibe-email-service",
+  "version": "1.0.0",
+  "description": "Microserviço de e-mail para Vibe Social Network",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "setup": "node setup.js",
+    "test": "node test-service.js",
+    "test-db": "node test-database-connection.js",
+    "create-tables": "node create-email-tables.js",
+    "fix-db": "npm run test-db && npm run create-tables"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mysql2": "^3.14.2",
+    "nodemailer": "^6.9.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "author": "Vibe Team",
+  "license": "MIT"
+}
