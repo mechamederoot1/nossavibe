@@ -556,6 +556,19 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
         userToken={user.token}
         onRequestHandled={fetchFriendRequestsCount}
       />
+
+      {showNotifications && (
+        <EnhancedNotificationCenter
+          userToken={user.token}
+          currentUserId={user.id || 0}
+          isOpen={showNotifications}
+          onClose={() => setShowNotifications(false)}
+          onNotificationClick={(notification) => {
+            console.log("Notification clicked:", notification);
+            setShowNotifications(false);
+          }}
+        />
+      )}
     </div>
   );
 };
