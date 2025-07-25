@@ -54,7 +54,14 @@ async def follow_user(
     
     db.add(follow)
     db.commit()
-    
+
+    # Criar notificação para o usuário seguido
+    await create_follow_notification(
+        db=db,
+        follower_id=current_user.id,
+        followed_id=user_id
+    )
+
     return {"message": "User followed successfully"}
 
 @router.delete("/{user_id}")
