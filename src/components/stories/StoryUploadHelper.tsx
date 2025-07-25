@@ -64,7 +64,7 @@ export const createStoryWithFile = async (
   privacy: string,
   userToken: string,
 ): Promise<boolean> => {
-  console.log("🔥 Creating story with enhanced approach...");
+  console.log("🔥 Creating story using direct FormData approach...");
   console.log("📋 Story params:", {
     hasContent: !!content,
     hasMediaFile: !!mediaFile,
@@ -76,68 +76,49 @@ export const createStoryWithFile = async (
   });
 
   try {
-    let mediaUrl: string | null = null;
-    let mediaType: "text" | "photo" | "video" | "music" | null = "text";
-
-    // If there's a media file, upload it first
-    if (mediaFile) {
-      console.log("📤 Uploading media file...");
-
-      // Upload the media file first
-      mediaUrl = await uploadStoryMedia(mediaFile, userToken);
-
-      if (!mediaUrl) {
-        console.error("❌ Failed to upload media file");
-        throw new Error("Erro ao fazer upload da mídia. Tente novamente.");
-      }
-
-      // Determine media type based on file
-      if (mediaFile.type.startsWith("image/")) {
-        mediaType = "photo";
-      } else if (mediaFile.type.startsWith("video/")) {
-        mediaType = "video";
-      } else if (mediaFile.type.startsWith("audio/")) {
-        mediaType = "music";
-      }
-
-      console.log("✅ Media uploaded successfully:", mediaUrl);
-    }
-
     // Validate required content
-    if (!content.trim() && !mediaUrl) {
+    if (!content.trim() && !mediaFile) {
       console.error("❌ Story must have either content or media");
-      console.log("📋 Validation failed:", { content: content.length, mediaUrl: !!mediaUrl });
       throw new Error("Story deve ter conteúdo ou mídia");
     }
 
-    // Ensure background color is safe for database
-    const safeBackgroundColor = backgroundColor.length > 255 
-      ? backgroundColor.substring(0, 255) 
-      : backgroundColor;
+    // Create FormData for multipart request
+    const formData = new FormData();
 
-    // Create story payload
-    const payload: StoryUploadData = {
-      content: content || "",
-      media_type: mediaType,
-      media_url: mediaUrl,
-      duration_hours: storyDuration,
-      background_color: safeBackgroundColor,
-      privacy,
-      overlays: [],
-    };
+    // Add text fields
+    if (content.trim()) {
+      formData.append("content", content.trim());
+    }
 
-    console.log("📤 Creating story with payload:", {
-      ...payload,
-      media_url: payload.media_url ? `${payload.media_url.substring(0, 50)}...` : null // Truncate for logging
-    });
+    formData.append("duration_hours", storyDuration.toString());
+    formData.append("background_color", backgroundColor);
 
-    const response = await apiCall("/stories/", {
+    // Add media file if present
+    if (mediaFile) {
+      formData.append("file", mediaFile);
+
+      // Determine media type based on file
+      if (mediaFile.type.startsWith("image/")) {
+        formData.append("media_type", "image");
+      } else if (mediaFile.type.startsWith("video/")) {
+        formData.append("media_type", "video");
+      } else if (mediaFile.type.startsWith("audio/")) {
+        formData.append("media_type", "audio");
+      }
+    } else {
+      formData.append("media_type", "text");
+    }
+
+    console.log("📤 Creating story with FormData...");
+
+    // Use fetch directly to properly handle FormData
+    const response = await fetch(`${API_BASE_URL}/stories/`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${userToken}`,
-        "Content-Type": "application/json",
+        // Don't set Content-Type - let browser set it with boundary for multipart
       },
-      body: JSON.stringify(payload),
+      body: formData,
     });
 
     if (response.ok) {
@@ -157,11 +138,11 @@ export const createStoryWithFile = async (
         throw new Error("Arquivo muito grande! Tente com um arquivo menor.");
       } else if (response.status === 400) {
         throw new Error("Dados inválidos. Verifique se o arquivo é válido.");
+      } else if (response.status === 404) {
+        throw new Error("Endpoint de stories não encontrado. Verifique se o backend está rodando.");
       } else {
-        throw new Error("Erro ao criar story. Tente novamente.");
+        throw new Error(`Erro ao criar story (${response.status}). Tente novamente.`);
       }
-
-      return false;
     }
   } catch (error) {
     console.error("❌ Story creation error:", error);
