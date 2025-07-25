@@ -16,26 +16,140 @@ from schemas import UserResponse, PostResponse
 router = APIRouter(prefix="/users", tags=["users"])
 
 @router.get("/")
-async def search_users(search: str = "", current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    if not search.strip():
-        return []
-    
-    users = db.query(User).filter(
+async def search_users(
+    search: str = "",
+    location: str = None,
+    verified_only: bool = False,
+    limit: int = 20,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Buscar usuários com filtros avançados"""
+    query = db.query(User).filter(
         User.is_active == True,
-        User.id != current_user.id,
-        (User.first_name.ilike(f"%{search}%") | User.last_name.ilike(f"%{search}%") | User.email.ilike(f"%{search}%"))
-    ).limit(20).all()
-    
+        User.id != current_user.id
+    )
+
+    # Filtro de busca por texto
+    if search.strip():
+        search_filter = (
+            User.first_name.ilike(f"%{search}%") |
+            User.last_name.ilike(f"%{search}%") |
+            User.email.ilike(f"%{search}%") |
+            User.username.ilike(f"%{search}%") |
+            User.bio.ilike(f"%{search}%")
+        )
+        query = query.filter(search_filter)
+
+    # Filtro por localização
+    if location:
+        query = query.filter(User.location.ilike(f"%{location}%"))
+
+    # Filtro por usuários verificados
+    if verified_only:
+        query = query.filter(User.is_verified == True)
+
+    # Obter usuários bloqueados para excluir dos resultados
+    from models import Block
+    blocked_users = db.query(Block).filter(
+        (Block.blocker_id == current_user.id) | (Block.blocked_id == current_user.id)
+    ).all()
+
+    blocked_ids = set()
+    for block in blocked_users:
+        blocked_ids.add(block.blocker_id)
+        blocked_ids.add(block.blocked_id)
+
+    if blocked_ids:
+        query = query.filter(~User.id.in_(blocked_ids))
+
+    users = query.limit(limit).all()
+
     return [
         {
             "id": user.id,
             "first_name": user.first_name,
             "last_name": user.last_name,
+            "username": user.username,
             "email": user.email,
-            "avatar": getattr(user, 'avatar', None)
+            "bio": user.bio,
+            "avatar": getattr(user, 'avatar', None),
+            "location": user.location,
+            "is_verified": user.is_verified,
+            "created_at": user.created_at.isoformat()
         }
         for user in users
     ]
+
+@router.get("/discover")
+async def discover_users(
+    limit: int = 10,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Descobrir novos usuários (usuários reais cadastrados)"""
+    # Obter IDs de amigos atuais
+    current_friends_query = db.query(Friendship).filter(
+        ((Friendship.requester_id == current_user.id) | (Friendship.addressee_id == current_user.id)),
+        Friendship.status == "accepted"
+    )
+
+    friend_ids = []
+    for friendship in current_friends_query:
+        if friendship.requester_id == current_user.id:
+            friend_ids.append(friendship.addressee_id)
+        else:
+            friend_ids.append(friendship.requester_id)
+
+    # Obter usuários bloqueados
+    from models import Block
+    blocked_users = db.query(Block).filter(
+        (Block.blocker_id == current_user.id) | (Block.blocked_id == current_user.id)
+    ).all()
+
+    blocked_ids = set()
+    for block in blocked_users:
+        blocked_ids.add(block.blocker_id)
+        blocked_ids.add(block.blocked_id)
+
+    # Obter solicitações pendentes
+    pending_requests = db.query(Friendship).filter(
+        ((Friendship.requester_id == current_user.id) | (Friendship.addressee_id == current_user.id)),
+        Friendship.status == "pending"
+    ).all()
+
+    pending_ids = set()
+    for request in pending_requests:
+        pending_ids.add(request.requester_id)
+        pending_ids.add(request.addressee_id)
+
+    # Excluir próprio usuário, amigos, bloqueados e solicitações pendentes
+    exclude_ids = set([current_user.id] + friend_ids + list(blocked_ids) + list(pending_ids))
+
+    # Buscar usuários ativos que não estão na lista de exclusão
+    # Priorizar usuários com mais informações no perfil
+    discovered_users = db.query(User).filter(
+        User.is_active == True,
+        ~User.id.in_(exclude_ids),
+        User.onboarding_completed == True  # Apenas usuários que completaram o onboarding
+    ).order_by(User.created_at.desc()).limit(limit).all()
+
+    result = []
+    for user in discovered_users:
+        result.append({
+            "id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "username": user.username,
+            "bio": user.bio,
+            "avatar": user.avatar,
+            "location": user.location,
+            "is_verified": user.is_verified,
+            "created_at": user.created_at.isoformat(),
+            "mutual_friends": 0  # Será calculado pelo frontend se necessário
+        })
+
+    return result
 
 @router.get("/{user_id}")
 async def get_user_by_id(user_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
