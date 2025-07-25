@@ -13,6 +13,6 @@ __all__ = [
     "Post", "Reaction", "Comment", "Share",
     "Story", "StoryView", "StoryTag", "StoryOverlay",
     "Friendship", "Block", "Follow",
-    "Notification", "Message", "MediaFile",
+    "Notification", "NotificationType", "Message", "MediaFile",
     "Report", "ReportType", "ReportStatus"
 ]
