@@ -281,20 +281,6 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
 
             {/* Right side actions */}
             <div className="flex items-center space-x-3">
-
-              {/* Connection Status */}
-              <div className="flex items-center space-x-2">
-                <div
-                  className={`w-2 h-2 rounded-full ${
-                    isConnected ? "bg-green-500" : "bg-red-500"
-                  }`}
-                  title={isConnected ? "Conectado" : "Desconectado"}
-                />
-                <span className="text-xs text-gray-500">
-                  {isConnected ? "Online" : "Offline"}
-                </span>
-              </div>
-
               {/* Notifications */}
               <NotificationBadge
                 count={unreadCount}
@@ -315,32 +301,6 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
                     </span>
                   )}
                 </button>
-              </div>
-
-              {/* Search */}
-              <div className="relative">
-                <button
-                  onClick={() => setShowInlineSearch(!showInlineSearch)}
-                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
-                  title="Pesquisar"
-                >
-                  <Search className="w-6 h-6" />
-                </button>
-
-                <InlineSearch
-                  userToken={user.token}
-                  currentUserId={user.id || 0}
-                  isOpen={showInlineSearch}
-                  onClose={() => setShowInlineSearch(false)}
-                  onAdvancedSearch={() => {
-                    setShowInlineSearch(false);
-                    window.location.href = "/search";
-                  }}
-                  onUserSelect={(userId) => {
-                    setShowInlineSearch(false);
-                    window.location.href = `/profile/${userId}`;
-                  }}
-                />
               </div>
 
               {/* User Menu */}
