@@ -166,7 +166,7 @@ async def get_stories(
                     "first_name": story.author.first_name,
                     "last_name": story.author.last_name,
                     "username": story.author.username,
-                    "avatar_url": story.author.avatar_url
+                    "avatar_url": story.author.avatar
                 },
                 "content": story.content,
                 "media_type": story.media_type,
