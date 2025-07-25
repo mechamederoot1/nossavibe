@@ -325,7 +325,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
             )}
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4" style={{position: 'relative', zIndex: 30}}>
+            <form onSubmit={handleSubmit} className="space-y-4" style={{position: 'relative', zIndex: 50}}>
               {!isLogin && (
                 <>
                   <div>
