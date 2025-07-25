@@ -16,6 +16,7 @@ from routes import auth_router, posts_router, users_router, email_verification_r
 from routes.friendships import router as friendships_router
 from routes.follows import router as follows_router
 from routes.reports import router as reports_router
+from routes.notifications import router as notifications_router
 from utils.auth import verify_websocket_token
 
 @asynccontextmanager
@@ -196,7 +197,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = No
 
         except WebSocketDisconnect:
             manager.disconnect(websocket, user_id)
-            print(f"🔌 WebSocket: Usuário {user_id} desconectado")
+            print(f"��� WebSocket: Usuário {user_id} desconectado")
 
     except Exception as e:
         print(f"❌ Erro no WebSocket para usuário {user_id}: {str(e)}")
