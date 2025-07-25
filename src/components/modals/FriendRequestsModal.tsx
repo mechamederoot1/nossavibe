@@ -14,25 +14,9 @@ export const FriendRequestsModal: React.FC<FriendRequestsModalProps> = ({
   isOpen,
   onClose,
   userToken,
-  onRequestHandled
+  onRequestHandled,
+  currentUserId = 0
 }) => {
-  const [requests, setRequests] = useState<FriendRequest[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      fetchFriendRequests();
-    }
-    
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-    return () => window.removeEventListener('resize', checkIfMobile);
-  }, [isOpen]);
 
   const fetchFriendRequests = async () => {
     setLoading(true);
