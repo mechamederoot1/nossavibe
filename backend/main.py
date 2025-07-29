@@ -24,6 +24,7 @@ from routes.search import router as search_router
 from routes.bookmarks import router as bookmarks_router
 from routes.shares import router as shares_router
 from routes.analytics import router as analytics_router
+from routes.two_factor import router as two_factor_router
 from utils.auth import verify_websocket_token
 
 @asynccontextmanager
