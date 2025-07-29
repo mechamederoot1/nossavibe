@@ -72,7 +72,7 @@ export function PostCard({
   useEffect(() => {
     const checkUserReaction = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/posts/${post.id}/reactions/user`, {
+        const response = await fetch(`${API_BASE_URL}/posts/${post.id}/reactions/user`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
