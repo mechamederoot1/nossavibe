@@ -1,6 +1,15 @@
 // Helper functions for story upload functionality
 import { apiCall, API_BASE_URL } from "../../config/api";
 
+// Helper function to convert file to base64
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.readAsDataURL(file);
+  });
+};
+
 export interface StoryUploadData {
   content: string;
   media_type: "text" | "photo" | "video" | "music" | null;
