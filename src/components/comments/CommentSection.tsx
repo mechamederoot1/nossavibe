@@ -71,7 +71,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/comments/", {
+      const response = await fetch("${API_BASE_URL}/comments/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -100,7 +100,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/comments/", {
+      const response = await fetch("${API_BASE_URL}/comments/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${userToken}`,
