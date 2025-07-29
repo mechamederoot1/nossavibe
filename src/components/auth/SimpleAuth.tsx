@@ -23,6 +23,29 @@ export function SimpleAuth({ onLogin }: AuthProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Função para login rápido de desenvolvimento
+  const handleQuickLogin = async () => {
+    console.log("🚀 Quick dev login triggered");
+    setLoading(true);
+    setError("");
+
+    try {
+      const mockResult = await mockAuthService.mockLogin("dev@test.com", "123456");
+      console.log("✅ Quick login successful!");
+      onLogin({
+        name: mockResult.user.name,
+        email: mockResult.user.email,
+        token: mockResult.user.token,
+        id: mockResult.user.id,
+      });
+    } catch (error) {
+      console.error("Quick login failed:", error);
+      setError("Erro no login rápido");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
