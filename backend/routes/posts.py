@@ -19,6 +19,70 @@ from utils.notification_helpers import create_post_reaction_notification, create
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
+def extract_hashtags(content: str) -> List[str]:
+    """Extract hashtags from content"""
+    if not content:
+        return []
+    hashtag_pattern = r'#(\w+)'
+    hashtags = re.findall(hashtag_pattern, content, re.IGNORECASE)
+    return list(set(hashtags))  # Remove duplicates
+
+def extract_mentions(content: str) -> List[str]:
+    """Extract user mentions from content"""
+    if not content:
+        return []
+    mention_pattern = r'@(\w+)'
+    mentions = re.findall(mention_pattern, content, re.IGNORECASE)
+    return list(set(mentions))  # Remove duplicates
+
+def process_hashtags(db: Session, post_id: int, content: str):
+    """Process and create hashtag associations for a post"""
+    hashtags = extract_hashtags(content)
+
+    for hashtag_name in hashtags:
+        # Get or create hashtag
+        hashtag = db.query(Hashtag).filter(Hashtag.name == hashtag_name.lower()).first()
+        if not hashtag:
+            hashtag = Hashtag(name=hashtag_name.lower(), usage_count=0)
+            db.add(hashtag)
+            db.flush()
+
+        # Create post-hashtag association
+        post_hashtag = PostHashtag(post_id=post_id, hashtag_id=hashtag.id)
+        db.add(post_hashtag)
+
+        # Update usage count
+        hashtag.usage_count += 1
+        hashtag.updated_at = datetime.utcnow()
+
+def process_mentions(db: Session, post_id: int, content: str, current_user_id: int):
+    """Process and create mention associations for a post"""
+    mentions = extract_mentions(content)
+
+    for username in mentions:
+        # Find user by username
+        mentioned_user = db.query(User).filter(User.username == username).first()
+        if mentioned_user:
+            # Create mention association
+            mention = PostMention(
+                post_id=post_id,
+                mentioned_user_id=mentioned_user.id,
+                mentioned_by_user_id=current_user_id,
+                mention_text=f"@{username}"
+            )
+            db.add(mention)
+
+            # Create notification for mentioned user
+            create_notification(
+                db=db,
+                recipient_id=mentioned_user.id,
+                sender_id=current_user_id,
+                notification_type="mention",
+                title="Você foi mencionado",
+                message=f"Você foi mencionado em um post",
+                data={"post_id": post_id, "mention_text": f"@{username}"}
+            )
+
 @router.post("/", response_model=PostResponse)
 async def create_post(post: PostCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # Validação e processamento do conteúdo
