@@ -47,6 +47,7 @@ interface ProfileHeaderProps {
   friendsCount?: number;
   postsCount?: number;
   onProfileUpdate?: () => void;
+  onStartChat?: (userId: number) => void;
 }
 
 export function ProfileHeader({
