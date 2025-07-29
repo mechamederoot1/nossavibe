@@ -18,7 +18,7 @@ export function CreateStoryModal({
   onSubmit,
 }: CreateStoryModalProps) {
   const [storyType, setStoryType] = useState<
-    "text" | "image" | "video" | "music"
+    "text" | "image" | "video" | "audio"
   >("text");
   const [content, setContent] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#3B82F6");
@@ -45,7 +45,7 @@ export function CreateStoryModal({
     if (
       (storyType === "image" ||
         storyType === "video" ||
-        storyType === "music") &&
+        storyType === "audio") &&
       !mediaFile
     )
       return;
@@ -152,9 +152,9 @@ export function CreateStoryModal({
               </button>
 
               <button
-                onClick={() => setStoryType("music")}
+                onClick={() => setStoryType("audio")}
                 className={`p-3 sm:p-4 rounded-lg border-2 transition-all ${
-                  storyType === "music"
+                  storyType === "audio"
                     ? "border-pink-500 bg-pink-50"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
@@ -168,12 +168,12 @@ export function CreateStoryModal({
           {/* Upload de Mídia */}
           {(storyType === "image" ||
             storyType === "video" ||
-            storyType === "music") && (
+            storyType === "audio") && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 {storyType === "image" && "Selecionar Foto"}
                 {storyType === "video" && "Selecionar Vídeo"}
-                {storyType === "music" && "Selecionar Música"}
+                {storyType === "audio" && "Selecionar Música"}
               </label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                 <input
@@ -236,7 +236,7 @@ export function CreateStoryModal({
                 </div>
               )}
 
-              {mediaFile && storyType === "music" && (
+              {mediaFile && storyType === "audio" && (
                 <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-700">📁 {mediaFile.name}</p>
                   {content && (
@@ -347,7 +347,7 @@ export function CreateStoryModal({
                 (storyType === "text" && !content.trim()) ||
                 ((storyType === "image" ||
                   storyType === "video" ||
-                  storyType === "music") &&
+                  storyType === "audio") &&
                   !mediaFile)
               }
               className="flex-1 px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm sm:text-base"
