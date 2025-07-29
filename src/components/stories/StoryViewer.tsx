@@ -81,7 +81,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
   const markAsViewed = async (storyId: string) => {
     try {
-      await fetch(`http://localhost:8000/stories/${storyId}/view`, {
+      await fetch(`${API_BASE_URL}/stories/${storyId}/view`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${userToken}`,
