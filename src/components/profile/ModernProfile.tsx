@@ -572,7 +572,7 @@ export function ModernProfile({
                 <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between">
                   <div className="mb-6 xl:mb-0">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h1 className="text-4xl font-bold text-gray-900">
+                      <h1 className="text-4xl font-bold text-gray-900" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                         {profile.first_name} {profile.last_name}
                       </h1>
                       {profile.is_verified && (
