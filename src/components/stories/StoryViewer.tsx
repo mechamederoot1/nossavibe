@@ -16,6 +16,7 @@ interface Story {
   created_at: string;
   expires_at: string;
   views_count: number;
+  viewed_by_user?: boolean;
 }
 
 interface StoryViewerProps {
