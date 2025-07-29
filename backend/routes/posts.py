@@ -3,14 +3,19 @@ Rotas de posts, reações e comentários
 """
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 import json
+import re
+from datetime import datetime
 
 from core.database import get_db
 from core.security import get_current_user
 from models import User, Post, Reaction, Comment, Share
+from models.hashtag import Hashtag, PostHashtag
+from models.mention import PostMention
 from schemas import PostCreate, PostResponse, ReactionCreate, CommentCreate, CommentResponse, ShareCreate
-from utils.notification_helpers import create_post_reaction_notification, create_post_comment_notification
+from schemas.post import PostUpdate
+from utils.notification_helpers import create_post_reaction_notification, create_post_comment_notification, create_notification
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
