@@ -68,6 +68,7 @@ export function PostCard({
   const [showOptions, setShowOptions] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [userReaction, setUserReaction] = useState<string | null>(null);
+  const [showComments, setShowComments] = useState(false);
 
   // Verificar se o usuário já reagiu ao post
   useEffect(() => {
