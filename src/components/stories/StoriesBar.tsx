@@ -95,7 +95,17 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
         const data = await response.json();
         console.log('📋 STORIES DEBUG: Dados recebidos do backend:', data);
         console.log('📋 STORIES DEBUG: Primeira story:', data[0]);
-        setStories(data);
+
+        // Map avatar_url to avatar for frontend compatibility
+        const mappedStories = data.map((story: any) => ({
+          ...story,
+          author: {
+            ...story.author,
+            avatar: story.author.avatar_url || story.author.avatar
+          }
+        }));
+
+        setStories(mappedStories);
       } else {
         console.error('Backend não disponível - status:', response.status);
         setStories([]); // Clear stories if backend is not available
