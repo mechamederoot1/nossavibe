@@ -18,7 +18,6 @@ import {
   Verified,
   Grid3X3,
   List,
-  Trophy,
   Star,
   Share2,
   MoreHorizontal,
@@ -284,7 +283,7 @@ export function ModernProfile({
         {/* Mobile Header with Cover */}
         <div className="relative">
           {/* Cover Photo */}
-          <div className="h-48 bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-600 relative overflow-hidden">
+          <div className="h-56 sm:h-64 bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-600 relative overflow-hidden">
             {profile.cover_photo && (
               <img
                 src={profile.cover_photo.startsWith("http") ? profile.cover_photo : `http://localhost:8000${profile.cover_photo}`}
@@ -297,7 +296,7 @@ export function ModernProfile({
                 <input type="file" id="mobile-cover-upload" accept="image/*" onChange={handleCoverUpload} className="hidden" />
                 <button
                   onClick={() => document.getElementById('mobile-cover-upload')?.click()}
-                  className="absolute top-4 right-4 bg-black/50 p-2 rounded-full text-white"
+                  className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm p-2.5 rounded-full text-white shadow-lg"
                 >
                   <Camera className="w-4 h-4" />
                 </button>
@@ -306,8 +305,8 @@ export function ModernProfile({
           </div>
 
           {/* Avatar and Basic Info */}
-          <div className="px-4 pb-4">
-            <div className="flex items-end -mt-12 mb-4">
+          <div className="px-4 sm:px-6 pb-4">
+            <div className="flex items-end -mt-14 sm:-mt-16 mb-4">
               <div className="relative">
                 <img
                   src={
@@ -316,105 +315,110 @@ export function ModernProfile({
                       : `https://ui-avatars.com/api/?name=${encodeURIComponent(`${profile.first_name} ${profile.last_name}`)}&background=3B82F6&color=fff&size=120`
                   }
                   alt={`${profile.first_name} ${profile.last_name}`}
-                  className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
+                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-white shadow-xl"
                 />
                 {isOwnProfile && (
                   <>
                     <input type="file" id="mobile-avatar-upload" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
                     <button
                       onClick={() => document.getElementById('mobile-avatar-upload')?.click()}
-                      className="absolute bottom-0 right-0 bg-blue-600 p-1.5 rounded-full text-white shadow-lg"
+                      className="absolute bottom-1 right-1 bg-blue-600 p-2 rounded-full text-white shadow-lg hover:bg-blue-700 transition-colors"
                     >
-                      <Camera className="w-3 h-3" />
+                      <Camera className="w-3.5 h-3.5" />
                     </button>
                   </>
                 )}
               </div>
               <div className="ml-4 flex-1 min-w-0">
-                <div className="flex items-center space-x-2">
-                  <h1 className="text-xl font-bold text-gray-900 truncate">
+                <div className="flex items-center space-x-2 mb-1">
+                  <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                     {profile.first_name} {profile.last_name}
                   </h1>
                   {profile.is_verified && <Verified className="w-5 h-5 text-blue-600 flex-shrink-0" />}
                 </div>
                 {profile.username && (
-                  <p className="text-gray-600">@{profile.username}</p>
+                  <p className="text-gray-600 text-sm sm:text-base">@{profile.username}</p>
                 )}
               </div>
             </div>
 
             {/* Bio */}
             {profile.bio && (
-              <p className="text-gray-700 text-sm mb-4 leading-relaxed">{profile.bio}</p>
+              <p className="text-gray-700 text-sm sm:text-base mb-4 sm:mb-6 leading-relaxed px-1">{profile.bio}</p>
             )}
 
             {/* Quick Stats */}
-            <div className="flex justify-around bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4 bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 mb-4 sm:mb-6">
               <div className="text-center">
-                <div className="text-lg font-bold text-gray-900">{profile.posts_count}</div>
-                <div className="text-xs text-gray-600">Posts</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{profile.posts_count}</div>
+                <div className="text-xs sm:text-sm text-gray-600">Posts</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-gray-900">{profile.friends_count}</div>
-                <div className="text-xs text-gray-600">Amigos</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{profile.friends_count}</div>
+                <div className="text-xs sm:text-sm text-gray-600">Amigos</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-gray-900">{profile.followers_count || 0}</div>
-                <div className="text-xs text-gray-600">Seguidores</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{profile.followers_count || 0}</div>
+                <div className="text-xs sm:text-sm text-gray-600">Seguidores</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-gray-900">{profile.following_count || 0}</div>
-                <div className="text-xs text-gray-600">Seguindo</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{profile.following_count || 0}</div>
+                <div className="text-xs sm:text-sm text-gray-600">Seguindo</div>
               </div>
             </div>
 
             {/* Mobile Action Buttons */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               {isOwnProfile ? (
-                <div className="flex space-x-2">
+                <div className="flex space-x-3">
                   <button
                     onClick={onEditProfile}
-                    className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-gray-100 text-gray-700 rounded-lg"
+                    className="flex-1 flex items-center justify-center space-x-2 py-3 sm:py-3.5 bg-blue-600 text-white rounded-xl font-medium shadow-sm hover:bg-blue-700 transition-colors"
                   >
                     <Edit3 className="w-4 h-4" />
-                    <span className="font-medium">Editar perfil</span>
+                    <span>Editar perfil</span>
                   </button>
-                  <button className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg">
-                    <Settings className="w-4 h-4" />
+                  <button className="px-4 py-3 sm:py-3.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors">
+                    <Settings className="w-5 h-5" />
                   </button>
                 </div>
               ) : (
-                <div className="flex space-x-2">
-                  {friendshipStatus === "accepted" ? (
-                    <button className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-green-100 text-green-700 rounded-lg">
-                      <UserCheck className="w-4 h-4" />
-                      <span className="font-medium">Amigos</span>
-                    </button>
-                  ) : friendshipStatus === "pending" ? (
-                    <button disabled className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-yellow-100 text-yellow-700 rounded-lg">
-                      <Users className="w-4 h-4" />
-                      <span className="font-medium">Pendente</span>
-                    </button>
-                  ) : (
+                <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-3">
+                  <div className="flex space-x-3 sm:flex-1">
+                    {friendshipStatus === "accepted" ? (
+                      <button className="flex-1 flex items-center justify-center space-x-2 py-3 bg-green-100 text-green-700 rounded-xl font-medium">
+                        <UserCheck className="w-4 h-4" />
+                        <span>Amigos</span>
+                      </button>
+                    ) : friendshipStatus === "pending" ? (
+                      <button disabled className="flex-1 flex items-center justify-center space-x-2 py-3 bg-yellow-100 text-yellow-700 rounded-xl font-medium cursor-not-allowed">
+                        <Users className="w-4 h-4" />
+                        <span>Pendente</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleSendFriendRequest}
+                        className="flex-1 flex items-center justify-center space-x-2 py-3 bg-blue-600 text-white rounded-xl font-medium shadow-sm hover:bg-blue-700 transition-colors"
+                      >
+                        <UserPlus className="w-4 h-4" />
+                        <span>Adicionar</span>
+                      </button>
+                    )}
                     <button
-                      onClick={handleSendFriendRequest}
-                      className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-blue-600 text-white rounded-lg"
+                      onClick={() => onSendMessage?.(userId)}
+                      className="px-4 py-3 bg-blue-100 text-blue-700 rounded-xl hover:bg-blue-200 transition-colors"
                     >
-                      <UserPlus className="w-4 h-4" />
-                      <span className="font-medium">Adicionar</span>
+                      <MessageCircle className="w-5 h-5" />
                     </button>
-                  )}
-                  <button
-                    onClick={() => onSendMessage?.(userId)}
-                    className="px-4 py-2.5 bg-blue-100 text-blue-700 rounded-lg"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                  </button>
+                  </div>
                   <button
                     onClick={handleToggleFollow}
-                    className={`px-4 py-2.5 rounded-lg ${followStatus ? 'bg-red-100 text-red-700' : 'bg-pink-100 text-pink-700'}`}
+                    className={`px-4 py-3 rounded-xl font-medium transition-colors sm:px-6 ${followStatus ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-pink-100 text-pink-700 hover:bg-pink-200'}`}
                   >
-                    <Heart className="w-4 h-4" />
+                    <div className="flex items-center space-x-2">
+                      <Heart className="w-4 h-4" />
+                      <span className="hidden sm:inline">{followStatus ? 'Seguindo' : 'Seguir'}</span>
+                    </div>
                   </button>
                 </div>
               )}
@@ -423,43 +427,53 @@ export function ModernProfile({
         </div>
 
         {/* Mobile Tabs */}
-        <div className="bg-white border-b border-gray-200 px-4">
+        <div className="bg-white border-b border-gray-200 px-4 sm:px-6 sticky top-0 z-10">
           <div className="flex">
             <button
               onClick={() => setActiveTab("posts")}
-              className={`flex-1 py-4 text-center font-medium ${
+              className={`flex-1 py-4 sm:py-5 text-center font-medium transition-colors ${
                 activeTab === "posts"
                   ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500"
+                  : "text-gray-500 hover:text-gray-700"
               }`}
             >
-              Posts ({posts.length})
+              <div className="flex items-center justify-center space-x-2">
+                <MessageCircle className="w-4 h-4" />
+                <span>Posts ({posts.length})</span>
+              </div>
             </button>
             <button
               onClick={() => setActiveTab("testimonials")}
-              className={`flex-1 py-4 text-center font-medium ${
+              className={`flex-1 py-4 sm:py-5 text-center font-medium transition-colors ${
                 activeTab === "testimonials"
                   ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500"
+                  : "text-gray-500 hover:text-gray-700"
               }`}
             >
-              Depoimentos ({testimonials.length})
+              <div className="flex items-center justify-center space-x-2">
+                <Heart className="w-4 h-4" />
+                <span>Depoimentos ({testimonials.length})</span>
+              </div>
             </button>
           </div>
         </div>
 
         {/* Mobile Content */}
-        <div className="p-4 space-y-4">
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 min-h-screen">
           {displayedPosts.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-xl">
-              <MessageCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <div className="text-center py-16 sm:py-20 bg-white rounded-xl shadow-sm">
+              {activeTab === "posts" ? (
+                <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-6" />
+              ) : (
+                <Heart className="w-16 h-16 text-gray-300 mx-auto mb-6" />
+              )}
+              <h3 className="text-xl sm:text-2xl font-medium text-gray-900 mb-3">
                 {activeTab === "posts" ? "Nenhum post ainda" : "Nenhum depoimento ainda"}
               </h3>
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-500 text-sm sm:text-base max-w-sm mx-auto">
                 {isOwnProfile
-                  ? `Comece a ${activeTab === "posts" ? "compartilhar" : "escrever depoimentos"}!`
-                  : `${profile.first_name} ainda não ${activeTab === "posts" ? "postou" : "tem depoimentos"}.`}
+                  ? `Comece a ${activeTab === "posts" ? "compartilhar suas ideias" : "escrever depoimentos"}!`
+                  : `${profile.first_name} ainda não ${activeTab === "posts" ? "postou nada" : "tem depoimentos"}.`}
               </p>
             </div>
           ) : (
@@ -788,7 +802,7 @@ export function ModernProfile({
                         : "border-transparent text-gray-500 hover:text-gray-700"
                     }`}
                   >
-                    <Trophy className="w-5 h-5" />
+                    <Heart className="w-5 h-5" />
                     <span>Depoimentos ({testimonials.length})</span>
                   </button>
                 </div>
