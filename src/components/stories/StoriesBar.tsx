@@ -159,7 +159,7 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
       );
     }
     
-    if (latestStory.media_type === 'music' && latestStory.media_url) {
+    if (latestStory.media_type === 'audio' && latestStory.media_url) {
       return (
         <div 
           className="w-full h-full flex items-center justify-center"
