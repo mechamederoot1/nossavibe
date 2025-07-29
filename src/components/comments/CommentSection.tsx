@@ -48,7 +48,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   const fetchComments = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8000/posts/${postId}/comments`,
+        `${API_BASE_URL}/posts/${postId}/comments`,
         {
           headers: {
             Authorization: `Bearer ${userToken}`,
