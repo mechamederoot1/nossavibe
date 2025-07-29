@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, MoreVertical, Trash2, Eye } from 'lucide-react';
+import { API_BASE_URL } from '../../config/api';
 
 interface Story {
   id: string;
