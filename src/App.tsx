@@ -5,6 +5,8 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+// Importar interceptor de mock para desenvolvimento
+import './services/MockInterceptor';
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { Layout } from "./components/Layout";
 import { SimpleAuth } from "./components/auth/SimpleAuth";
