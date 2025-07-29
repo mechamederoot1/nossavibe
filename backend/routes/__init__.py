@@ -7,6 +7,7 @@ from .users import router as users_router
 from .email_verification import router as email_verification_router
 from .stories import router as stories_router
 from .upload import router as upload_router
+from .reports import router as reports_router
 
 __all__ = [
     "auth_router",
@@ -14,5 +15,6 @@ __all__ = [
     "users_router",
     "email_verification_router",
     "stories_router",
-    "upload_router"
+    "upload_router",
+    "reports_router"
 ]
