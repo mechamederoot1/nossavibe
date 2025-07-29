@@ -171,15 +171,13 @@ app.include_router(stories_router)
 app.include_router(upload_router)
 app.include_router(friendships_router)
 app.include_router(follows_router)
-app.include_router(reports_router)
+# Core user features only
 app.include_router(notifications_router)
 app.include_router(messages_router)
 app.include_router(settings_router)
 app.include_router(search_router)
 app.include_router(bookmarks_router)
 app.include_router(shares_router)
-app.include_router(analytics_router)
-app.include_router(two_factor_router)
 
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = None):
