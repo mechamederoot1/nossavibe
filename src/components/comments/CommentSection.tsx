@@ -125,6 +125,35 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     }
   };
 
+  const handleCommentReaction = async (commentId: number) => {
+    try {
+      const currentReaction = commentReactions[commentId];
+      const isRemoving = currentReaction?.isLoved;
+
+      const method = isRemoving ? "DELETE" : "POST";
+      const response = await fetch(`${API_BASE_URL}/comments/${commentId}/reactions`, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+        body: method === "POST" ? JSON.stringify({ reaction_type: "love" }) : undefined,
+      });
+
+      if (response.ok) {
+        setCommentReactions(prev => ({
+          ...prev,
+          [commentId]: {
+            isLoved: !isRemoving,
+            count: isRemoving ? (prev[commentId]?.count || 1) - 1 : (prev[commentId]?.count || 0) + 1
+          }
+        }));
+      }
+    } catch (error) {
+      console.error("Erro ao reagir ao comentário:", error);
+    }
+  };
+
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
