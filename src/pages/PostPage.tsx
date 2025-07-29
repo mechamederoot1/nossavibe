@@ -268,7 +268,7 @@ export function PostPage({ userToken, currentUserId }: PostPageProps) {
           {/* Media */}
           {post.media_url && (
             <div className="mt-4">
-              {post.media_type === "photo" && (
+              {post.media_type === "image" && (
                 <img
                   src={
                     post.media_url.startsWith("http")
