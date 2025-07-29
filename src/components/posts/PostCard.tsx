@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { 
-  Heart, 
-  MessageCircle, 
-  Share, 
-  Bookmark, 
-  MoreHorizontal, 
-  Edit3, 
+import {
+  Heart,
+  MessageCircle,
+  Share,
+  Bookmark,
+  MoreHorizontal,
+  Edit3,
   Trash2,
   Flag,
   Link,
   Eye,
-  EyeOff
+  EyeOff,
+  Archive,
+  ArchiveRestore
 } from 'lucide-react';
 
 interface PostAuthor {
@@ -28,11 +30,13 @@ interface Post {
   media_url?: string;
   media_type?: string;
   created_at: string;
+  updated_at?: string;
   reactions_count: number;
   comments_count: number;
   shares_count: number;
   is_profile_update?: boolean;
   is_cover_update?: boolean;
+  is_archived?: boolean;
 }
 
 interface PostCardProps {
@@ -46,25 +50,28 @@ interface PostCardProps {
   onBookmark?: (postId: number) => void;
   onDelete?: (postId: number) => void;
   onEdit?: (postId: number) => void;
+  onArchive?: (postId: number, isArchived: boolean) => void;
 }
 
-export function PostCard({ 
-  post, 
+export function PostCard({
+  post,
   userToken,
   currentUserId,
   canEdit = false,
-  onLike, 
-  onComment, 
-  onShare, 
+  onLike,
+  onComment,
+  onShare,
   onBookmark,
   onDelete,
-  onEdit
+  onEdit,
+  onArchive
 }: PostCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.reactions_count);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isArchiving, setIsArchiving] = useState(false);
 
   const handleReaction = async (reactionType: string = "like") => {
     try {
@@ -89,7 +96,7 @@ export function PostCard({
 
   const handleDelete = async () => {
     if (!confirm("Tem certeza que deseja deletar este post?")) return;
-    
+
     setIsDeleting(true);
     try {
       const response = await fetch(`http://localhost:8000/posts/${post.id}`, {
@@ -109,6 +116,33 @@ export function PostCard({
       alert("Erro ao deletar post");
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleArchive = async () => {
+    const action = post.is_archived ? "desarquivar" : "arquivar";
+    if (!confirm(`Tem certeza que deseja ${action} este post?`)) return;
+
+    setIsArchiving(true);
+    try {
+      const response = await fetch(`http://localhost:8000/posts/${post.id}/archive`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        onArchive?.(post.id, result.is_archived);
+      } else {
+        alert(`Erro ao ${action} post`);
+      }
+    } catch (error) {
+      console.error(`Erro ao ${action} post:`, error);
+      alert(`Erro ao ${action} post`);
+    } finally {
+      setIsArchiving(false);
     }
   };
 
@@ -172,9 +206,19 @@ export function PostCard({
               
               <div className="flex items-center space-x-2 text-sm text-gray-500">
                 <span>{formatTimeAgo(post.created_at)}</span>
+                {post.updated_at && (
+                  <span className="text-xs text-gray-400">
+                    • editado
+                  </span>
+                )}
                 {post.post_type === "testimonial" && (
                   <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs">
                     Depoimento
+                  </span>
+                )}
+                {post.is_archived && (
+                  <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">
+                    Arquivado
                   </span>
                 )}
               </div>
@@ -207,6 +251,27 @@ export function PostCard({
                     
                     <button
                       onClick={() => {
+                        handleArchive();
+                        setShowOptions(false);
+                      }}
+                      disabled={isArchiving}
+                      className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      {post.is_archived ? (
+                        <>
+                          <ArchiveRestore className="w-4 h-4" />
+                          <span>{isArchiving ? "Desarquivando..." : "Desarquivar"}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Archive className="w-4 h-4" />
+                          <span>{isArchiving ? "Arquivando..." : "Arquivar"}</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      onClick={() => {
                         handleDelete();
                         setShowOptions(false);
                       }}
@@ -216,7 +281,7 @@ export function PostCard({
                       <Trash2 className="w-4 h-4" />
                       <span>{isDeleting ? "Deletando..." : "Deletar"}</span>
                     </button>
-                    
+
                     <div className="border-t border-gray-100 my-1"></div>
                   </>
                 )}
