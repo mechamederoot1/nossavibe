@@ -257,14 +257,20 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
       );
     }
     
-    // Text story
+    // Text story or fallback
+    console.log('📝 STORY DEBUG: Rendering as text story or fallback', {
+      media_type: currentStory.media_type,
+      has_content: !!currentStory.content,
+      background_color: currentStory.background_color
+    });
+
     return (
-      <div 
+      <div
         className="w-full h-full flex items-center justify-center text-white text-center p-4"
         style={{ backgroundColor: currentStory.background_color || '#3B82F6' }}
       >
         <div className="text-lg font-medium">
-          {currentStory.content}
+          {currentStory.content || (currentStory.media_type ? `Story tipo: ${currentStory.media_type}` : 'Story sem conteúdo')}
         </div>
       </div>
     );
