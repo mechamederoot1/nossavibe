@@ -673,8 +673,12 @@ export function ProfileHeader({
                   <Plus className="w-4 h-4" />
                   <span>Adicionar</span>
                 </button>
-                <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-                  Mensagem
+                <button
+                  onClick={() => onStartChat?.(user.id || 0)}
+                  className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Mensagem</span>
                 </button>
               </>
             )}
