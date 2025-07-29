@@ -12,6 +12,7 @@ from core.database import get_db
 from core.security import get_current_user
 from models import User, Post, Friendship
 from schemas import UserResponse, PostResponse
+from schemas.user import UserProfileUpdate
 
 router = APIRouter(prefix="/users", tags=["users"])
 
