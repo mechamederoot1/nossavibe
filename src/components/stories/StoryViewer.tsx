@@ -145,7 +145,19 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   };
 
   const renderStoryContent = () => {
-    if (!currentStory) return null;
+    if (!currentStory) {
+      console.error('❌ STORY DEBUG: currentStory is null/undefined');
+      return null;
+    }
+
+    console.log('📋 STORY DEBUG: Rendering story content', {
+      id: currentStory.id,
+      media_type: currentStory.media_type,
+      media_url: currentStory.media_url,
+      content: currentStory.content,
+      background_color: currentStory.background_color,
+      author: currentStory.author
+    });
 
     // Helper function to get full URL for media
     const getMediaUrl = (url: string) => {
