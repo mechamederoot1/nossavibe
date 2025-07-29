@@ -41,17 +41,13 @@ export const BackendStatus: React.FC<BackendStatusProps> = ({ className = '' }) 
   // Don't show anything if we haven't checked yet
   if (isBackendOnline === null) return null;
 
-  // Don't show if backend is online and we've decided to hide the status
-  if (isBackendOnline && !showStatus) return null;
+  // Don't show anything if backend is online - users don't need to know
+  if (isBackendOnline) return null;
 
   return (
     <div className={`fixed top-4 right-4 z-50 ${className}`}>
-      {isBackendOnline ? (
-        <div className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2">
-          <CheckCircle className="w-4 h-4" />
-          <span className="text-sm font-medium">Backend online</span>
-        </div>
-      ) : (
+      {/* Only show when backend is offline */}
+      {!isBackendOnline && (
         <div className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg max-w-sm">
           <div className="flex items-center space-x-2 mb-2">
             <XCircle className="w-4 h-4" />
