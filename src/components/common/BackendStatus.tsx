@@ -52,20 +52,26 @@ export const BackendStatus: React.FC<BackendStatusProps> = ({ className = '' }) 
           <span className="text-sm font-medium">Backend online</span>
         </div>
       ) : (
-        <div className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg">
+        <div className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg max-w-sm">
           <div className="flex items-center space-x-2 mb-2">
             <XCircle className="w-4 h-4" />
             <span className="text-sm font-medium">Backend offline</span>
           </div>
-          <div className="text-xs opacity-90">
-            • Stories podem não carregar imagens<br/>
-            • Algumas funcionalidades limitadas
+          <div className="text-xs opacity-90 mb-2">
+            O servidor Python não está rodando:<br/>
+            • Stories não carregam imagens<br/>
+            • Dados não são salvos no banco<br/>
+            • Upload de arquivos indisponível
+          </div>
+          <div className="text-xs bg-red-600 p-2 rounded mb-2">
+            <strong>Para corrigir:</strong><br/>
+            Execute: <code>python3 start-backend.py</code>
           </div>
           <button
             onClick={checkBackendStatus}
-            className="mt-2 text-xs underline hover:no-underline"
+            className="text-xs underline hover:no-underline"
           >
-            Tentar novamente
+            ↻ Verificar novamente
           </button>
         </div>
       )}
