@@ -218,10 +218,14 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
     }
   };
 
+  const isMockMode = user.token?.startsWith('mock_token') || false;
+
   return (
     <div
       className={`min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 ${isMobile ? "pb-20" : ""}`}
     >
+      {/* Mock Development Banner */}
+      <MockBanner show={isMockMode} />
       {/* Desktop Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 sticky top-0 z-40 hidden md:block">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
