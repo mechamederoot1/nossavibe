@@ -195,6 +195,25 @@ async def remove_post_reaction(post_id: int, current_user: User = Depends(get_cu
     else:
         raise HTTPException(status_code=404, detail="Reaction not found")
 
+@router.get("/{post_id}/reactions/user")
+async def get_user_reaction(post_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Get current user's reaction to a post"""
+    reaction = db.query(Reaction).filter(
+        Reaction.post_id == post_id,
+        Reaction.user_id == current_user.id
+    ).first()
+
+    if reaction:
+        return {
+            "reaction": {
+                "id": reaction.id,
+                "reaction_type": reaction.reaction_type,
+                "created_at": reaction.created_at.isoformat()
+            }
+        }
+    else:
+        return {"reaction": None}
+
 # Comments
 @router.get("/{post_id}/comments", response_model=List[CommentResponse])
 async def get_post_comments(post_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
