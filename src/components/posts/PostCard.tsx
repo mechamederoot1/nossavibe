@@ -351,15 +351,17 @@ export function PostCard({
         <div className="flex items-center justify-between mt-3">
           <div className="flex items-center space-x-1">
             <button
-              onClick={() => handleReaction("like")}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                isLiked
-                  ? "bg-red-50 text-red-600"
-                  : "text-gray-600 hover:bg-gray-50"
+              onClick={() => handleReaction("love")}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                isLoved
+                  ? "bg-red-50 text-red-600 scale-105"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-red-500"
               }`}
             >
-              <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
-              <span>Curtir</span>
+              <Heart className={`w-5 h-5 transition-all duration-200 ${
+                isLoved ? "fill-current text-red-600 scale-110" : "hover:text-red-500"
+              }`} />
+              <span className="font-medium">{isLoved ? "Amei" : "Amar"}</span>
             </button>
 
             <button
