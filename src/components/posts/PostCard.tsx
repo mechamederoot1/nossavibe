@@ -366,7 +366,10 @@ export function PostCard({
             </button>
 
             <button
-              onClick={() => onComment?.(post.id)}
+              onClick={() => {
+                setShowComments(true);
+                onComment?.(post.id);
+              }}
               className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
             >
               <MessageCircle className="w-5 h-5" />
