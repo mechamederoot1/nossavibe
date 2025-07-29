@@ -87,3 +87,11 @@ class NotificationSettings(BaseModel):
     reaction_notifications: Optional[bool] = None
     message_notifications: Optional[bool] = None
     story_notifications: Optional[bool] = None
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str
+
+class AccountSettings(BaseModel):
+    privacy_settings: Optional[Dict[str, Any]] = None
+    notification_settings: Optional[Dict[str, Any]] = None
