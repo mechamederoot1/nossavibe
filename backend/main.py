@@ -191,13 +191,43 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = No
         print(f"✅ WebSocket: Usuário {user_id} conectado")
 
         try:
-            # Manter conexão ativa
+            # Manter conexão ativa e processar mensagens
             while True:
-                # Aguardar mensagens do cliente (ping/pong para manter conexão)
+                # Aguardar mensagens do cliente
                 data = await websocket.receive_text()
-                # Echo para manter conexão ativa
-                if data == "ping":
-                    await websocket.send_text("pong")
+
+                try:
+                    # Tentar fazer parse do JSON
+                    message_data = json.loads(data)
+                    message_type = message_data.get("type")
+
+                    if message_type == "ping":
+                        await websocket.send_text("pong")
+
+                    elif message_type == "typing":
+                        # Reenviar indicador de digitação para o destinatário
+                        recipient_id = message_data.get("recipient_id")
+                        if recipient_id:
+                            typing_message = {
+                                "type": "typing",
+                                "sender_id": user_id,
+                                "is_typing": message_data.get("is_typing", False)
+                            }
+                            await manager.send_personal_message(typing_message, recipient_id)
+
+                    elif message_type == "message_read":
+                        # Notificar o remetente que a mensagem foi lida
+                        message_id = message_data.get("message_id")
+                        read_receipt = {
+                            "type": "message_read",
+                            "message_id": message_id,
+                            "read_by": user_id
+                        }
+
+                except json.JSONDecodeError:
+                    # Se não for JSON válido, tratar como ping simples
+                    if data == "ping":
+                        await websocket.send_text("pong")
 
         except WebSocketDisconnect:
             manager.disconnect(websocket, user_id)
