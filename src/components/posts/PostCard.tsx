@@ -185,7 +185,7 @@ export function PostCard({
                 post.author.avatar
                   ? post.author.avatar.startsWith("http")
                     ? post.author.avatar
-                    : `http://localhost:8000${post.author.avatar}`
+                    : `${API_BASE_URL}${post.author.avatar}`
                   : `https://ui-avatars.com/api/?name=${encodeURIComponent(
                       `${post.author.first_name} ${post.author.last_name}`
                     )}&background=3B82F6&color=fff`
