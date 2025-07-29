@@ -24,7 +24,7 @@ import { notificationService } from "../services/NotificationService";
 import { Logo } from "./ui/Logo";
 import { useTheme } from "../contexts/ThemeContext";
 import { API_BASE_URL } from "../config/api";
-import { ChatSidebar } from "./chat/ChatSidebar";
+import { OnlineFriendsSidebar } from "./feed/OnlineFriendsSidebar";
 import { FeedSidebar } from "./feed/FeedSidebar";
 
 interface LayoutProps {
