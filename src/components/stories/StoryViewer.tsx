@@ -256,11 +256,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
     }
     
     // Text story or fallback
-    console.log('📝 STORY DEBUG: Rendering as text story or fallback', {
-      media_type: currentStory.media_type,
-      has_content: !!currentStory.content,
-      background_color: currentStory.background_color
-    });
+    console.log('📝 STORY DEBUG: Fallback to text rendering');
 
     return (
       <div
