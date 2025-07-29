@@ -108,7 +108,15 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
 
   const handleViewStoryGroup = (authorId: number, storyIndex: number = 0) => {
     const authorStories = groupedStories[authorId];
+    console.log('🎯 STORIES DEBUG: Abrindo grupo de stories', {
+      authorId,
+      storyIndex,
+      authorStories,
+      storiesCount: authorStories?.length
+    });
+
     if (authorStories && authorStories.length > 0) {
+      console.log('🎯 STORIES DEBUG: Story que será exibida:', authorStories[storyIndex]);
       setSelectedStoryGroup(authorStories);
       setSelectedStoryIndex(storyIndex);
     }
