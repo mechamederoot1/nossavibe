@@ -26,6 +26,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import { API_BASE_URL } from "../config/api";
 import { ChatSidebar } from "./chat/ChatSidebar";
 import { FeedSidebar } from "./feed/FeedSidebar";
+import { MockBanner } from "./ui/MockBanner";
 
 interface LayoutProps {
   children: React.ReactNode;
