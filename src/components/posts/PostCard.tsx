@@ -400,6 +400,14 @@ export function PostCard({
           </button>
         </div>
       </div>
+
+      {/* Comments Section */}
+      <CommentSection
+        postId={post.id}
+        userToken={userToken}
+        isOpen={showComments}
+        onClose={() => setShowComments(false)}
+      />
     </div>
   );
 }
