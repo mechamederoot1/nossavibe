@@ -167,6 +167,7 @@ app.include_router(friendships_router)
 app.include_router(follows_router)
 app.include_router(reports_router)
 app.include_router(notifications_router)
+app.include_router(messages_router)
 
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = None):
