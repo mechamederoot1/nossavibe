@@ -16,6 +16,7 @@ import { MessagesModal } from "./modals/MessagesModal";
 import { ResponsiveCreateStoryModal } from "./modals/ResponsiveCreateStoryModal";
 import { NotificationCenter } from "./notifications/NotificationCenter";
 import { EnhancedNotificationCenter } from "./notifications/EnhancedNotificationCenter";
+import { BackendStatus } from "./common/BackendStatus";
 import { FriendRequestsModal } from "./modals/FriendRequestsModal";
 import { NotificationBadge } from "./ui/NotificationBadge";
 import { InlineSearch } from "./search/InlineSearch";
