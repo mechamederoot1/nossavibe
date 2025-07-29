@@ -12,7 +12,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sqlalchemy import create_engine, text, MetaData, Table, Column, Integer, String, Boolean, DateTime, Text, ForeignKey
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
-from core.config import DATABASE_URL
+from core.config import get_database_url
 from core.database import Base, engine
 from models.message import Message
 from models.user import User
