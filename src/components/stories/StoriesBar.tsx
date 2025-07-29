@@ -89,13 +89,33 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
           'Authorization': `Bearer ${userToken}`,
         },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setStories(data);
+      } else {
+        throw new Error('Backend não respondeu');
       }
     } catch (error) {
       console.error('Erro ao carregar stories:', error);
+
+      // Fallback: Load local stories
+      const localStories = JSON.parse(localStorage.getItem('vibe_local_stories') || '[]');
+
+      // Filter out expired stories
+      const validStories = localStories.filter((story: any) => {
+        const expiresAt = new Date(story.expires_at);
+        return expiresAt > new Date();
+      });
+
+      // Update localStorage with valid stories
+      localStorage.setItem('vibe_local_stories', JSON.stringify(validStories));
+
+      setStories(validStories);
+
+      if (validStories.length > 0) {
+        console.log('✅ Carregados stories locais:', validStories.length);
+      }
     }
   };
 
