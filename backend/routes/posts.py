@@ -215,6 +215,59 @@ async def delete_post(post_id: int, current_user: User = Depends(get_current_use
     
     return {"message": "Post deleted successfully"}
 
+@router.put("/{post_id}")
+async def update_post(
+    post_id: int,
+    post_update: PostUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Update an existing post"""
+    post = db.query(Post).filter(Post.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    if post.author_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to edit this post")
+
+    # Update content if provided
+    if post_update.content is not None:
+        post.content = post_update.content
+        post.edited_at = datetime.utcnow()
+        post.is_edited = True
+
+        # Remove old hashtags and mentions
+        db.query(PostHashtag).filter(PostHashtag.post_id == post_id).delete()
+        db.query(PostMention).filter(PostMention.post_id == post_id).delete()
+
+        # Process new hashtags and mentions
+        process_hashtags(db, post.id, post_update.content)
+        process_mentions(db, post.id, post_update.content, current_user.id)
+
+    # Update privacy if provided
+    if post_update.privacy is not None:
+        post.privacy = post_update.privacy
+
+    # Update media if provided
+    if post_update.media_url is not None:
+        post.media_url = post_update.media_url
+    if post_update.media_type is not None:
+        post.media_type = post_update.media_type
+
+    db.commit()
+    db.refresh(post)
+
+    return {
+        "message": "Post updated successfully",
+        "post": {
+            "id": post.id,
+            "content": post.content,
+            "privacy": post.privacy,
+            "edited_at": post.edited_at.isoformat() if post.edited_at else None,
+            "is_edited": post.is_edited
+        }
+    }
+
 # Reactions
 @router.post("/{post_id}/reactions")
 async def create_post_reaction(post_id: int, reaction_data: ReactionCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
