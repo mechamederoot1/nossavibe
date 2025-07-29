@@ -178,6 +178,7 @@ app.include_router(settings_router)
 app.include_router(search_router)
 app.include_router(bookmarks_router)
 app.include_router(shares_router)
+app.include_router(analytics_router)
 
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int, token: str = None):
