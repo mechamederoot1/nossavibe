@@ -57,7 +57,7 @@ export function MobileCreateStoryModal({
     "select" | "create" | "customize" | "preview"
   >("select");
   const [storyType, setStoryType] = useState<
-    "text" | "photo" | "video" | "music"
+    "text" | "image" | "video" | "music"
   >("text");
   const [content, setContent] = useState("");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
@@ -229,7 +229,7 @@ export function MobileCreateStoryModal({
   const handleSubmit = async () => {
     if (storyType === "text" && !content.trim()) return;
     if (
-      (storyType === "photo" ||
+      (storyType === "image" ||
         storyType === "video" ||
         storyType === "music") &&
       !mediaFile
@@ -296,7 +296,7 @@ export function MobileCreateStoryModal({
         {/* Media Content */}
         {storyType !== "text" && mediaPreview && (
           <div className="absolute inset-0">
-            {storyType === "photo" && (
+            {storyType === "image" && (
               <img
                 src={mediaPreview}
                 alt="Story content"
@@ -390,7 +390,7 @@ export function MobileCreateStoryModal({
         <h1 className="text-lg font-semibold">
           {step === "select" && "Criar Story"}
           {step === "create" &&
-            `${storyType === "text" ? "Texto" : storyType === "photo" ? "Foto" : storyType === "video" ? "Vídeo" : "Música"}`}
+            `${storyType === "text" ? "Texto" : storyType === "image" ? "Foto" : storyType === "video" ? "Vídeo" : "Música"}`}
           {step === "customize" && "Personalizar"}
           {step === "preview" && "Preview"}
         </h1>
@@ -409,7 +409,7 @@ export function MobileCreateStoryModal({
                 gradient: "from-blue-500 to-purple-600",
               },
               {
-                type: "photo",
+                type: "image",
                 icon: Image,
                 label: "Foto",
                 gradient: "from-green-500 to-teal-600",
@@ -449,7 +449,7 @@ export function MobileCreateStoryModal({
             ref={fileInputRef}
             type="file"
             accept={
-              storyType === "photo"
+              storyType === "image"
                 ? "image/*"
                 : storyType === "video"
                   ? "video/*"
@@ -771,7 +771,7 @@ export function MobileCreateStoryModal({
                 onClick={handleSubmit}
                 disabled={
                   (storyType === "text" && !content.trim()) ||
-                  ((storyType === "photo" ||
+                  ((storyType === "image" ||
                     storyType === "video" ||
                     storyType === "music") &&
                     !mediaFile)
