@@ -127,13 +127,34 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
 
   const getStoryPreview = (authorStories: Story[]) => {
     const latestStory = authorStories[authorStories.length - 1];
-    
+
     if (latestStory.media_type === 'photo' && latestStory.media_url) {
+      // Helper function to get media URL
+      const getMediaUrl = (url: string) => {
+        if (url.startsWith('http') || url.startsWith('data:')) {
+          return url; // Already a full URL or base64
+        }
+        return `http://localhost:8000${url}`;
+      };
+
       return (
-        <img 
-          src={latestStory.media_url} 
-          alt="Story preview" 
+        <img
+          src={getMediaUrl(latestStory.media_url)}
+          alt="Story preview"
           className="w-full h-full object-cover"
+          onError={(e) => {
+            console.error('❌ Failed to load story preview:', latestStory.media_url);
+            // Replace with fallback content
+            const target = e.currentTarget as HTMLImageElement;
+            target.style.display = 'none';
+
+            const fallback = document.createElement('div');
+            fallback.className = 'w-full h-full flex items-center justify-center text-white';
+            fallback.style.backgroundColor = latestStory.background_color || '#3B82F6';
+            fallback.innerHTML = '<span class="text-2xl">📷</span>';
+
+            target.parentElement?.appendChild(fallback);
+          }}
         />
       );
     }
