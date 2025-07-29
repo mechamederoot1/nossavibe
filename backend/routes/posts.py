@@ -139,6 +139,63 @@ async def delete_post(post_id: int, current_user: User = Depends(get_current_use
     
     return {"message": "Post deleted successfully"}
 
+@router.put("/{post_id}", response_model=PostResponse)
+async def update_post(post_id: int, post_update: PostUpdate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Editar um post existente"""
+    post = db.query(Post).filter(Post.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    if post.author_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to edit this post")
+
+    # Atualizar apenas os campos fornecidos
+    update_data = post_update.dict(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(post, field, value)
+
+    db.commit()
+    db.refresh(post)
+
+    return PostResponse(
+        id=post.id,
+        author={
+            "id": post.author.id,
+            "first_name": post.author.first_name,
+            "last_name": post.author.last_name,
+            "avatar": getattr(post.author, 'avatar', None)
+        },
+        content=post.content,
+        post_type=post.post_type,
+        media_type=post.media_type,
+        media_url=post.media_url,
+        created_at=post.created_at,
+        updated_at=post.updated_at,
+        reactions_count=post.reactions_count,
+        comments_count=post.comments_count,
+        shares_count=post.shares_count,
+        is_profile_update=post.is_profile_update,
+        is_cover_update=post.is_cover_update,
+        is_archived=post.is_archived
+    )
+
+@router.put("/{post_id}/archive")
+async def toggle_archive_post(post_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Arquivar ou desarquivar um post"""
+    post = db.query(Post).filter(Post.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    if post.author_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to archive this post")
+
+    # Alternar estado de arquivamento
+    post.is_archived = not post.is_archived
+    db.commit()
+
+    action = "archived" if post.is_archived else "unarchived"
+    return {"message": f"Post {action} successfully", "is_archived": post.is_archived}
+
 # Reactions
 @router.post("/{post_id}/reactions")
 async def create_post_reaction(post_id: int, reaction_data: ReactionCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
