@@ -150,13 +150,11 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
       return null;
     }
 
-    console.log('📋 STORY DEBUG: Rendering story content', {
+    console.log('📋 STORY DEBUG: Rendering story', {
       id: currentStory.id,
       media_type: currentStory.media_type,
-      media_url: currentStory.media_url,
-      content: currentStory.content,
-      background_color: currentStory.background_color,
-      author: currentStory.author
+      has_media_url: !!currentStory.media_url,
+      has_content: !!currentStory.content
     });
 
     // Helper function to get full URL for media
