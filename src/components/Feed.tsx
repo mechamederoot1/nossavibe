@@ -245,9 +245,6 @@ export const Feed: React.FC<FeedProps> = ({ user }) => {
         refreshTrigger={storyRefreshTrigger}
       />
 
-      {/* Story Test - DEBUG TEMPORÁRIO */}
-      <StoryTest />
-
       {/* Create Post */}
       <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
         <div className="flex items-center space-x-3 md:space-x-4">
