@@ -153,7 +153,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
         return url; // Already a full URL or base64
       }
       // Add API base URL for relative paths
-      return `http://localhost:8000${url}`;
+      return `${API_BASE_URL}${url}`;
     };
 
     if (currentStory.media_type === 'photo' && currentStory.media_url) {
