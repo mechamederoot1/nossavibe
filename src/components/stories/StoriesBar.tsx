@@ -362,7 +362,11 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
             id: story.id.toString()
           }))}
           currentIndex={selectedStoryIndex}
-          onClose={() => setSelectedStoryGroup(null)}
+          onClose={() => {
+            setSelectedStoryGroup(null);
+            // Refresh stories para atualizar indicadores após visualização
+            fetchStories();
+          }}
           userToken={userToken}
           onDelete={handleDeleteStory}
           currentUserId={currentUser.id}
