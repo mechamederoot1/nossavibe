@@ -148,8 +148,8 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
     // Helper function to get full URL for media
     const getMediaUrl = (url: string) => {
-      if (url.startsWith('http')) {
-        return url; // Already a full URL
+      if (url.startsWith('http') || url.startsWith('data:')) {
+        return url; // Already a full URL or base64
       }
       // Add API base URL for relative paths
       return `http://localhost:8000${url}`;
@@ -164,7 +164,24 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
             className="w-full h-full object-cover"
             onError={(e) => {
               console.error('❌ Failed to load story image:', currentStory.media_url);
-              e.currentTarget.style.display = 'none';
+              // Show fallback content instead of hiding
+              const target = e.currentTarget as HTMLImageElement;
+              target.style.display = 'none';
+
+              // Create fallback element
+              const fallback = document.createElement('div');
+              fallback.className = 'w-full h-full flex items-center justify-center text-white text-center p-4';
+              fallback.style.backgroundColor = currentStory.background_color || '#3B82F6';
+              fallback.innerHTML = `
+                <div>
+                  <div class="text-6xl mb-4">📷</div>
+                  <div class="text-lg font-medium">Imagem não disponível</div>
+                  <div class="text-sm opacity-80 mt-2">Backend não está rodando</div>
+                </div>
+              `;
+
+              // Insert fallback after the image
+              target.parentElement?.appendChild(fallback);
             }}
           />
           {currentStory.content && (
