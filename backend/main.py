@@ -19,6 +19,10 @@ from routes.follows import router as follows_router
 from routes.reports import router as reports_router
 from routes.notifications import router as notifications_router
 from routes.messages import router as messages_router
+from routes.settings import router as settings_router
+from routes.search import router as search_router
+from routes.bookmarks import router as bookmarks_router
+from routes.shares import router as shares_router
 from utils.auth import verify_websocket_token
 
 @asynccontextmanager
