@@ -227,7 +227,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
       {/* Mock Development Banner */}
       <MockBanner show={isMockMode} />
       {/* Desktop Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 sticky top-0 z-40 hidden md:block">
+      <header className={`bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 sticky z-40 hidden md:block ${isMockMode ? 'top-10' : 'top-0'}`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
