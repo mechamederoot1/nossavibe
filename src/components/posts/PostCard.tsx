@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Heart, 
   MessageCircle, 
@@ -9,8 +9,8 @@ import {
   Trash2,
   Flag,
   Link,
-  Eye,
-  EyeOff
+  Send,
+  Reply
 } from 'lucide-react';
 
 interface PostAuthor {
@@ -18,6 +18,21 @@ interface PostAuthor {
   first_name: string;
   last_name: string;
   avatar?: string;
+}
+
+interface Comment {
+  id: number;
+  content: string;
+  author: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    avatar?: string;
+  };
+  created_at: string;
+  reactions_count: number;
+  replies?: Comment[];
+  parent_id?: number;
 }
 
 interface Post {
@@ -38,7 +53,7 @@ interface Post {
 interface PostCardProps {
   post: Post;
   userToken: string;
-  currentUserId: number;
+  currentUserId?: number;
   canEdit?: boolean;
   onLike?: (postId: number) => void;
   onComment?: (postId: number) => void;
@@ -65,6 +80,14 @@ export function PostCard({
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Comments state
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<number | null>(null);
+  const [replyText, setReplyText] = useState("");
 
   const handleReaction = async (reactionType: string = "like") => {
     try {
@@ -113,8 +136,94 @@ export function PostCard({
   };
 
   const handleReport = async () => {
-    // Implementar sistema de denúncia
     alert("Funcionalidade de denúncia será implementada");
+  };
+
+  const fetchComments = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `http://localhost:8000/posts/${post.id}/comments`,
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        },
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setComments(data);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar comentários:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmitComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    try {
+      const response = await fetch("http://localhost:8000/comments/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: newComment,
+          post_id: parseInt(post.id.toString()),
+        }),
+      });
+
+      if (response.ok) {
+        setNewComment("");
+        fetchComments();
+        // Update comment count
+        post.comments_count = post.comments_count + 1;
+      }
+    } catch (error) {
+      console.error("Erro ao enviar comentário:", error);
+    }
+  };
+
+  const handleSubmitReply = async (e: React.FormEvent, parentId: number) => {
+    e.preventDefault();
+    if (!replyText.trim()) return;
+
+    try {
+      const response = await fetch("http://localhost:8000/comments/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: replyText,
+          post_id: parseInt(post.id.toString()),
+          parent_id: parentId,
+        }),
+      });
+
+      if (response.ok) {
+        setReplyText("");
+        setReplyingTo(null);
+        fetchComments();
+      }
+    } catch (error) {
+      console.error("Erro ao enviar resposta:", error);
+    }
+  };
+
+  const handleToggleComments = () => {
+    setShowComments(!showComments);
+    if (!showComments && comments.length === 0) {
+      fetchComments();
+    }
+    onComment?.(post.id);
   };
 
   const formatTimeAgo = (dateString: string) => {
@@ -320,8 +429,12 @@ export function PostCard({
             </button>
 
             <button
-              onClick={() => onComment?.(post.id)}
-              className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+              onClick={handleToggleComments}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                showComments
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
             >
               <MessageCircle className="w-5 h-5" />
               <span>Comentar</span>
@@ -351,6 +464,145 @@ export function PostCard({
           </button>
         </div>
       </div>
+
+      {/* Comments Section */}
+      {showComments && (
+        <div className="border-t border-gray-100">
+          {/* Comment Input */}
+          <div className="p-4 border-b border-gray-100 bg-gray-50">
+            <form onSubmit={handleSubmitComment} className="flex space-x-3">
+              <img
+                src={`https://ui-avatars.com/api/?name=Usuário&background=3B82F6&color=fff`}
+                alt="Você"
+                className="w-8 h-8 rounded-full"
+              />
+              <div className="flex-1 flex space-x-2">
+                <input
+                  type="text"
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  placeholder="Escreva um comentário..."
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button
+                  type="submit"
+                  disabled={!newComment.trim()}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Comments List */}
+          <div className="p-4 space-y-4 max-h-96 overflow-y-auto">
+            {loading ? (
+              <div className="text-center py-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+              </div>
+            ) : comments.length === 0 ? (
+              <p className="text-center text-gray-500 py-4">
+                Seja o primeiro a comentar!
+              </p>
+            ) : (
+              comments.map((comment) => (
+                <div key={comment.id} className="space-y-2">
+                  {/* Main Comment */}
+                  <div className="flex space-x-3">
+                    <img
+                      src={
+                        comment.author.avatar ||
+                        `https://ui-avatars.com/api/?name=${comment.author.first_name}+${comment.author.last_name}&background=3B82F6&color=fff`
+                      }
+                      alt={`${comment.author.first_name} ${comment.author.last_name}`}
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <div className="flex-1">
+                      <div className="bg-gray-100 rounded-lg p-3">
+                        <p className="font-medium text-sm">
+                          {comment.author.first_name} {comment.author.last_name}
+                        </p>
+                        <p className="text-gray-900">{comment.content}</p>
+                      </div>
+                      <div className="flex items-center space-x-4 mt-1 text-sm text-gray-500">
+                        <span>{formatTimeAgo(comment.created_at)}</span>
+                        <button className="hover:text-red-600 flex items-center space-x-1">
+                          <Heart className="w-4 h-4" />
+                          <span>{comment.reactions_count}</span>
+                        </button>
+                        <button
+                          onClick={() => setReplyingTo(comment.id)}
+                          className="hover:text-blue-600 flex items-center space-x-1"
+                        >
+                          <Reply className="w-4 h-4" />
+                          <span>Responder</span>
+                        </button>
+                      </div>
+
+                      {/* Reply Form */}
+                      {replyingTo === comment.id && (
+                        <form
+                          onSubmit={(e) => handleSubmitReply(e, comment.id)}
+                          className="mt-2 flex space-x-2"
+                        >
+                          <input
+                            type="text"
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder="Escreva uma resposta..."
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                          />
+                          <button
+                            type="submit"
+                            disabled={!replyText.trim()}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                          >
+                            <Send className="w-4 h-4" />
+                          </button>
+                        </form>
+                      )}
+
+                      {/* Replies */}
+                      {comment.replies && comment.replies.length > 0 && (
+                        <div className="ml-6 mt-3 space-y-2">
+                          {comment.replies.map((reply) => (
+                            <div key={reply.id} className="flex space-x-3">
+                              <img
+                                src={
+                                  reply.author.avatar ||
+                                  `https://ui-avatars.com/api/?name=${reply.author.first_name}+${reply.author.last_name}&background=3B82F6&color=fff`
+                                }
+                                alt={`${reply.author.first_name} ${reply.author.last_name}`}
+                                className="w-6 h-6 rounded-full"
+                              />
+                              <div className="flex-1">
+                                <div className="bg-gray-50 rounded-lg p-2">
+                                  <p className="font-medium text-xs">
+                                    {reply.author.first_name} {reply.author.last_name}
+                                  </p>
+                                  <p className="text-gray-900 text-sm">{reply.content}</p>
+                                </div>
+                                <div className="flex items-center space-x-3 mt-1 text-xs text-gray-500">
+                                  <span>{formatTimeAgo(reply.created_at)}</span>
+                                  <button className="hover:text-red-600 flex items-center space-x-1">
+                                    <Heart className="w-3 h-3" />
+                                    <span>{reply.reactions_count}</span>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
