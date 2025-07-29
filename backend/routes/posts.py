@@ -308,6 +308,14 @@ async def create_post_reaction(post_id: int, reaction_data: ReactionCreate, curr
                 reaction_type=reaction_data.reaction_type
             )
 
+            # Send real-time notification
+            await realtime_notifications.send_like_notification(
+                liker_id=current_user.id,
+                post_author_id=post.author_id,
+                post_id=post_id,
+                reaction_type=reaction_data.reaction_type
+            )
+
         return {"message": "Reaction added"}
 
 @router.delete("/{post_id}/reactions")
