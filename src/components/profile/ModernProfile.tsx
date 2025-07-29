@@ -536,7 +536,7 @@ export function ModernProfile({
 
           {/* Profile Info Section */}
           <div className="px-8 pb-8">
-            <div className="flex flex-col lg:flex-row lg:items-end lg:space-x-8 -mt-16">
+            <div className="flex flex-col lg:flex-row lg:items-end lg:space-x-8 -mt-20">
               {/* Avatar */}
               <div className="relative flex-shrink-0 mb-6 lg:mb-0">
                 <img
