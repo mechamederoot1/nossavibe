@@ -653,10 +653,10 @@ export function ModernProfile({
                       <>
                         <button
                           onClick={onEditProfile}
-                          className="flex items-center justify-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-lg"
+                          className="flex items-center justify-center space-x-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg transform hover:scale-105"
                         >
                           <Edit3 className="w-5 h-5" />
-                          <span className="font-medium">Editar perfil</span>
+                          <span className="font-semibold">Editar perfil</span>
                         </button>
                         
                         <button className="flex items-center justify-center space-x-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors">
