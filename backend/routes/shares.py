@@ -13,6 +13,7 @@ from models.share import Share
 from models.notification import Notification
 from utils.auth import get_current_user
 from utils.notification_helpers import create_notification
+from utils.realtime_notifications import realtime_notifications
 
 router = APIRouter(prefix="/shares", tags=["shares"])
 
