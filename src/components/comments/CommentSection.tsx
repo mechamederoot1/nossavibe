@@ -284,9 +284,18 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                             </div>
                             <div className="flex items-center space-x-3 mt-1 text-xs text-gray-500">
                               <span>{formatTimeAgo(reply.created_at)}</span>
-                              <button className="hover:text-red-600 flex items-center space-x-1">
-                                <Heart className="w-3 h-3" />
-                                <span>{reply.reactions_count}</span>
+                              <button
+                                onClick={() => handleCommentReaction(reply.id)}
+                                className={`flex items-center space-x-1 transition-colors ${
+                                  commentReactions[reply.id]?.isLoved
+                                    ? "text-red-600"
+                                    : "hover:text-red-600"
+                                }`}
+                              >
+                                <Heart className={`w-3 h-3 ${
+                                  commentReactions[reply.id]?.isLoved ? "fill-current" : ""
+                                }`} />
+                                <span>{commentReactions[reply.id]?.count || reply.reactions_count}</span>
                               </button>
                             </div>
                           </div>
