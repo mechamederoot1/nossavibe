@@ -15,6 +15,14 @@ class PostCreate(BaseModel):
     is_profile_update: Optional[bool] = False
     is_cover_update: Optional[bool] = False
 
+class PostUpdate(BaseModel):
+    content: Optional[str] = None
+    post_type: Optional[str] = None
+    media_type: Optional[str] = None
+    media_url: Optional[str] = None
+    media_metadata: Optional[str] = None
+    privacy: Optional[str] = None
+
 class PostResponse(BaseModel):
     id: int
     author: Dict[str, Any]
@@ -23,11 +31,13 @@ class PostResponse(BaseModel):
     media_type: Optional[str] = None
     media_url: Optional[str] = None
     created_at: datetime
+    updated_at: Optional[datetime] = None
     reactions_count: int
     comments_count: int
     shares_count: int
     is_profile_update: Optional[bool] = False
     is_cover_update: Optional[bool] = False
+    is_archived: Optional[bool] = False
     
     class Config:
         from_attributes = True
