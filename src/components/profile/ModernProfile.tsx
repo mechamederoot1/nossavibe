@@ -421,6 +421,71 @@ export function ModernProfile({
                 </div>
               )}
             </div>
+
+            {/* Personal Information Section */}
+            <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 mt-4 sm:mt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
+                <Users className="w-5 h-5 text-blue-600" />
+                <span>Informações Pessoais</span>
+              </h3>
+
+              <div className="space-y-4">
+                {/* Work and Position */}
+                {profile.work && (
+                  <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <Briefcase className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900">Trabalho</p>
+                      <p className="text-sm text-gray-700">{profile.work}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Education */}
+                {profile.education && (
+                  <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <GraduationCap className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900">Formação</p>
+                      <p className="text-sm text-gray-700">{profile.education}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Relationship Status */}
+                {profile.relationship_status && (
+                  <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <Heart className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900">Estado Civil</p>
+                      <p className="text-sm text-gray-700">{profile.relationship_status}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Current Location */}
+                {profile.location && (
+                  <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <MapPin className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900">Cidade Atual</p>
+                      <p className="text-sm text-gray-700">{profile.location}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Show a message if no personal info is available */}
+                {!profile.work && !profile.education && !profile.relationship_status && !profile.location && (
+                  <div className="text-center py-6">
+                    <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500 text-sm">Nenhuma informação pessoal adicionada ainda</p>
+                    {profile.is_own_profile && (
+                      <p className="text-gray-400 text-xs mt-1">Edite seu perfil para adicionar informações</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
