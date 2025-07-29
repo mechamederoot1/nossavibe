@@ -369,7 +369,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
       </header>
 
       {/* Mobile Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-40 md:hidden">
+      <header className={`bg-white shadow-sm border-b sticky z-40 md:hidden ${isMockMode ? 'top-10' : 'top-0'}`}>
         <div className="px-4 py-3">
           <div className="flex justify-between items-center">
             {/* Logo */}
