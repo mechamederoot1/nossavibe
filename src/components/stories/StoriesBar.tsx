@@ -303,16 +303,26 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
                 className="flex-shrink-0 flex flex-col items-center space-y-2 group"
               >
                 <div className="relative">
-                  {/* Container com borda que muda cor baseado no status de leitura */}
-                  <div className={`w-16 h-16 rounded-full overflow-hidden p-0.5 group-hover:scale-105 transition-transform ${
+                  {/* Container com borda gradient estilo Instagram */}
+                  <div className={`w-16 h-16 rounded-full p-0.5 group-hover:scale-105 transition-all duration-200 ${
                     hasUnreadStories
-                      ? 'bg-gradient-to-tr from-purple-600 via-pink-600 to-orange-500'
+                      ? 'bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 shadow-lg'
                       : 'bg-gray-300'
                   }`}>
-                    <div className="w-full h-full rounded-full overflow-hidden bg-gray-200">
-                      {getStoryPreview(authorStories)}
+                    {/* Fundo branco interno para criar efeito de borda */}
+                    <div className="w-full h-full rounded-full p-0.5 bg-white">
+                      <div className="w-full h-full rounded-full overflow-hidden bg-gray-200">
+                        {getStoryPreview(authorStories)}
+                      </div>
                     </div>
                   </div>
+
+                  {/* Indicador de novo story (ponto azul) */}
+                  {hasUnreadStories && (
+                    <div className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-blue-500 border-2 border-white rounded-full flex items-center justify-center">
+                      <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    </div>
+                  )}
                   
                   {/* Story count indicator */}
                   {authorStories.length > 1 && (
