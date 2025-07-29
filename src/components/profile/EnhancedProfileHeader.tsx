@@ -51,6 +51,7 @@ interface ProfileHeaderProps {
   onEditProfile?: () => void;
   onProfileUpdate?: () => void;
   currentUserId?: number;
+  onStartChat?: (userId: number) => void;
 }
 
 export function EnhancedProfileHeader({
