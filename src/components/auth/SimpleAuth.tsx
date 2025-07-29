@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { Logo } from "../ui/Logo";
 import { emailVerificationService } from "../../services/EmailVerificationService";
+import { mockAuthService } from "../../services/MockAuthService";
 
 interface AuthProps {
   onLogin: (userData: { name: string; email: string; token: string }) => void;
