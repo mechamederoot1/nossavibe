@@ -61,6 +61,7 @@ export function EnhancedProfileHeader({
   onEditProfile,
   onProfileUpdate,
   currentUserId,
+  onStartChat,
 }: ProfileHeaderProps) {
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
