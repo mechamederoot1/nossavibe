@@ -111,6 +111,7 @@ export function ProfileRoute({
           userId={targetUser.id}
           userToken={currentUser.token}
           onClose={() => window.history.back()}
+          onStartChat={onStartChat}
         />
       </div>
     );
