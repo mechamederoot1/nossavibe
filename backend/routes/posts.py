@@ -58,11 +58,13 @@ async def create_post(post: PostCreate, current_user: User = Depends(get_current
         media_type=db_post.media_type,
         media_url=db_post.media_url,
         created_at=db_post.created_at,
+        updated_at=db_post.updated_at,
         reactions_count=db_post.reactions_count,
         comments_count=db_post.comments_count,
         shares_count=db_post.shares_count,
         is_profile_update=db_post.is_profile_update,
-        is_cover_update=db_post.is_cover_update
+        is_cover_update=db_post.is_cover_update,
+        is_archived=db_post.is_archived
     )
 
 @router.get("/", response_model=List[PostResponse])
@@ -83,11 +85,13 @@ async def get_posts(current_user: User = Depends(get_current_user), db: Session 
             media_type=post.media_type,
             media_url=post.media_url,
             created_at=post.created_at,
+            updated_at=post.updated_at,
             reactions_count=post.reactions_count,
             comments_count=post.comments_count,
             shares_count=post.shares_count,
             is_profile_update=post.is_profile_update,
-            is_cover_update=post.is_cover_update
+            is_cover_update=post.is_cover_update,
+            is_archived=post.is_archived
         )
         for post in posts
     ]
@@ -113,11 +117,13 @@ async def get_post(post_id: int, current_user: User = Depends(get_current_user),
         media_type=post.media_type,
         media_url=post.media_url,
         created_at=post.created_at,
+        updated_at=post.updated_at,
         reactions_count=db.query(Reaction).filter(Reaction.post_id == post.id).count(),
         comments_count=db.query(Comment).filter(Comment.post_id == post.id).count(),
         shares_count=db.query(Share).filter(Share.post_id == post.id).count(),
         is_profile_update=post.is_profile_update,
-        is_cover_update=post.is_cover_update
+        is_cover_update=post.is_cover_update,
+        is_archived=post.is_archived
     )
 
 @router.delete("/{post_id}")
