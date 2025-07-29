@@ -546,7 +546,7 @@ export function ModernProfile({
                       : `https://ui-avatars.com/api/?name=${encodeURIComponent(`${profile.first_name} ${profile.last_name}`)}&background=3B82F6&color=fff&size=160`
                   }
                   alt={`${profile.first_name} ${profile.last_name}`}
-                  className="w-32 h-32 rounded-full border-4 border-white shadow-xl"
+                  className="w-40 h-40 rounded-full border-6 border-white shadow-xl bg-white"
                 />
                 
                 {isOwnProfile && (
