@@ -535,6 +535,9 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
           }}
         />
       )}
+
+      {/* Backend Status Indicator */}
+      <BackendStatus />
     </div>
   );
 };
