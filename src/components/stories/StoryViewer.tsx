@@ -118,7 +118,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
     if (!confirm('Tem certeza que deseja excluir este story?')) return;
     
     try {
-      const response = await fetch(`http://localhost:8000/stories/${currentStory.id}`, {
+      const response = await fetch(`${API_BASE_URL}/stories/${currentStory.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${userToken}`,
