@@ -203,6 +203,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             isOwnProfile={user.is_own_profile || false}
             userToken={userToken}
             currentUserId={parseInt(userToken.split(".")[0]) || 0} // Extract from token or pass properly
+            onStartChat={onStartChat}
           />
 
           {/* Action Buttons for Non-Own Profile */}
