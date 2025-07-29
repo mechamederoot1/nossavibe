@@ -151,6 +151,13 @@ async def accept_friend_request(
         friendship_id=friendship.id
     )
 
+    # Send real-time notification
+    await realtime_notifications.send_friend_accept_notification(
+        accepter_id=current_user.id,
+        requester_id=friendship.requester_id,
+        friendship_id=friendship.id
+    )
+
     return {"message": "Friend request accepted"}
 
 @router.post("/requests/{request_id}/reject")
