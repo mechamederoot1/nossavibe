@@ -332,8 +332,11 @@ export function PostCard({
         <div className="flex items-center justify-between">
           {/* Reaction counts */}
           <div className="flex items-center space-x-4 text-sm text-gray-500">
-            {likesCount > 0 && (
-              <span>{likesCount} {likesCount === 1 ? "curtida" : "curtidas"}</span>
+            {lovesCount > 0 && (
+              <span className="flex items-center space-x-1">
+                <Heart className="w-4 h-4 fill-current text-red-500" />
+                <span>{lovesCount} {lovesCount === 1 ? "pessoa amou" : "pessoas amaram"}</span>
+              </span>
             )}
             {post.comments_count > 0 && (
               <span>{post.comments_count} {post.comments_count === 1 ? "comentário" : "comentários"}</span>
