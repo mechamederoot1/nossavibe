@@ -127,13 +127,26 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
 
   const getStoryPreview = (authorStories: Story[]) => {
     const latestStory = authorStories[authorStories.length - 1];
-    
-    if (latestStory.media_type === 'photo' && latestStory.media_url) {
+
+    // Helper function to get full URL for media
+    const getMediaUrl = (url: string) => {
+      if (url.startsWith('http')) {
+        return url; // Already a full URL
+      }
+      // Add API base URL for relative paths
+      return `http://localhost:8000${url}`;
+    };
+
+    if (latestStory.media_type === 'image' && latestStory.media_url) {
       return (
-        <img 
-          src={latestStory.media_url} 
-          alt="Story preview" 
+        <img
+          src={getMediaUrl(latestStory.media_url)}
+          alt="Story preview"
           className="w-full h-full object-cover"
+          onError={(e) => {
+            console.error('❌ Failed to load story preview:', latestStory.media_url);
+            console.error('❌ Full URL attempted:', getMediaUrl(latestStory.media_url));
+          }}
         />
       );
     }
