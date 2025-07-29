@@ -429,7 +429,10 @@ export function EnhancedProfileHeader({
                     <UserPlus className="w-4 h-4" />
                     <span>Seguir</span>
                   </button>
-                  <button className="flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm font-medium">
+                  <button
+                    onClick={() => onStartChat?.(user.id || 0)}
+                    className="flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm font-medium"
+                  >
                     <MessageCircle className="w-4 h-4" />
                     <span>Mensagem</span>
                   </button>
