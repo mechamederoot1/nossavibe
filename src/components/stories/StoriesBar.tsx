@@ -84,7 +84,7 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
 
   const fetchStories = async () => {
     try {
-      const response = await fetch('http://localhost:8000/stories/', {
+      const response = await fetch(`${API_BASE_URL}/stories/`, {
         headers: {
           'Authorization': `Bearer ${userToken}`,
         },
@@ -94,28 +94,12 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
         const data = await response.json();
         setStories(data);
       } else {
-        throw new Error('Backend não respondeu');
+        console.error('Backend não disponível - status:', response.status);
+        setStories([]); // Clear stories if backend is not available
       }
     } catch (error) {
       console.error('Erro ao carregar stories:', error);
-
-      // Fallback: Load local stories
-      const localStories = JSON.parse(localStorage.getItem('vibe_local_stories') || '[]');
-
-      // Filter out expired stories
-      const validStories = localStories.filter((story: any) => {
-        const expiresAt = new Date(story.expires_at);
-        return expiresAt > new Date();
-      });
-
-      // Update localStorage with valid stories
-      localStorage.setItem('vibe_local_stories', JSON.stringify(validStories));
-
-      setStories(validStories);
-
-      if (validStories.length > 0) {
-        console.log('✅ Carregados stories locais:', validStories.length);
-      }
+      setStories([]); // Clear stories if there's an error
     }
   };
 
