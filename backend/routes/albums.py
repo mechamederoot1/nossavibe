@@ -1,16 +1,18 @@
 """
 Albums routes for photo album management
 """
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import desc
+from sqlalchemy import desc, asc
 from typing import List, Optional
+from datetime import datetime
 
 from core.database import get_db
 from models.user import User
 from models.album import Album, AlbumPhoto
 from utils.auth import get_current_user
 from utils.files import save_upload_file
+from utils.realtime_notifications import RealtimeNotificationService
 
 router = APIRouter(prefix="/albums", tags=["albums"])
 
@@ -18,28 +20,46 @@ router = APIRouter(prefix="/albums", tags=["albums"])
 async def create_album(
     name: str = Form(...),
     description: Optional[str] = Form(None),
+    privacy: str = Form("public"),
+    cover_photo: Optional[UploadFile] = File(None),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Create a new photo album"""
-    
-    album = Album(
-        user_id=current_user.id,
-        name=name,
-        description=description
-    )
-    
-    db.add(album)
-    db.commit()
-    db.refresh(album)
-    
-    return {
-        "id": album.id,
-        "name": album.name,
-        "description": album.description,
-        "created_at": album.created_at.isoformat(),
-        "photos_count": 0
-    }
+    try:
+        # Save cover photo if provided
+        cover_photo_url = None
+        if cover_photo:
+            cover_photo_url = await save_upload_file(cover_photo, "albums")
+
+        album = Album(
+            user_id=current_user.id,
+            name=name,
+            description=description,
+            privacy=privacy,
+            cover_photo_url=cover_photo_url
+        )
+
+        db.add(album)
+        db.commit()
+        db.refresh(album)
+
+        return {
+            "success": True,
+            "message": "Álbum criado com sucesso",
+            "album": {
+                "id": album.id,
+                "name": album.name,
+                "description": album.description,
+                "privacy": album.privacy,
+                "cover_photo_url": album.cover_photo_url,
+                "created_at": album.created_at.isoformat(),
+                "photos_count": 0
+            }
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao criar álbum: {str(e)}")
 
 @router.get("/")
 async def get_user_albums(
@@ -105,8 +125,12 @@ async def get_album(
             detail="Album not found"
         )
     
-    # Check if user can view this album
-    # TODO: Add privacy settings for albums
+    # Check if user can view this album based on privacy settings
+    if album.privacy == "private" and album.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied to private album"
+        )
     
     photos = db.query(AlbumPhoto).filter(
         AlbumPhoto.album_id == album_id
@@ -120,10 +144,12 @@ async def get_album(
         "updated_at": album.updated_at.isoformat(),
         "owner": {
             "id": album.user.id,
-            "first_name": album.user.first_name,
-            "last_name": album.user.last_name,
-            "avatar": album.user.avatar
+            "username": album.user.username,
+            "full_name": album.user.full_name,
+            "avatar_url": album.user.avatar_url
         },
+        "privacy": album.privacy,
+        "cover_photo_url": album.cover_photo_url,
         "photos_count": len(photos),
         "photos": [
             {
@@ -164,7 +190,8 @@ async def update_album(
     if description is not None:
         album.description = description
     
-    album.updated_at = datetime.utcnow()
+    if hasattr(album, 'updated_at'):
+        album.updated_at = datetime.utcnow()
     db.commit()
     db.refresh(album)
     
@@ -260,7 +287,8 @@ async def add_photos_to_album(
         })
     
     # Update album updated_at
-    album.updated_at = datetime.utcnow()
+    if hasattr(album, 'updated_at'):
+        album.updated_at = datetime.utcnow()
     
     db.commit()
     
@@ -303,7 +331,8 @@ async def remove_photo_from_album(
         )
     
     db.delete(photo)
-    album.updated_at = datetime.utcnow()
+    if hasattr(album, 'updated_at'):
+        album.updated_at = datetime.utcnow()
     db.commit()
     
     return {"message": "Photo removed from album"}
@@ -351,4 +380,72 @@ async def update_photo_caption(
             "id": photo.id,
             "caption": photo.caption
         }
+    }
+
+@router.get("/featured/public")
+async def get_featured_albums(
+    limit: int = Query(10, ge=1, le=50),
+    db: Session = Depends(get_db)
+):
+    """Get featured public albums"""
+    albums = db.query(Album).filter(
+        Album.is_featured == True,
+        Album.privacy == "public"
+    ).order_by(desc(Album.updated_at)).limit(limit).all()
+
+    result = []
+    for album in albums:
+        # Get album owner
+        owner = db.query(User).filter(User.id == album.user_id).first()
+
+        result.append({
+            "id": album.id,
+            "name": album.name,
+            "description": album.description,
+            "cover_photo_url": album.cover_photo_url,
+            "photos_count": album.photos_count,
+            "created_at": album.created_at.isoformat(),
+            "owner": {
+                "id": owner.id,
+                "username": owner.username,
+                "full_name": owner.full_name,
+                "avatar_url": owner.avatar_url
+            }
+        })
+
+    return {
+        "success": True,
+        "albums": result
+    }
+
+@router.put("/{album_id}/feature")
+async def toggle_album_featured(
+    album_id: int,
+    is_featured: bool = Form(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Toggle album featured status (admin or owner only)"""
+    album = db.query(Album).filter(Album.id == album_id).first()
+    if not album:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Album not found"
+        )
+
+    if album.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to modify this album"
+        )
+
+    album.is_featured = is_featured
+    if hasattr(album, 'updated_at'):
+        album.updated_at = datetime.utcnow()
+    db.commit()
+
+    return {
+        "success": True,
+        "message": f"Album {'featured' if is_featured else 'unfeatured'} successfully",
+        "is_featured": album.is_featured
     }
