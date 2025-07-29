@@ -298,6 +298,16 @@ export function EnhancedMobileStoryCreator({
           </div>
         )}
 
+        {/* Fallback when no media or content */}
+        {!mediaCapture && !content && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-white/60 text-center">
+              <Type className="w-12 h-12 mx-auto mb-2" />
+              <p className="text-sm">Adicione texto ou mídia ao seu story</p>
+            </div>
+          </div>
+        )}
+
         {/* Close Button */}
         <button
           onClick={() => setStep("capture")}
