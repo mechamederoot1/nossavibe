@@ -67,7 +67,32 @@ export function PostCard({
   const [isDeleting, setIsDeleting] = useState(false);
   const [userReaction, setUserReaction] = useState<string | null>(null);
 
-  const handleReaction = async (reactionType: string = "like") => {
+  // Verificar se o usuário já reagiu ao post
+  useEffect(() => {
+    const checkUserReaction = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/posts/${post.id}/reactions/user`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.reaction) {
+            setUserReaction(data.reaction.reaction_type);
+            setIsLoved(data.reaction.reaction_type === "love");
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao verificar reação do usuário:", error);
+      }
+    };
+
+    checkUserReaction();
+  }, [post.id, userToken]);
+
+  const handleReaction = async (reactionType: string = "love") => {
     try {
       const response = await fetch(`http://localhost:8000/posts/${post.id}/reactions`, {
         method: "POST",
