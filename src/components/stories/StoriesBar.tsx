@@ -93,6 +93,8 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
 
       if (response.ok) {
         const data = await response.json();
+        console.log('📋 STORIES DEBUG: Dados recebidos do backend:', data);
+        console.log('📋 STORIES DEBUG: Primeira story:', data[0]);
         setStories(data);
       } else {
         console.error('Backend não disponível - status:', response.status);
