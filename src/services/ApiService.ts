@@ -189,6 +189,35 @@ class ApiService {
   getCacheSize(): number {
     return this.cache.size;
   }
+
+  // Métodos específicos para posts
+  async updatePost(postId: number, postData: any, token: string): Promise<Response> {
+    return this.makeRequest(`/posts/${postId}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(postData),
+    });
+  }
+
+  async archivePost(postId: number, token: string): Promise<Response> {
+    return this.makeRequest(`/posts/${postId}/archive`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
+  async deletePost(postId: number, token: string): Promise<Response> {
+    return this.makeRequest(`/posts/${postId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
 }
 
 export const apiService = new ApiService();
