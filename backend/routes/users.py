@@ -430,3 +430,154 @@ async def upload_user_cover_photo(file: UploadFile = File(...), current_user: Us
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload cover photo: {str(e)}")
+
+@router.put("/me", response_model=dict)
+async def update_user_profile(
+    profile_data: UserProfileUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Atualizar informações pessoais do usuário"""
+
+    print(f"🔄 ATUALIZANDO PERFIL - Usuário: {current_user.id}")
+    print(f"📋 Dados recebidos: {profile_data.dict(exclude_unset=True)}")
+
+    try:
+        # Verificar se username já existe (se fornecido)
+        if profile_data.username and profile_data.username != current_user.username:
+            existing_user = db.query(User).filter(
+                User.username == profile_data.username,
+                User.id != current_user.id
+            ).first()
+
+            if existing_user:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Este nome de usuário já está em uso"
+                )
+
+        # Verificar se email já existe (se fornecido)
+        if profile_data.email and profile_data.email != current_user.email:
+            existing_email = db.query(User).filter(
+                User.email == profile_data.email,
+                User.id != current_user.id
+            ).first()
+
+            if existing_email:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Este email já está em uso"
+                )
+
+        # Atualizar apenas os campos fornecidos
+        update_data = profile_data.dict(exclude_unset=True)
+
+        for field, value in update_data.items():
+            if hasattr(current_user, field):
+                setattr(current_user, field, value)
+                print(f"✅ Atualizando {field}: {value}")
+
+        # Salvar no banco
+        db.commit()
+        db.refresh(current_user)
+
+        print(f"✅ Perfil atualizado com sucesso - ID: {current_user.id}")
+
+        # Retornar dados atualizados
+        return {
+            "success": True,
+            "message": "Perfil atualizado com sucesso!",
+            "user": {
+                "id": current_user.id,
+                "first_name": current_user.first_name,
+                "last_name": current_user.last_name,
+                "username": current_user.username,
+                "nickname": current_user.nickname,
+                "bio": current_user.bio,
+                "email": current_user.email,
+                "phone": current_user.phone,
+                "location": current_user.location,
+                "website": current_user.website,
+                "birth_date": current_user.birth_date.isoformat() if current_user.birth_date else None,
+                "gender": current_user.gender,
+                "relationship_status": current_user.relationship_status,
+                "work": current_user.work,
+                "education": current_user.education,
+                "avatar": current_user.avatar,
+                "cover_photo": current_user.cover_photo
+            }
+        }
+
+    except HTTPException as he:
+        print(f"❌ HTTPException: {he.detail}")
+        db.rollback()
+        raise he
+    except Exception as e:
+        print(f"❌ Erro inesperado ao atualizar perfil: {str(e)}")
+        print(f"   Tipo do erro: {type(e)}")
+        import traceback
+        traceback.print_exc()
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro interno: {str(e)}")
+
+@router.get("/me", response_model=dict)
+async def get_current_user_profile(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Obter informações completas do usuário atual"""
+
+    try:
+        # Importar models necessários
+        from models.friendship import Friendship
+        from models.post import Post
+        from models.follow import Follow
+        from sqlalchemy import or_, and_
+
+        # Contar amigos
+        friends_count = db.query(Friendship).filter(
+            or_(
+                and_(Friendship.requester_id == current_user.id, Friendship.status == "accepted"),
+                and_(Friendship.addressee_id == current_user.id, Friendship.status == "accepted")
+            )
+        ).count()
+
+        # Contar posts
+        posts_count = db.query(Post).filter(Post.author_id == current_user.id).count()
+
+        # Contar seguidores
+        followers_count = db.query(Follow).filter(Follow.following_id == current_user.id).count()
+
+        # Contar seguindo
+        following_count = db.query(Follow).filter(Follow.follower_id == current_user.id).count()
+
+        return {
+            "id": current_user.id,
+            "first_name": current_user.first_name,
+            "last_name": current_user.last_name,
+            "username": current_user.username,
+            "nickname": current_user.nickname,
+            "bio": current_user.bio,
+            "email": current_user.email,
+            "phone": current_user.phone,
+            "avatar": current_user.avatar,
+            "cover_photo": current_user.cover_photo,
+            "location": current_user.location,
+            "website": current_user.website,
+            "birth_date": current_user.birth_date.isoformat() if current_user.birth_date else None,
+            "gender": current_user.gender,
+            "relationship_status": current_user.relationship_status,
+            "work": current_user.work,
+            "education": current_user.education,
+            "is_verified": current_user.verified,
+            "friends_count": friends_count,
+            "posts_count": posts_count,
+            "followers_count": followers_count,
+            "following_count": following_count,
+            "is_own_profile": True,
+            "created_at": current_user.created_at.isoformat()
+        }
+
+    except Exception as e:
+        print(f"❌ Erro ao buscar perfil do usuário: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erro interno: {str(e)}")
