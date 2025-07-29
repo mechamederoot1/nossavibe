@@ -7,6 +7,7 @@ from .story import Story, StoryView, StoryTag, StoryOverlay
 from .friendship import Friendship, Block, Follow
 from .notification import Notification, NotificationType, Message, MediaFile
 from .report import Report, ReportType, ReportStatus
+from .saved_posts import SavedPostCollection, SavedPost, CommentReaction
 
 __all__ = [
     "User",
@@ -14,5 +15,6 @@ __all__ = [
     "Story", "StoryView", "StoryTag", "StoryOverlay",
     "Friendship", "Block", "Follow",
     "Notification", "NotificationType", "Message", "MediaFile",
-    "Report", "ReportType", "ReportStatus"
+    "Report", "ReportType", "ReportStatus",
+    "SavedPostCollection", "SavedPost", "CommentReaction"
 ]
