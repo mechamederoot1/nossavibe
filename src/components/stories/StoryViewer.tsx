@@ -155,7 +155,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
       return `http://localhost:8000${url}`;
     };
 
-    if (currentStory.media_type === 'photo' && currentStory.media_url) {
+    if (currentStory.media_type === 'image' && currentStory.media_url) {
       return (
         <div className="relative w-full h-full">
           <img
@@ -164,6 +164,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
             className="w-full h-full object-cover"
             onError={(e) => {
               console.error('❌ Failed to load story image:', currentStory.media_url);
+              console.error('❌ Full URL attempted:', getMediaUrl(currentStory.media_url));
               e.currentTarget.style.display = 'none';
             }}
           />
