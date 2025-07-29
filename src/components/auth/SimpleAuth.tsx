@@ -15,8 +15,8 @@ export function SimpleAuth({ onLogin }: AuthProps) {
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
-    email: "",
-    password: "",
+    email: "teste@mail.com",
+    password: "12345678",
     confirm_password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
