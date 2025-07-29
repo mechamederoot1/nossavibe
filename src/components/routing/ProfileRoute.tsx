@@ -25,6 +25,7 @@ interface ProfileRouteProps {
 export function ProfileRoute({
   currentUser,
   onUserDataRefresh,
+  onStartChat,
 }: ProfileRouteProps) {
   const { username, userId } = useParams<{
     username: string;
