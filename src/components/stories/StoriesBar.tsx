@@ -133,7 +133,7 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
   const getStoryPreview = (authorStories: Story[]) => {
     const latestStory = authorStories[authorStories.length - 1];
 
-    if (latestStory.media_type === 'photo' && latestStory.media_url) {
+    if ((latestStory.media_type === 'photo' || latestStory.media_type === 'image') && latestStory.media_url) {
       // Helper function to get media URL
       const getMediaUrl = (url: string) => {
         if (url.startsWith('http') || url.startsWith('data:')) {
