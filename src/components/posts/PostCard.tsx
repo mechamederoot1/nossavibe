@@ -314,7 +314,7 @@ export function PostCard({
                 src={
                   post.media_url.startsWith("http")
                     ? post.media_url
-                    : `http://localhost:8000${post.media_url}`
+                    : `${API_BASE_URL}${post.media_url}`
                 }
                 controls
                 className="w-full max-h-96"
