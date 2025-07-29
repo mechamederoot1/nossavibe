@@ -86,6 +86,13 @@ async def send_friend_request(
         friendship_id=friendship.id
     )
 
+    # Send real-time notification
+    await realtime_notifications.send_friend_request_notification(
+        requester_id=current_user.id,
+        addressee_id=addressee_id,
+        friendship_id=friendship.id
+    )
+
     return {"message": "Friend request sent successfully"}
 
 @router.get("/requests")
