@@ -139,7 +139,7 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
         if (url.startsWith('http') || url.startsWith('data:')) {
           return url; // Already a full URL or base64
         }
-        return `http://localhost:8000${url}`;
+        return `${API_BASE_URL}${url}`;
       };
 
       return (
