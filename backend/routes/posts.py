@@ -386,6 +386,15 @@ async def create_comment(post_id: int, comment_data: CommentCreate, current_user
             comment_id=comment.id
         )
 
+        # Send real-time notification
+        await realtime_notifications.send_comment_notification(
+            commenter_id=current_user.id,
+            post_author_id=post.author_id,
+            post_id=post_id,
+            comment_id=comment.id,
+            comment_content=comment_data.content
+        )
+
     return CommentResponse(
         id=comment.id,
         content=comment.content,
