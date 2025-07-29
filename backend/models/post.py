@@ -18,11 +18,13 @@ class Post(Base):
     media_metadata = Column(Text)
     privacy = Column(String(20), default="public")  # public, friends, private
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=None, onupdate=datetime.utcnow)
     reactions_count = Column(Integer, default=0)
     comments_count = Column(Integer, default=0)
     shares_count = Column(Integer, default=0)
     is_profile_update = Column(Boolean, default=False)
     is_cover_update = Column(Boolean, default=False)
+    is_archived = Column(Boolean, default=False)
     
     author = relationship("User", backref="posts")
 
