@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { StoryViewer } from '../stories/StoryViewer';
+import { API_BASE_URL } from '../../config/api';
 
 interface Story {
   id: number;
