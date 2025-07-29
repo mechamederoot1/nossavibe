@@ -19,6 +19,7 @@ interface User {
 interface ProfileRouteProps {
   currentUser: User;
   onUserDataRefresh?: () => void;
+  onStartChat?: (userId: number) => void;
 }
 
 export function ProfileRoute({
