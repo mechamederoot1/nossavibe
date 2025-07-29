@@ -94,18 +94,32 @@ export function PostCard({
 
   const handleReaction = async (reactionType: string = "love") => {
     try {
-      const response = await fetch(`http://localhost:8000/posts/${post.id}/reactions`, {
-        method: "POST",
+      // Se já tem reação, remover; senão, adicionar
+      const isRemoving = userReaction === reactionType;
+      const method = isRemoving ? "DELETE" : "POST";
+      const url = isRemoving
+        ? `http://localhost:8000/posts/${post.id}/reactions`
+        : `http://localhost:8000/posts/${post.id}/reactions`;
+
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${userToken}`,
         },
-        body: JSON.stringify({ reaction_type: reactionType }),
+        body: method === "POST" ? JSON.stringify({ reaction_type: reactionType }) : undefined,
       });
 
       if (response.ok) {
-        setIsLiked(!isLiked);
-        setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+        if (isRemoving) {
+          setUserReaction(null);
+          setIsLoved(false);
+          setLovesCount(prev => prev - 1);
+        } else {
+          setUserReaction(reactionType);
+          setIsLoved(reactionType === "love");
+          setLovesCount(prev => userReaction ? prev : prev + 1); // Só incrementa se não tinha reação antes
+        }
         onLike?.(post.id);
       }
     } catch (error) {
