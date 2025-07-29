@@ -95,6 +95,42 @@ export const useSession = () => {
     }
 
     try {
+      // Se for token mock, usar dados mock
+      if (token.startsWith('mock_token')) {
+        console.log("🎭 Using mock user data");
+        const mockUser = mockAuthService.getMockUser();
+        const userWithDefaults = {
+          id: mockUser.id,
+          display_id: mockUser.id.toString(),
+          name: mockUser.name,
+          email: mockUser.email,
+          avatar: mockUser.avatar,
+          cover_photo: mockUser.cover_photo,
+          bio: mockUser.bio,
+          location: mockUser.location,
+          joinDate: "Janeiro 2025",
+          username: mockUser.username,
+          nickname: mockUser.first_name,
+          phone: "11999999999",
+          website: mockUser.website,
+          birth_date: "1990-01-01",
+          gender: "Não informado",
+          relationship_status: "Solteiro",
+          work: mockUser.work,
+          education: mockUser.education,
+          onboarding_completed: true, // Mock sempre completo
+          token,
+        };
+
+        setSessionState(prev => ({
+          ...prev,
+          user: userWithDefaults,
+          loading: false
+        }));
+
+        return userWithDefaults;
+      }
+
       const response = await apiCall('/auth/me', {
         headers: {
           Authorization: `Bearer ${token}`,
