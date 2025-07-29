@@ -2,7 +2,7 @@
 Schemas de usuário
 """
 from pydantic import BaseModel, EmailStr
-from typing import Optional, Union
+from typing import Optional, Union, Dict, Any
 from datetime import datetime, date
 
 class UserBase(BaseModel):
