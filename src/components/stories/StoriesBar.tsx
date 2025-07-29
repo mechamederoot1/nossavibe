@@ -258,7 +258,10 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
             const authorStories = groupedStories[authorId];
             const author = authorStories[0].author;
             const totalViews = authorStories.reduce((sum, story) => sum + story.views_count, 0);
-            
+
+            // Verificar se há stories não lidos neste grupo
+            const hasUnreadStories = authorStories.some(story => !story.viewed_by_user);
+
             return (
               <button
                 key={authorId}
@@ -266,7 +269,12 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
                 className="flex-shrink-0 flex flex-col items-center space-y-2 group"
               >
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-full overflow-hidden border-3 border-gradient-to-r from-purple-500 to-pink-500 p-0.5 group-hover:scale-105 transition-transform">
+                  {/* Container com borda que muda cor baseado no status de leitura */}
+                  <div className={`w-16 h-16 rounded-full overflow-hidden p-0.5 group-hover:scale-105 transition-transform ${
+                    hasUnreadStories
+                      ? 'bg-gradient-to-tr from-purple-600 via-pink-600 to-orange-500'
+                      : 'bg-gray-300'
+                  }`}>
                     <div className="w-full h-full rounded-full overflow-hidden bg-gray-200">
                       {getStoryPreview(authorStories)}
                     </div>
