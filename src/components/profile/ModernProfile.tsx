@@ -348,7 +348,7 @@ export function ModernProfile({
             )}
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4 bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 mb-4 sm:mb-6">
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 sm:gap-4 bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 mb-4 sm:mb-6">
               <div className="text-center">
                 <div className="text-xl sm:text-2xl font-bold text-gray-900">{profile.friends_count}</div>
                 <div className="text-xs sm:text-sm text-gray-600">Amigos</div>
@@ -358,6 +358,8 @@ export function ModernProfile({
                 <div className="text-xs sm:text-sm text-gray-600">Seguidores</div>
               </div>
               <div className="text-center">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{profile.following_count || 0}</div>
+                <div className="text-xs sm:text-sm text-gray-600">Seguindo</div>
               </div>
               <div className="text-center">
               </div>
