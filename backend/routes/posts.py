@@ -16,6 +16,7 @@ from models.mention import PostMention
 from schemas import PostCreate, PostResponse, ReactionCreate, CommentCreate, CommentResponse, ShareCreate
 from schemas.post import PostUpdate
 from utils.notification_helpers import create_post_reaction_notification, create_post_comment_notification, create_notification
+from utils.realtime_notifications import realtime_notifications
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
