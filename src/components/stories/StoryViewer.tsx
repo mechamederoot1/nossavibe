@@ -155,7 +155,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
       return `http://localhost:8000${url}`;
     };
 
-    if (currentStory.media_type === 'photo' && currentStory.media_url) {
+    if ((currentStory.media_type === 'photo' || currentStory.media_type === 'image') && currentStory.media_url) {
       return (
         <div className="relative w-full h-full">
           <img
