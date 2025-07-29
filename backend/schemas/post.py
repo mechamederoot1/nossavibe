@@ -52,5 +52,11 @@ class CommentResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class PostUpdate(BaseModel):
+    content: Optional[str] = None
+    privacy: Optional[str] = None
+    media_url: Optional[str] = None
+    media_type: Optional[str] = None
+
 class ShareCreate(BaseModel):
     post_id: int
