@@ -17,6 +17,7 @@ from routes.friendships import router as friendships_router
 from routes.follows import router as follows_router
 from routes.reports import router as reports_router
 from routes.notifications import router as notifications_router
+from routes.messages import router as messages_router
 from utils.auth import verify_websocket_token
 
 @asynccontextmanager
