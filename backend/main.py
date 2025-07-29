@@ -2,6 +2,7 @@
 Aplicação principal FastAPI - Vibe Social Network
 """
 import os
+import json
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Response, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
