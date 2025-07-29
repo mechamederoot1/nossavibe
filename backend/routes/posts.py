@@ -111,6 +111,13 @@ async def create_post(post: PostCreate, current_user: User = Depends(get_current
         is_cover_update=post.is_cover_update
     )
     db.add(db_post)
+    db.flush()  # Get the post ID before committing
+
+    # Process hashtags and mentions
+    if content_to_save:
+        process_hashtags(db, db_post.id, content_to_save)
+        process_mentions(db, db_post.id, content_to_save, current_user.id)
+
     db.commit()
     db.refresh(db_post)
     
