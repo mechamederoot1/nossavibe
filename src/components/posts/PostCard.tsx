@@ -98,9 +98,7 @@ export function PostCard({
       // Se já tem reação, remover; senão, adicionar
       const isRemoving = userReaction === reactionType;
       const method = isRemoving ? "DELETE" : "POST";
-      const url = isRemoving
-        ? `http://localhost:8000/posts/${post.id}/reactions`
-        : `http://localhost:8000/posts/${post.id}/reactions`;
+      const url = `${API_BASE_URL}/posts/${post.id}/reactions`;
 
       const response = await fetch(url, {
         method,
