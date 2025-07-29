@@ -283,6 +283,9 @@ export const Feed: React.FC<FeedProps> = ({ user }) => {
             <PostCard
               key={post.id}
               post={post}
+              userToken={user.token}
+              currentUserId={user.id}
+              canEdit={post.author.id === user.id}
               onLike={(postId) => console.log('Like post:', postId)}
               onComment={(postId) => console.log('Comment post:', postId)}
               onShare={(postId) => console.log('Share post:', postId)}
