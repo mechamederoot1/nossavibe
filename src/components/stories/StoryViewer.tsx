@@ -203,7 +203,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
       );
     }
     
-    if (currentStory.media_type === 'music' && currentStory.media_url) {
+    if (currentStory.media_type === 'audio' && currentStory.media_url) {
       return (
         <div 
           className="w-full h-full flex flex-col items-center justify-center text-white p-4"
