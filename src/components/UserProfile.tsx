@@ -44,6 +44,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
   userId,
   userToken,
   onClose,
+  onStartChat,
 }) => {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
