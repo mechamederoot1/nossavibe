@@ -6,7 +6,6 @@ import { StoriesBar } from "./stories/StoriesBar";
 import { createStoryWithFile } from "./stories/StoryUploadHelper";
 import { apiCall } from "../config/api";
 import { toast } from "./ui/Toast";
-import { StoryTest } from "./stories/StoryTest";
 
 // Global function type declaration
 declare global {
