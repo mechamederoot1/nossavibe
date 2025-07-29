@@ -241,9 +241,9 @@ export function ModernCreateStoryModal({
   const handleSubmit = async () => {
     if (storyType === "text" && !content.trim()) return;
     if (
-      (storyType === "photo" ||
+      (storyType === "image" ||
         storyType === "video" ||
-        storyType === "music") &&
+        storyType === "audio") &&
       !mediaFile
     )
       return;
