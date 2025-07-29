@@ -16,6 +16,7 @@ interface UserProfileProps {
   userId: number;
   userToken: string;
   onClose: () => void;
+  onStartChat?: (userId: number) => void;
 }
 
 interface UserData {
