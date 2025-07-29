@@ -18,7 +18,7 @@ export function CreateStoryModal({
   onSubmit,
 }: CreateStoryModalProps) {
   const [storyType, setStoryType] = useState<
-    "text" | "photo" | "video" | "music"
+    "text" | "image" | "video" | "music"
   >("text");
   const [content, setContent] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#3B82F6");
@@ -43,7 +43,7 @@ export function CreateStoryModal({
   const handleSubmit = async () => {
     if (storyType === "text" && !content.trim()) return;
     if (
-      (storyType === "photo" ||
+      (storyType === "image" ||
         storyType === "video" ||
         storyType === "music") &&
       !mediaFile
@@ -128,9 +128,9 @@ export function CreateStoryModal({
               </button>
 
               <button
-                onClick={() => setStoryType("photo")}
+                onClick={() => setStoryType("image")}
                 className={`p-3 sm:p-4 rounded-lg border-2 transition-all ${
-                  storyType === "photo"
+                  storyType === "image"
                     ? "border-green-500 bg-green-50"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
@@ -166,12 +166,12 @@ export function CreateStoryModal({
           </div>
 
           {/* Upload de Mídia */}
-          {(storyType === "photo" ||
+          {(storyType === "image" ||
             storyType === "video" ||
             storyType === "music") && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {storyType === "photo" && "Selecionar Foto"}
+                {storyType === "image" && "Selecionar Foto"}
                 {storyType === "video" && "Selecionar Vídeo"}
                 {storyType === "music" && "Selecionar Música"}
               </label>
@@ -179,7 +179,7 @@ export function CreateStoryModal({
                 <input
                   type="file"
                   accept={
-                    storyType === "photo"
+                    storyType === "image"
                       ? "image/*"
                       : storyType === "video"
                         ? "video/*"
@@ -193,7 +193,7 @@ export function CreateStoryModal({
                   <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                   <p className="text-sm text-gray-600">
                     Clique para selecionar{" "}
-                    {storyType === "photo"
+                    {storyType === "image"
                       ? "uma foto"
                       : storyType === "video"
                         ? "um vídeo"
@@ -202,7 +202,7 @@ export function CreateStoryModal({
                 </label>
               </div>
 
-              {mediaPreview && storyType === "photo" && (
+              {mediaPreview && storyType === "image" && (
                 <div className="mt-4 relative">
                   <img
                     src={mediaPreview}
@@ -345,7 +345,7 @@ export function CreateStoryModal({
               onClick={handleSubmit}
               disabled={
                 (storyType === "text" && !content.trim()) ||
-                ((storyType === "photo" ||
+                ((storyType === "image" ||
                   storyType === "video" ||
                   storyType === "music") &&
                   !mediaFile)
