@@ -30,7 +30,7 @@ export const Profile: React.FC<ProfileProps> = ({ user, onUserDataRefresh }) => 
   };
 
   return (
-    <UniversalProfile
+    <ModernProfile
       userId={user.id || 0}
       userToken={user.token}
       currentUserId={user.id || 0}
