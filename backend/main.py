@@ -16,7 +16,7 @@ from core.websockets import manager
 from routes import auth_router, posts_router, users_router, email_verification_router, stories_router, upload_router
 from routes.friendships import router as friendships_router
 from routes.follows import router as follows_router
-from routes.reports import router as reports_router
+# Removed reports router - focusing on user experience
 from routes.notifications import router as notifications_router
 from routes.messages import router as messages_router
 from routes.settings import router as settings_router
