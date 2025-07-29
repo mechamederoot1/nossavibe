@@ -56,6 +56,7 @@ export function ProfileHeader({
   friendsCount = 342,
   postsCount = 0,
   onProfileUpdate,
+  onStartChat,
 }: ProfileHeaderProps) {
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
