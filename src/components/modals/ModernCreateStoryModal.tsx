@@ -56,7 +56,7 @@ export function ModernCreateStoryModal({
   onSubmit,
 }: ModernCreateStoryModalProps) {
   const [storyType, setStoryType] = useState<
-    "text" | "photo" | "video" | "music"
+    "text" | "image" | "video" | "music"
   >("text");
   const [content, setContent] = useState("");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
@@ -289,7 +289,7 @@ export function ModernCreateStoryModal({
         {/* Media Content */}
         {storyType !== "text" && mediaPreview && (
           <div className="absolute inset-0">
-            {storyType === "photo" && (
+            {storyType === "image" && (
               <img
                 src={mediaPreview}
                 alt="Story content"
@@ -485,7 +485,7 @@ export function ModernCreateStoryModal({
             <div className="grid grid-cols-4 gap-4">
               {[
                 { type: "text", icon: Type, label: "Texto", color: "blue" },
-                { type: "photo", icon: Image, label: "Foto", color: "green" },
+                { type: "image", icon: Image, label: "Foto", color: "green" },
                 { type: "video", icon: Video, label: "Vídeo", color: "purple" },
                 { type: "music", icon: Music, label: "Música", color: "pink" },
               ].map(({ type, icon: Icon, label, color }) => (
@@ -696,7 +696,7 @@ export function ModernCreateStoryModal({
                     ref={fileInputRef}
                     type="file"
                     accept={
-                      storyType === "photo"
+                      storyType === "image"
                         ? "image/*"
                         : storyType === "video"
                           ? "video/*"
@@ -711,7 +711,7 @@ export function ModernCreateStoryModal({
                       <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                       <h3 className="text-lg font-medium text-gray-900 mb-2">
                         Adicionar{" "}
-                        {storyType === "photo"
+                        {storyType === "image"
                           ? "Foto"
                           : storyType === "video"
                             ? "Vídeo"
@@ -730,7 +730,7 @@ export function ModernCreateStoryModal({
                   ) : (
                     <div className="space-y-4">
                       <div className="relative max-w-xs mx-auto">
-                        {storyType === "photo" && (
+                        {storyType === "image" && (
                           <img
                             src={mediaPreview}
                             alt="Preview"
@@ -796,7 +796,7 @@ export function ModernCreateStoryModal({
                 onClick={handleSubmit}
                 disabled={
                   (storyType === "text" && !content.trim()) ||
-                  ((storyType === "photo" ||
+                  ((storyType === "image" ||
                     storyType === "video" ||
                     storyType === "music") &&
                     !mediaFile)
