@@ -394,8 +394,16 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
           {children}
         </main>
 
-        {/* Chat Sidebar - Right */}
-        <ChatSidebar user={user} isVisible={shouldShowSidebars && showChatSidebar} />
+        {/* Online Friends Sidebar - Right */}
+        {shouldShowSidebars && (
+          <OnlineFriendsSidebar
+            userToken={user.token}
+            onStartChat={(friendId) => {
+              // TODO: Open chat with friend
+              setShowMessages(true);
+            }}
+          />
+        )}
       </div>
 
       {/* Mobile Bottom Navigation */}
