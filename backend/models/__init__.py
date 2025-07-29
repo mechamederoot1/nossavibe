@@ -5,7 +5,8 @@ from .user import User
 from .post import Post, Reaction, Comment, Share
 from .story import Story, StoryView, StoryTag, StoryOverlay
 from .friendship import Friendship, Block, Follow
-from .notification import Notification, NotificationType, Message, MediaFile
+from .notification import Notification, NotificationType, MediaFile
+from .message import Message
 from .report import Report, ReportType, ReportStatus
 
 __all__ = [
