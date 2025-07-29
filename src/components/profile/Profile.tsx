@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { UniversalProfile } from "./UniversalProfile";
+import { ModernProfile } from "./ModernProfile";
 
 interface ProfileProps {
   user: {
