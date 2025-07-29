@@ -68,8 +68,14 @@ async def create_post(post: PostCreate, current_user: User = Depends(get_current
     )
 
 @router.get("/", response_model=List[PostResponse])
-async def get_posts(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    posts = db.query(Post).order_by(Post.created_at.desc()).limit(50).all()
+async def get_posts(show_archived: bool = False, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    query = db.query(Post)
+
+    # Por padrão, não mostrar posts arquivados
+    if not show_archived:
+        query = query.filter(Post.is_archived == False)
+
+    posts = query.order_by(Post.created_at.desc()).limit(50).all()
     
     return [
         PostResponse(
