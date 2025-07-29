@@ -319,10 +319,17 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
       {/* Story Viewer */}
       {selectedStoryGroup && (
         <StoryViewer
-          stories={selectedStoryGroup.map(story => ({
-            ...story,
-            id: story.id.toString()
-          }))}
+          stories={selectedStoryGroup.map(story => {
+            const convertedStory = {
+              ...story,
+              id: story.id.toString()
+            };
+            console.log('🔄 STORIES DEBUG: Convertendo story para StoryViewer:', {
+              original: story,
+              converted: convertedStory
+            });
+            return convertedStory;
+          })}
           currentIndex={selectedStoryIndex}
           onClose={() => setSelectedStoryGroup(null)}
           userToken={userToken}
