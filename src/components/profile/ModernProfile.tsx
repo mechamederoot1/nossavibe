@@ -475,8 +475,19 @@ export function ModernProfile({
                   </div>
                 )}
 
+                {/* Hometown */}
+                {profile.hometown && (
+                  <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <MapPin className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900">Cidade Natal</p>
+                      <p className="text-sm text-gray-700">{profile.hometown}</p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Show a message if no personal info is available */}
-                {!profile.work && !profile.education && !profile.relationship_status && !profile.location && (
+                {!profile.work && !profile.education && !profile.relationship_status && !profile.location && !profile.hometown && (
                   <div className="text-center py-6">
                     <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                     <p className="text-gray-500 text-sm">Nenhuma informação pessoal adicionada ainda</p>
