@@ -37,6 +37,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [replyText, setReplyText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [commentReactions, setCommentReactions] = useState<{[key: number]: {isLoved: boolean, count: number}}>({});
 
   useEffect(() => {
     if (isOpen) {
