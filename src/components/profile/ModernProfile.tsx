@@ -568,7 +568,7 @@ export function ModernProfile({
               </div>
 
               {/* Profile Details */}
-              <div className="flex-1 min-w-0 bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+              <div className="flex-1 min-w-0">
                 <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between">
                   <div className="mb-6 xl:mb-0">
                     <div className="flex items-center space-x-3 mb-2">
