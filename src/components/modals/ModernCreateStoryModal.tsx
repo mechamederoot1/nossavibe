@@ -56,7 +56,7 @@ export function ModernCreateStoryModal({
   onSubmit,
 }: ModernCreateStoryModalProps) {
   const [storyType, setStoryType] = useState<
-    "text" | "image" | "video" | "music"
+    "text" | "image" | "video" | "audio"
   >("text");
   const [content, setContent] = useState("");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
@@ -487,7 +487,7 @@ export function ModernCreateStoryModal({
                 { type: "text", icon: Type, label: "Texto", color: "blue" },
                 { type: "image", icon: Image, label: "Foto", color: "green" },
                 { type: "video", icon: Video, label: "Vídeo", color: "purple" },
-                { type: "music", icon: Music, label: "Música", color: "pink" },
+                { type: "audio", icon: Music, label: "Música", color: "pink" },
               ].map(({ type, icon: Icon, label, color }) => (
                 <button
                   key={type}
@@ -744,7 +744,7 @@ export function ModernCreateStoryModal({
                             className="w-full rounded-lg"
                           />
                         )}
-                        {storyType === "music" && (
+                        {storyType === "audio" && (
                           <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-8 rounded-lg text-white text-center">
                             <Music className="w-12 h-12 mx-auto mb-2" />
                             <p className="font-medium">{mediaFile?.name}</p>
@@ -798,7 +798,7 @@ export function ModernCreateStoryModal({
                   (storyType === "text" && !content.trim()) ||
                   ((storyType === "image" ||
                     storyType === "video" ||
-                    storyType === "music") &&
+                    storyType === "audio") &&
                     !mediaFile)
                 }
                 className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105"
