@@ -33,6 +33,7 @@ interface ProfileUser {
   avatar?: string;
   cover_photo?: string;
   location?: string;
+  hometown?: string;
   website?: string;
   work?: string;
   education?: string;
