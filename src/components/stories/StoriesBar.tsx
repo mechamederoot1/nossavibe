@@ -127,21 +127,42 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
 
   const getStoryPreview = (authorStories: Story[]) => {
     const latestStory = authorStories[authorStories.length - 1];
-    
-    if (latestStory.media_type === 'photo' && latestStory.media_url) {
+
+    // Helper function to get full URL for media
+    const getMediaUrl = (url: string) => {
+      if (url.startsWith('http')) {
+        return url; // Already a full URL
+      }
+      // Add API base URL for relative paths
+      return `http://localhost:8000${url}`;
+    };
+
+    if ((latestStory.media_type === 'photo' || latestStory.media_type === 'image') && latestStory.media_url) {
       return (
-        <img 
-          src={latestStory.media_url} 
-          alt="Story preview" 
+        <img
+          src={getMediaUrl(latestStory.media_url)}
+          alt="Story preview"
           className="w-full h-full object-cover"
+          onError={(e) => {
+            console.error('❌ Failed to load story preview image:', latestStory.media_url);
+            e.currentTarget.style.display = 'none';
+          }}
         />
       );
     }
     
     if (latestStory.media_type === 'video' && latestStory.media_url) {
       return (
-        <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-          <span className="text-white text-2xl">📹</span>
+        <div className="w-full h-full bg-gray-800 flex items-center justify-center relative">
+          <video
+            src={getMediaUrl(latestStory.media_url)}
+            className="w-full h-full object-cover absolute inset-0"
+            muted
+            onError={(e) => {
+              console.error('❌ Failed to load story preview video:', latestStory.media_url);
+            }}
+          />
+          <span className="text-white text-2xl relative z-10">📹</span>
         </div>
       );
     }
