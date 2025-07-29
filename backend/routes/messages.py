@@ -12,6 +12,7 @@ from models.message import Message
 from models.user import User
 from utils.auth import get_current_user
 from schemas.misc import MessageCreate, MessageResponse, ConversationResponse
+from utils.realtime_notifications import realtime_notifications
 
 router = APIRouter(prefix="/messages", tags=["messages"])
 
