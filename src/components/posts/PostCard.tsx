@@ -60,11 +60,12 @@ export function PostCard({
   onDelete,
   onEdit
 }: PostCardProps) {
-  const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(post.reactions_count);
+  const [isLoved, setIsLoved] = useState(false);
+  const [lovesCount, setLovesCount] = useState(post.reactions_count);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [userReaction, setUserReaction] = useState<string | null>(null);
 
   const handleReaction = async (reactionType: string = "like") => {
     try {
