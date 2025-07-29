@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Send, Heart, Reply, MoreHorizontal, X } from "lucide-react";
+import { API_BASE_URL } from "../../config/api";
 
 interface Comment {
   id: number;
