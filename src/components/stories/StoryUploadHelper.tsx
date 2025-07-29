@@ -75,6 +75,46 @@ export const createStoryWithFile = async (
     privacy
   });
 
+  // First check if backend is available
+  try {
+    const healthCheck = await fetch(`${API_BASE_URL}/health`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(3000)
+    });
+    if (!healthCheck.ok) {
+      throw new Error('Backend não está respondendo');
+    }
+  } catch (error) {
+    console.warn("⚠️ Backend offline, criando story apenas localmente");
+
+    // Store story locally (in localStorage as fallback)
+    const localStory = {
+      id: Date.now(),
+      content,
+      media_type: mediaFile ? (mediaFile.type.startsWith('image/') ? 'photo' : 'video') : 'text',
+      media_url: mediaFile ? await fileToBase64(mediaFile) : null,
+      background_color: backgroundColor,
+      duration_hours: storyDuration,
+      created_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + storyDuration * 60 * 60 * 1000).toISOString(),
+      author: {
+        id: parseInt(userToken.split('.')[0]) || 1, // Simple extraction
+        first_name: 'Você',
+        last_name: '',
+        avatar: null
+      },
+      views_count: 0
+    };
+
+    // Store in localStorage
+    const localStories = JSON.parse(localStorage.getItem('vibe_local_stories') || '[]');
+    localStories.push(localStory);
+    localStorage.setItem('vibe_local_stories', JSON.stringify(localStories));
+
+    console.log("✅ Story salvo localmente:", localStory);
+    return true;
+  }
+
   try {
     // Validate required content
     if (!content.trim() && !mediaFile) {
