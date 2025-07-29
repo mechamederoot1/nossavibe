@@ -19,22 +19,43 @@ class FollowCreate(BaseModel):
 class MessageCreate(BaseModel):
     recipient_id: int
     content: Optional[str] = None
-    message_type: str = "text"  # text, image, video, audio, file
+    message_type: str = "text"  # text, image, video, audio, file, sticker
     media_url: Optional[str] = None
     media_metadata: Optional[str] = None
 
 class MessageResponse(BaseModel):
     id: int
     sender: Dict[str, Any]
-    recipient: Dict[str, Any]
     content: Optional[str]
     message_type: str
     media_url: Optional[str]
     is_read: bool
-    created_at: datetime
+    created_at: str
+    is_own: bool
 
     class Config:
         from_attributes = True
+
+class ConversationResponse(BaseModel):
+    user: Dict[str, Any]
+    unread_count: int
+    last_message: Optional[Dict[str, Any]] = None
+
+    class Config:
+        from_attributes = True
+
+class UserSender(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    avatar: Optional[str] = None
+
+class LastMessage(BaseModel):
+    content: Optional[str]
+    message_type: str
+    created_at: str
+    is_read: bool
+    is_own: bool
 
 # Notification schemas
 class NotificationResponse(BaseModel):
