@@ -49,7 +49,16 @@ async def send_message(
     # Load sender info for response
     message.sender = current_user
     message.recipient = recipient
-    
+
+    # Send real-time notification
+    await realtime_notifications.send_message_notification(
+        sender_id=current_user.id,
+        recipient_id=message_data.recipient_id,
+        message_id=message.id,
+        message_content=message_data.content or "",
+        message_type=message_data.message_type
+    )
+
     return {
         "id": message.id,
         "sender": {
