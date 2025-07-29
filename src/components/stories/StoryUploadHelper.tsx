@@ -12,7 +12,7 @@ const fileToBase64 = (file: File): Promise<string> => {
 
 export interface StoryUploadData {
   content: string;
-  media_type: "text" | "photo" | "video" | "music" | null;
+  media_type: "text" | "image" | "video" | "audio" | null;
   media_url?: string;
   duration_hours: number;
   background_color?: string;
