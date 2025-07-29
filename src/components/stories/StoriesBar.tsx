@@ -105,6 +105,40 @@ export const StoriesBar: React.FC<StoriesBarProps> = ({ userToken, onCreateStory
     if (authorStories && authorStories.length > 0) {
       setSelectedStoryGroup(authorStories);
       setSelectedStoryIndex(storyIndex);
+
+      // Marcar stories como lidos quando o grupo é aberto
+      markStoriesAsViewed(authorStories);
+    }
+  };
+
+  const markStoriesAsViewed = async (storiesToMark: Story[]) => {
+    // Marcar apenas stories que ainda não foram lidos
+    const unreadStories = storiesToMark.filter(story => !story.viewed_by_user);
+
+    if (unreadStories.length === 0) return;
+
+    // Atualizar estado local imediatamente para melhor UX
+    setStories(prevStories =>
+      prevStories.map(story => {
+        if (unreadStories.some(unread => unread.id === story.id)) {
+          return { ...story, viewed_by_user: true };
+        }
+        return story;
+      })
+    );
+
+    // Marcar no backend (assíncrono)
+    for (const story of unreadStories) {
+      try {
+        await fetch(`http://localhost:8000/stories/${story.id}/view`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+          },
+        });
+      } catch (error) {
+        console.error(`Erro ao marcar story ${story.id} como lido:`, error);
+      }
     }
   };
 
