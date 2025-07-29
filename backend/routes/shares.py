@@ -79,6 +79,14 @@ async def share_post(
             message=f"{current_user.first_name} {current_user.last_name} compartilhou seu post",
             data={"post_id": post_id, "share_id": share.id}
         )
+
+        # Send real-time notification
+        await realtime_notifications.send_share_notification(
+            sharer_id=current_user.id,
+            post_author_id=post.author_id,
+            post_id=post_id,
+            share_id=share.id
+        )
     
     # If sharing with a message, create a new post that references the original
     shared_post_id = None
