@@ -57,7 +57,7 @@ export function MobileCreateStoryModal({
     "select" | "create" | "customize" | "preview"
   >("select");
   const [storyType, setStoryType] = useState<
-    "text" | "image" | "video" | "music"
+    "text" | "image" | "video" | "audio"
   >("text");
   const [content, setContent] = useState("");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
@@ -231,7 +231,7 @@ export function MobileCreateStoryModal({
     if (
       (storyType === "image" ||
         storyType === "video" ||
-        storyType === "music") &&
+        storyType === "audio") &&
       !mediaFile
     )
       return;
@@ -421,7 +421,7 @@ export function MobileCreateStoryModal({
                 gradient: "from-purple-500 to-pink-600",
               },
               {
-                type: "music",
+                type: "audio",
                 icon: Music,
                 label: "Música",
                 gradient: "from-pink-500 to-rose-600",
@@ -773,7 +773,7 @@ export function MobileCreateStoryModal({
                   (storyType === "text" && !content.trim()) ||
                   ((storyType === "image" ||
                     storyType === "video" ||
-                    storyType === "music") &&
+                    storyType === "audio") &&
                     !mediaFile)
                 }
                 className="flex-2 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium text-lg disabled:opacity-50 flex items-center justify-center space-x-2"
