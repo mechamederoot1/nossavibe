@@ -7,7 +7,7 @@ from .story import Story, StoryView, StoryTag, StoryOverlay
 from .friendship import Friendship, Block, Follow
 from .notification import Notification, NotificationType, MediaFile
 from .message import Message
-from .report import Report, ReportType, ReportStatus
+from .report import Report
 from .album import Album, AlbumPhoto
 from .media import MediaFile
 from .bookmark import Bookmark
