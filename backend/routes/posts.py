@@ -279,3 +279,68 @@ async def create_comment(post_id: int, comment_data: CommentCreate, current_user
         created_at=comment.created_at,
         reactions_count=0
     )
+
+# Comment Reactions
+@router.post("/comments/{comment_id}/reactions")
+async def create_comment_reaction(comment_id: int, reaction_data: ReactionCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Add or update reaction to a comment"""
+    comment = db.query(Comment).filter(Comment.id == comment_id).first()
+    if not comment:
+        raise HTTPException(status_code=404, detail="Comment not found")
+
+    # Check if user already reacted
+    existing_reaction = db.query(CommentReaction).filter(
+        CommentReaction.comment_id == comment_id,
+        CommentReaction.user_id == current_user.id
+    ).first()
+
+    if existing_reaction:
+        # Update existing reaction
+        existing_reaction.reaction_type = reaction_data.reaction_type
+        db.commit()
+        return {"message": "Comment reaction updated"}
+    else:
+        # Create new reaction
+        reaction = CommentReaction(
+            comment_id=comment_id,
+            user_id=current_user.id,
+            reaction_type=reaction_data.reaction_type
+        )
+        db.add(reaction)
+        db.commit()
+
+        return {"message": "Comment reaction added"}
+
+@router.delete("/comments/{comment_id}/reactions")
+async def remove_comment_reaction(comment_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Remove reaction from a comment"""
+    reaction = db.query(CommentReaction).filter(
+        CommentReaction.comment_id == comment_id,
+        CommentReaction.user_id == current_user.id
+    ).first()
+
+    if reaction:
+        db.delete(reaction)
+        db.commit()
+        return {"message": "Comment reaction removed"}
+    else:
+        raise HTTPException(status_code=404, detail="Comment reaction not found")
+
+@router.get("/comments/{comment_id}/reactions/user")
+async def get_user_comment_reaction(comment_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Get current user's reaction to a comment"""
+    reaction = db.query(CommentReaction).filter(
+        CommentReaction.comment_id == comment_id,
+        CommentReaction.user_id == current_user.id
+    ).first()
+
+    if reaction:
+        return {
+            "reaction": {
+                "id": reaction.id,
+                "reaction_type": reaction.reaction_type,
+                "created_at": reaction.created_at.isoformat()
+            }
+        }
+    else:
+        return {"reaction": None}
